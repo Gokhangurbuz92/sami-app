@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "خوش آمدید",
+    "login": "لاگ ان",
+    "logout": "لاگ آؤٹ",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "submit": "جمع کرائیں",
+    "cancel": "منسوخ کریں",
+    "error": "خرابی",
+    "success": "کامیابی",
+    "loading": "لوڈ ہو رہا ہے...",
+    "save": "محفوظ کریں",
+    "delete": "حذف کریں",
+    "edit": "ترمیم کریں",
+    "search": "تلاش کریں"
+  },
+  "auth": {
+    "loginTitle": "SAMI میں لاگ ان",
+    "loginError": "غلط ای میل یا پاس ورڈ",
+    "loginSuccess": "کامیابی سے لاگ ان ہو گیا",
+    "errors": {
+      "signUp": "رجسٹریشن کے دوران خرابی: {{error}}",
+      "signIn": "لاگ ان کے دوران خرابی: {{error}}",
+      "logout": "لاگ آؤٹ کے دوران خرابی: {{error}}",
+      "resetPassword": "پاس ورڈ ری سیٹ کرنے کے دوران خرابی: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "ہوم",
+    "planning": "منصوبہ بندی",
+    "notifications": "اطلاعات",
+    "notes": "نوٹس",
+    "profile": "پروفائل"
+  },
+  "dashboard": {
+    "searchYouth": "نوجوان تلاش کریں...",
+    "planning": "کیلنڈر",
+    "appointments": "ملاقاتوں",
+    "notes": "نوٹس",
+    "title": "ڈیش بورڈ",
+    "welcome": "آپ کے ڈیش بورڈ میں خوش آمدید",
+    "upcomingEvents": "آنے والے واقعات",
+    "noUpcomingEvents": "کوئی آنے والا واقعہ نہیں ہے",
+    "unreadMessages": "نہ پڑھے گئے پیغامات",
+    "noUnreadMessages": "کوئی نہ پڑھا گیا پیغام نہیں ہے",
+    "recentNotes": "حالیہ نوٹس",
+    "noRecentNotes": "کوئی حالیہ نوٹ نہیں ہے",
+    "importantNotifications": "اہم اطلاعات",
+    "noImportantNotifications": "کوئی اہم اطلاع نہیں ہے"
+  },
+  "login": {
+    "title": "لاگ ان",
+    "error": "لاگ ان خرابی۔ براہ کرم اپنی معلومات کی تصدیق کریں۔"
+  },
+  "planning": {
+    "title": "منصوبہ بندی",
+    "addEvent": "ملاقات شامل کریں",
+    "noEvents": "کوئی ملاقات نہیں"
+  },
+  "notes": {
+    "title": "نوٹس",
+    "addNote": "نوٹ شامل کریں",
+    "noNotes": "کوئی نوٹ نہیں"
+  },
+  "notifications": {
+    "title": "اطلاعات",
+    "noNotifications": "کوئی اطلاعات نہیں"
+  },
+  "profile": {
+    "title": "پروفائل",
+    "name": "نام",
+    "email": "ای میل",
+    "phone": "فون",
+    "update": "پروفائل اپ ڈیٹ کریں"
+  },
+  "messaging": {
+    "title": "پیغامات",
+    "typeMessage": "اپنا پیغام ٹائپ کریں...",
+    "selectConversation": "بات چیت منتخب کریں",
+    "sendMessage": "پیغام بھیجیں",
+    "newMessage": "نیا پیغام",
+    "unreadMessages": "ناپڑھے پیغامات",
+    "noMessages": "کوئی پیغام نہیں",
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "خرابی",
+    "typing": "ٹائپ کر رہے ہیں...",
+    "attachments": {
+      "add": "فائل شامل کریں",
+      "remove": "ہٹائیں",
+      "image": "تصویر",
+      "file": "فائل",
+      "uploading": "اپ لوڈ ہو رہا ہے...",
+      "error": "اپ لوڈ کرتے وقت خرابی",
+      "errorSize": "فائل بہت بڑی ہے (10MB سے زیادہ)",
+      "errorType": "غلط فائل",
+      "errorNameTooLong": "فائل کا نام بہت لمبا ہے",
+      "errorTooManyFiles": "صرف 5 فائلیں",
+      "fileAttached": "فائل منسلک ہو گئی"
+    },
+    "translation": {
+      "show": "پیغام ترجمہ کریں",
+      "hide": "ترجمہ چھپائیں",
+      "error": "ترجمہ کرتے وقت خرابی",
+      "translating": "ترجمہ ہو رہا ہے...",
+      "translated": "ترجمہ ہو گیا",
+      "original": "اصل پیغام دکھائیں"
+    },
+    "reactions": {
+      "add": "ردعمل شامل کریں",
+      "remove": "ردعمل ہٹائیں",
+      "maxReactions": "صرف 5 ردعمل"
+    },
+    "roles": {
+      "youth": "نوجوان",
+      "referent": "حوالہ",
+      "co-referent": "معاون حوالہ"
+    },
+    "notifications": {
+      "notSupported": "اطلاعات کی حمایت نہیں کی جاتی",
+      "firebaseNotSupported": "Firebase Messaging کی حمایت نہیں کی جاتی",
+      "permission": {
+        "denied": "اطلاعات مسترد کر دی گئیں",
+        "granted": "اطلاعات منظور کر لی گئیں"
+      }
+    }
+  }
+} 

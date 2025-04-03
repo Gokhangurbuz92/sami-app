@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "مرحباً",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "submit": "تأكيد",
+    "cancel": "إلغاء",
+    "error": "خطأ",
+    "success": "نجاح",
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "search": "بحث"
+  },
+  "auth": {
+    "loginTitle": "تسجيل الدخول إلى SAMI",
+    "loginError": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "errors": {
+      "signUp": "خطأ أثناء التسجيل: {{error}}",
+      "signIn": "خطأ أثناء تسجيل الدخول: {{error}}",
+      "logout": "خطأ أثناء تسجيل الخروج: {{error}}",
+      "resetPassword": "خطأ أثناء إعادة تعيين كلمة المرور: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "planning": "التخطيط",
+    "notifications": "الإشعارات",
+    "notes": "الملاحظات",
+    "profile": "الملف الشخصي"
+  },
+  "dashboard": {
+    "searchYouth": "البحث عن شاب...",
+    "planning": "الجدول الزمني",
+    "appointments": "المواعيد",
+    "notes": "ملاحظات",
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً بك في لوحة التحكم",
+    "upcomingEvents": "الأحداث القادمة",
+    "noUpcomingEvents": "لا توجد أحداث قادمة",
+    "unreadMessages": "الرسائل غير المقروءة",
+    "noUnreadMessages": "لا توجد رسائل غير مقروءة",
+    "recentNotes": "الملاحظات الأخيرة",
+    "noRecentNotes": "لا توجد ملاحظات حديثة",
+    "importantNotifications": "الإشعارات المهمة",
+    "noImportantNotifications": "لا توجد إشعارات مهمة"
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "error": "خطأ في تسجيل الدخول. يرجى التحقق من بياناتك."
+  },
+  "planning": {
+    "title": "التخطيط",
+    "addEvent": "إضافة موعد",
+    "noEvents": "لا توجد مواعيد"
+  },
+  "notes": {
+    "title": "الملاحظات",
+    "addNote": "إضافة ملاحظة",
+    "noNotes": "لا توجد ملاحظات"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "noNotifications": "لا توجد إشعارات"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "update": "تحديث الملف الشخصي"
+  },
+  "messaging": {
+    "title": "الرسائل",
+    "typeMessage": "اكتب رسالتك...",
+    "selectConversation": "اختر محادثة",
+    "sendMessage": "إرسال",
+    "newMessage": "رسالة جديدة",
+    "unreadMessages": "رسائل غير مقروءة",
+    "noMessages": "لا توجد رسائل",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "typing": "يكتب...",
+    "attachments": {
+      "add": "إضافة ملف",
+      "remove": "حذف",
+      "image": "صورة",
+      "file": "ملف",
+      "uploading": "جاري الرفع...",
+      "error": "خطأ أثناء الرفع",
+      "errorSize": "الملف كبير جداً (الحد الأقصى 10 ميجابايت)",
+      "errorType": "نوع الملف غير مدعوم",
+      "errorNameTooLong": "اسم الملف طويل جداً",
+      "errorTooManyFiles": "لا يمكنك إرسال أكثر من 5 ملفات في وقت واحد",
+      "fileAttached": "تم إرفاق الملف"
+    },
+    "translation": {
+      "show": "ترجمة الرسالة",
+      "hide": "إخفاء الترجمة",
+      "error": "خطأ أثناء الترجمة",
+      "translating": "جاري الترجمة...",
+      "translated": "تمت ترجمة الرسالة",
+      "original": "عرض الرسالة الأصلية"
+    },
+    "reactions": {
+      "add": "إضافة رد فعل",
+      "remove": "حذف رد الفعل",
+      "maxReactions": "لا يمكنك إضافة أكثر من 5 ردود فعل"
+    },
+    "roles": {
+      "youth": "شاب",
+      "referent": "مرجع",
+      "co-referent": "مرجع مساعد"
+    },
+    "notifications": {
+      "notSupported": "الإشعارات غير مدعومة في متصفحك",
+      "firebaseNotSupported": "Firebase Messaging غير مدعوم",
+      "permission": {
+        "denied": "تم رفض الإشعارات",
+        "granted": "تم تفعيل الإشعارات"
+      }
+    }
+  }
+} 

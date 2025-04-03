@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "እንኳዕ ብደሓን መጻእኩም",
+    "login": "እንተዛ",
+    "logout": "ውጽእ",
+    "email": "ኢመይል",
+    "password": "የማምለጥ ቃል",
+    "submit": "ኣቕርብ",
+    "cancel": "ኣቋርጽ",
+    "error": "ስህተት",
+    "success": "ተዛዚምነት",
+    "loading": "ይጽንሕ ኣሎ...",
+    "save": "ዓቅብ",
+    "delete": "ሰርዝ",
+    "edit": "ኣስተካክል",
+    "search": "ፈልጥ"
+  },
+  "auth": {
+    "loginTitle": "ናብ SAMI እንተዛ",
+    "loginError": "ዘይትኽክለኛ ኢመይል ወይ የማምለጥ ቃል",
+    "loginSuccess": "ብተዛዚምነት ተመዝጊብኩም ኣለኹም",
+    "errors": {
+      "signUp": "ስህተት ኣብ እዋን ምዝገባ: {{error}}",
+      "signIn": "ስህተት ኣብ እዋን ምእታው: {{error}}",
+      "logout": "ስህተት ኣብ እዋን ምውጻእ: {{error}}",
+      "resetPassword": "ስህተት ኣብ እዋን ምድራስ ቃል ምስጢር: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "ቤት",
+    "planning": "ውጥንቲ",
+    "notifications": "ማዕረግታት",
+    "notes": "ማስታወሻታት",
+    "profile": "መለስያ"
+  },
+  "dashboard": {
+    "searchYouth": "ንወጣት ፈልጥ...",
+    "planning": "የመዓልቲ መዝገብ",
+    "appointments": "ቀጠሮታት",
+    "notes": "ማስታወሻታት",
+    "title": "ዳሽቦርድ",
+    "welcome": "ናብ ዳሽቦርድኩም እንኳዕ ብደሓን መጻእኩም",
+    "upcomingEvents": "ዝመጽእ ፍጻመታት",
+    "noUpcomingEvents": "ዝመጽእ ፍጻመታት የለን",
+    "unreadMessages": "ዘይተንብቡ መልእኽታት",
+    "noUnreadMessages": "ዘይተንብቡ መልእኽታት የለን",
+    "recentNotes": "ቀረባ ማስታወሻታት",
+    "noRecentNotes": "ቀረባ ማስታወሻታት የለን",
+    "importantNotifications": "ኣገዳሲ ማዕረግታት",
+    "noImportantNotifications": "ኣገዳሲ ማዕረግታት የለን"
+  },
+  "login": {
+    "title": "እንተዛ",
+    "error": "ውጽኣት ስህተት። በጃኹም መረጻትኩም ይፍትሑ።"
+  },
+  "planning": {
+    "title": "ውጥንቲ",
+    "addEvent": "ቀጠሮ ወስኽ",
+    "noEvents": "ቀጠሮታት የለን"
+  },
+  "notes": {
+    "title": "ማስታወሻታት",
+    "addNote": "ማስታወሻ ወስኽ",
+    "noNotes": "ማስታወሻታት የለን"
+  },
+  "notifications": {
+    "title": "ማዕረግታት",
+    "noNotifications": "ማዕረግታት የለን"
+  },
+  "profile": {
+    "title": "መለስያ",
+    "name": "ስም",
+    "email": "ኢመይል",
+    "phone": "ተሌፎን",
+    "update": "መለስያ ኣዘምን"
+  },
+  "messaging": {
+    "title": "መልእኽቲ",
+    "typeMessage": "መልእኽትኩም ይጽሕፉ...",
+    "selectConversation": "ዘረባ ምረጽ",
+    "sendMessage": "መልእኽቲ ምልኣኽ",
+    "newMessage": "ሓድሽ መልእኽቲ",
+    "unreadMessages": "ዘይተንብቡ መልእኽታት",
+    "noMessages": "መልእኽቲ የለን",
+    "loading": "ይጽንሕ ኣሎ...",
+    "error": "ስህተት",
+    "typing": "ይጽሕፍ ኣሎ...",
+    "attachments": {
+      "add": "ፋይል ምውሳኽ",
+      "remove": "ምድራስ",
+      "image": "ስእሊ",
+      "file": "ፋይል",
+      "uploading": "ይስዕብ ኣሎ...",
+      "error": "ኣብ እዋን ምስዕባር ስህተት",
+      "errorSize": "ፋይል ኣዝዩ ዓቢ እዩ (ካብ 10MB ንላዕሊ)",
+      "errorType": "ዘይተገድስ ፋይል",
+      "errorNameTooLong": "ስም ፋይል ኣዝዩ ነዊሕ እዩ",
+      "errorTooManyFiles": "5 ፋይላት ጥራይ",
+      "fileAttached": "ፋይል ተወሲዱ"
+    },
+    "translation": {
+      "show": "መልእኽቲ ምትርጓም",
+      "hide": "ትርጉም ምሕባእ",
+      "error": "ኣብ እዋን ምትርጓም ስህተት",
+      "translating": "ይትርጎም ኣሎ...",
+      "translated": "ተተርጎሙ",
+      "original": "ቀዳማይ መልእኽቲ ምርኣይ"
+    },
+    "reactions": {
+      "add": "ምላሽ ምውሳኽ",
+      "remove": "ምላሽ ምድራስ",
+      "maxReactions": "5 ምላሽ ጥራይ"
+    },
+    "roles": {
+      "youth": "ወጣት",
+      "referent": "ማሕበረሰብ ሓላፊ",
+      "co-referent": "ሓላፊ ሓጋዚ"
+    },
+    "notifications": {
+      "notSupported": "ማዕረግታት ኣይድግፍን እዩ",
+      "firebaseNotSupported": "Firebase Messaging ኣይድግፍን እዩ",
+      "permission": {
+        "denied": "ማዕረግታት ተኸልኪሉ",
+        "granted": "ማዕረግታት ተፈቒዱ"
+      }
+    }
+  }
+} 

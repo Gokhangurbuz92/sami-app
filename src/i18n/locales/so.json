@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "Ku soo dhawoow",
+    "login": "Geli",
+    "logout": "Ka bax",
+    "email": "Email",
+    "password": "Furaha sirta ah",
+    "submit": "Hubi",
+    "cancel": "Jooji",
+    "error": "Khalad",
+    "success": "Guul",
+    "loading": "Waa la soo gelinayaa...",
+    "save": "Kaydi",
+    "delete": "Tirtir",
+    "edit": "Wax ka bedel",
+    "search": "Raadi"
+  },
+  "auth": {
+    "loginTitle": "Geli SAMI",
+    "loginError": "Email ama furaha sirta ah waa khalad",
+    "loginSuccess": "Si guul leh ayaa lagu geliyay",
+    "errors": {
+      "signUp": "Khalad markii la diiwaangelinayo: {{error}}",
+      "signIn": "Khalad markii la gelinayo: {{error}}",
+      "logout": "Khalad markii la bixinayo: {{error}}",
+      "resetPassword": "Khalad markii la dib u dejineynayo erayga sirta ah: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "planning": "Qorsheynta",
+    "notifications": "Ogeysiisyada",
+    "notes": "Xusuusiyada",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "searchYouth": "Raadi dhalinyaro...",
+    "planning": "Kalandarka",
+    "appointments": "Ballanqaadyada",
+    "notes": "Xusuusiyada",
+    "title": "Dashboard",
+    "welcome": "Ku soo dhawoow dashboard-kaaga",
+    "upcomingEvents": "Dhacdooyinka soo socda",
+    "noUpcomingEvents": "Ma jiraan dhacdooyin soo socda",
+    "unreadMessages": "Fariimaha aan la akhriyin",
+    "noUnreadMessages": "Ma jiraan fariimo aan la akhriyin",
+    "recentNotes": "Qoraallo cusub",
+    "noRecentNotes": "Ma jiraan qoraallo cusub",
+    "importantNotifications": "Ogeysiino muhiim ah",
+    "noImportantNotifications": "Ma jiraan ogeysiino muhiim ah"
+  },
+  "login": {
+    "title": "Geli",
+    "error": "Khalad gelitaanka. Fadlan hubi macluumaadkaaga."
+  },
+  "planning": {
+    "title": "Qorsheynta",
+    "addEvent": "Ku dar ballanqaad",
+    "noEvents": "Ma jiraan ballanqaado"
+  },
+  "notes": {
+    "title": "Xusuusiyada",
+    "addNote": "Ku dar xusuus",
+    "noNotes": "Ma jiraan xusuusiyo"
+  },
+  "notifications": {
+    "title": "Ogeysiisyada",
+    "noNotifications": "Ma jiraan ogeysiisyo"
+  },
+  "profile": {
+    "title": "Profile",
+    "name": "Magaca",
+    "email": "Email",
+    "phone": "Telefoonka",
+    "update": "Cusbooneysii profile"
+  },
+  "messaging": {
+    "title": "Fariin",
+    "typeMessage": "Qor fariintaada...",
+    "selectConversation": "Dooro wada hadal",
+    "sendMessage": "Dir fariin",
+    "newMessage": "Fariin cusub",
+    "unreadMessages": "Fariin aan la akhriyin",
+    "noMessages": "Ma jiraan fariin",
+    "loading": "Waa la soo dejinaayaa...",
+    "error": "Khalad",
+    "typing": "Waa la qorayaa...",
+    "attachments": {
+      "add": "Ku dar fayl",
+      "remove": "Ka saar",
+      "image": "Sawir",
+      "file": "Fayl",
+      "uploading": "Waa la soo dejinaayaa...",
+      "error": "Khalad marka la soo dejinaayo",
+      "errorSize": "Faylka waa weyn (10MB ka badan)",
+      "errorType": "Fayl aan la ogolayn",
+      "errorNameTooLong": "Magaca faylka waa dheer",
+      "errorTooManyFiles": "5 fayl oo keliya",
+      "fileAttached": "Faylka waa la ku daray"
+    },
+    "translation": {
+      "show": "Turjun fariin",
+      "hide": "Qari turjumaadda",
+      "error": "Khalad marka la turjunayo",
+      "translating": "Waa la turjunayaa...",
+      "translated": "Waa la turjunay",
+      "original": "Muuji fariinta asalka ah"
+    },
+    "reactions": {
+      "add": "Ku dar jawaab",
+      "remove": "Ka saar jawaab",
+      "maxReactions": "5 jawaab oo keliya"
+    },
+    "roles": {
+      "youth": "Dhallinyaro",
+      "referent": "Tilmaamaha",
+      "co-referent": "Tilmaamaha ku-xigeen"
+    },
+    "notifications": {
+      "notSupported": "Ma la taageero ogeysiis",
+      "firebaseNotSupported": "Ma la taageero Firebase Messaging",
+      "permission": {
+        "denied": "Waa la diiday ogeysiis",
+        "granted": "Waa la oggolaaday ogeysiis"
+      }
+    }
+  }
+} 

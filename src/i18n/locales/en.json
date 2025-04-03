@@ -1,0 +1,151 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search"
+  },
+  "auth": {
+    "loginTitle": "Login to SAMI",
+    "loginError": "Invalid email or password",
+    "loginSuccess": "Login successful",
+    "errors": {
+      "signUp": "Error during sign up: {{error}}",
+      "signIn": "Error during sign in: {{error}}",
+      "logout": "Error during logout: {{error}}",
+      "resetPassword": "Error during password reset: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "planning": "Planning",
+    "notifications": "Notifications",
+    "notes": "Notes",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "searchYouth": "Search youth...",
+    "planning": "Calendar",
+    "appointments": "Appointments",
+    "notes": "Notes",
+    "title": "Dashboard",
+    "welcome": "Welcome to your dashboard",
+    "upcomingEvents": "Upcoming Events",
+    "noUpcomingEvents": "No upcoming events",
+    "unreadMessages": "Unread Messages",
+    "noUnreadMessages": "No unread messages",
+    "recentNotes": "Recent Notes",
+    "noRecentNotes": "No recent notes",
+    "importantNotifications": "Important Notifications",
+    "noImportantNotifications": "No important notifications"
+  },
+  "login": {
+    "title": "Login",
+    "error": "Login error. Please check your information."
+  },
+  "planning": {
+    "title": "Planning",
+    "addEvent": "Add event",
+    "noEvents": "No events",
+    "allDay": "All day",
+    "previous": "Previous",
+    "next": "Next",
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "agenda": "Agenda",
+    "date": "Date",
+    "time": "Time",
+    "event": "Event",
+    "noEventsInRange": "No events in this range",
+    "showMore": "Show {{count}} more events",
+    "description": "Description",
+    "categories": {
+      "title": "Category",
+      "rdv_medical": "Medical appointment",
+      "school": "School",
+      "rdv_administrative": "Administrative appointment",
+      "cleaning_room": "Room cleaning",
+      "laundry": "Laundry day",
+      "other": "Other"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "addNote": "Add note",
+    "noNotes": "No notes"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noNotifications": "No notifications"
+  },
+  "profile": {
+    "title": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "update": "Update profile"
+  },
+  "messaging": {
+    "title": "Messages",
+    "typeMessage": "Type your message...",
+    "selectConversation": "Select a conversation",
+    "sendMessage": "Send",
+    "newMessage": "New message",
+    "unreadMessages": "Unread messages",
+    "noMessages": "No messages",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "typing": "Typing...",
+    "attachments": {
+      "add": "Add file",
+      "remove": "Remove",
+      "image": "Image",
+      "file": "File",
+      "uploading": "Uploading...",
+      "error": "Error during upload",
+      "errorSize": "File is too large (max 10MB)",
+      "errorType": "File type not supported",
+      "errorNameTooLong": "File name is too long",
+      "errorTooManyFiles": "You cannot send more than 5 files at once",
+      "fileAttached": "File attached"
+    },
+    "translation": {
+      "show": "Translate message",
+      "hide": "Hide translation",
+      "error": "Error during translation",
+      "translating": "Translating...",
+      "translated": "Message translated",
+      "original": "Show original message"
+    },
+    "reactions": {
+      "add": "Add reaction",
+      "remove": "Remove reaction",
+      "maxReactions": "You cannot add more than 5 reactions"
+    },
+    "roles": {
+      "youth": "Youth",
+      "referent": "Referent",
+      "co-referent": "Co-referent"
+    },
+    "notifications": {
+      "notSupported": "Notifications are not supported by your browser",
+      "firebaseNotSupported": "Firebase Messaging is not supported",
+      "permission": {
+        "denied": "Notifications have been denied",
+        "granted": "Notifications are enabled"
+      }
+    }
+  }
+} 

@@ -1,0 +1,21 @@
+{
+  "name": "SAMI - Suivi des Jeunes",
+  "short_name": "SAMI",
+  "description": "Application de suivi des jeunes MNA du Foyer SAMI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 

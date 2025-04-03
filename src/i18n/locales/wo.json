@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Dalal ak Jam",
+    "login": "Dugg",
+    "logout": "Jib",
+    "email": "Email",
+    "password": "Baat-u-njël",
+    "submit": "Yonnee",
+    "cancel": "Neenal",
+    "error": "Njuumte",
+    "success": "Baax na",
+    "loading": "Di xaar...",
+    "save": "Denc",
+    "delete": "Rey",
+    "edit": "Fatte",
+    "search": "Seet"
+  },
+  "auth": {
+    "loginTitle": "Dugg ci SAMI",
+    "loginError": "Email walla baat-u-njël du jub",
+    "loginSuccess": "Dugg nga ci baax"
+  },
+  "navigation": {
+    "home": "Dal",
+    "planning": "Xool",
+    "notifications": "Xibaar",
+    "notes": "Bind",
+    "profile": "Xeew"
+  },
+  "dashboard": {
+    "searchYouth": "Seet xale yi...",
+    "planning": "Xool",
+    "appointments": "Rendez-vous yi",
+    "notes": "Bind yi",
+    "title": "Tabloo bu Njëkk",
+    "welcome": "Jërëjëf ci tabloo bu njëkk bi",
+    "upcomingEvents": "Tey yi ñu war a am",
+    "noUpcomingEvents": "Amul tey yi ñu war a am",
+    "unreadMessages": "Xibaar yi ñu xamul",
+    "noUnreadMessages": "Amul xibaar yi ñu xamul",
+    "recentNotes": "Tey yi ñu jot",
+    "noRecentNotes": "Amul tey yi ñu jot",
+    "importantNotifications": "Xibaar yi ñu war a xam",
+    "noImportantNotifications": "Amul xibaar yi ñu war a xam"
+  },
+  "login": {
+    "title": "Dugg",
+    "error": "Njuumte ci duggu. Faddal xeew maa."
+  },
+  "planning": {
+    "title": "Xool",
+    "addEvent": "Yok rendez-vous",
+    "noEvents": "Amul rendez-vous"
+  },
+  "notes": {
+    "title": "Bind",
+    "addNote": "Yok bind",
+    "noNotes": "Amul bind"
+  },
+  "notifications": {
+    "title": "Xibaar",
+    "noNotifications": "Amul xibaar"
+  },
+  "profile": {
+    "title": "Xeew",
+    "name": "Tur",
+    "email": "Email",
+    "phone": "Telefon",
+    "update": "Fatte xeew"
+  },
+  "messaging": {
+    "title": "Xibaar",
+    "typeMessage": "Bind xibaar bi...",
+    "selectConversation": "Tànn waxtaan",
+    "sendMessage": "Yonnee",
+    "newMessage": "Xibaar bu bees",
+    "unreadMessages": "Xibaar yuñu lu",
+    "noMessages": "Amul xibaar",
+    "loading": "Di xaar...",
+    "error": "Njuumte am na",
+    "typing": "Di bind...",
+    "attachments": {
+      "add": "Yok doxal",
+      "remove": "Rey",
+      "image": "Nataal",
+      "file": "Doxal",
+      "uploading": "Di yok...",
+      "error": "Njuumte ci yok",
+      "errorSize": "Doxal bi dafa mag (10MB ci kaw)",
+      "errorType": "Doxal bii duñu ko gënaal",
+      "errorNameTooLong": "Tur bi dafa gudd",
+      "errorTooManyFiles": "Doxal 5 ci yoon duñu ko yok",
+      "fileAttached": "Doxal bi yok na"
+    },
+    "translation": {
+      "show": "Firndeel xibaar bi",
+      "hide": "Nëbb firndeel bi",
+      "error": "Njuumte ci firndeel",
+      "translating": "Di firndeel...",
+      "translated": "Xibaar bi firndeel na",
+      "original": "Wone xibaar bu njëkk"
+    },
+    "reactions": {
+      "add": "Yok tontu",
+      "remove": "Rey tontu",
+      "maxReactions": "Tontu 5 ci kaw duñu ko yok"
+    },
+    "roles": {
+      "youth": "Xale",
+      "referent": "Jagle",
+      "co-referent": "Jagle bu bees"
+    },
+    "notifications": {
+      "notSupported": "Xibaar duñu ko gënaal ci wàll bi",
+      "firebaseNotSupported": "Firebase Messaging duñu ko gënaal",
+      "permission": {
+        "denied": "Xibaar ñuñu ko",
+        "granted": "Xibaar ñuñu ko"
+      }
+    }
+  }
+} 

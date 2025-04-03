@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "I ni ce",
+    "login": "Don",
+    "logout": "Bɔ",
+    "email": "Email",
+    "password": "Daɲɛgafe",
+    "submit": "Jijɛ",
+    "cancel": "Fafali",
+    "error": "Juguma",
+    "success": "Kɛɲɛ",
+    "loading": "Bɛna...",
+    "save": "Sɛgɛ",
+    "delete": "Fafali",
+    "edit": "Fafali",
+    "search": "Yiri"
+  },
+  "auth": {
+    "loginTitle": "Don SAMI",
+    "loginError": "Email wala daɲɛgafe juguma",
+    "loginSuccess": "Kɛɲɛ kɛra",
+    "errors": {
+      "signUp": "Juguma waati jumɛnw la: {{error}}",
+      "signIn": "Juguma waati don na: {{error}}",
+      "logout": "Juguma waati bɔ na: {{error}}",
+      "resetPassword": "Juguma waati daɲɛgafe fɔli na: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "So",
+    "planning": "Kɛlɛ",
+    "notifications": "Dantigɛli",
+    "notes": "Sɛbɛnni",
+    "profile": "Jɛɲɔgɔnya"
+  },
+  "dashboard": {
+    "searchYouth": "Yiri denmisɛn...",
+    "planning": "Kalandɛri",
+    "appointments": "Kɛlɛ",
+    "notes": "Sɛbɛnni",
+    "title": "Dashboard",
+    "welcome": "I ka kɛnɛ wa dashboard ma",
+    "upcomingEvents": "Kɛnɛw ka taa",
+    "noUpcomingEvents": "Kɛnɛw tɛ taa",
+    "unreadMessages": "Kuma minnu tɛ kalan",
+    "noUnreadMessages": "Kuma tɛ kalan",
+    "recentNotes": "Kuma minnu ka kɛ kɔfɛ",
+    "noRecentNotes": "Kuma tɛ kɛ kɔfɛ",
+    "importantNotifications": "Kuma minnu ka di",
+    "noImportantNotifications": "Kuma tɛ di"
+  },
+  "login": {
+    "title": "Don",
+    "error": "Juguma don. I jɛɲɔgɔnya fafali."
+  },
+  "planning": {
+    "title": "Kɛlɛ",
+    "addEvent": "Kɛlɛ kura kɛ",
+    "noEvents": "Kɛlɛ tɛ yen"
+  },
+  "notes": {
+    "title": "Sɛbɛnni",
+    "addNote": "Sɛbɛnni kura kɛ",
+    "noNotes": "Sɛbɛnni tɛ yen"
+  },
+  "notifications": {
+    "title": "Dantigɛli",
+    "noNotifications": "Dantigɛli tɛ yen"
+  },
+  "profile": {
+    "title": "Jɛɲɔgɔnya",
+    "name": "Tɔgɔ",
+    "email": "Email",
+    "phone": "Telefɔni",
+    "update": "Jɛɲɔgɔnya fafali"
+  },
+  "messaging": {
+    "title": "Kuma",
+    "typeMessage": "Kuma bɛ kɛ...",
+    "selectConversation": "Kuma tɔgɔ tɔgɔ",
+    "sendMessage": "Kuma",
+    "newMessage": "Kuma kura",
+    "unreadMessages": "Kuma tɛ kɛ",
+    "noMessages": "Kuma tɛ yen",
+    "loading": "Bɛna...",
+    "error": "Juguma bɛ kɛ",
+    "typing": "Bɛ kɛ...",
+    "attachments": {
+      "add": "Kuma kura kɛ",
+      "remove": "Fafali",
+      "image": "Nata",
+      "file": "Kuma",
+      "uploading": "Bɛna...",
+      "error": "Juguma kɛ na",
+      "errorSize": "Kuma bɛ mag (10MB ci kaw)",
+      "errorType": "Kuma tɛ yen",
+      "errorNameTooLong": "Tɔgɔ bɛ gɛlɛn",
+      "errorTooManyFiles": "Kuma 5 tɛ yen",
+      "fileAttached": "Kuma bɛ yen"
+    },
+    "translation": {
+      "show": "Kuma kura kɛ",
+      "hide": "Kuma tɛ yen",
+      "error": "Juguma kɛ na",
+      "translating": "Bɛna...",
+      "translated": "Kuma bɛ yen",
+      "original": "Kuma tɛ yen"
+    },
+    "reactions": {
+      "add": "Kuma kura kɛ",
+      "remove": "Fafali",
+      "maxReactions": "Kuma 5 tɛ yen"
+    },
+    "roles": {
+      "youth": "Den",
+      "referent": "Jɛɲɔgɔnya",
+      "co-referent": "Jɛɲɔgɔnya kura"
+    },
+    "notifications": {
+      "notSupported": "Kuma tɛ yen",
+      "firebaseNotSupported": "Firebase Messaging tɛ yen",
+      "permission": {
+        "denied": "Kuma tɛ yen",
+        "granted": "Kuma bɛ yen"
+      }
+    }
+  }
+} 

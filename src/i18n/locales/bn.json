@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "স্বাগতম",
+    "login": "লগইন",
+    "logout": "লগআউট",
+    "email": "ইমেইল",
+    "password": "পাসওয়ার্ড",
+    "submit": "জমা দিন",
+    "cancel": "বাতিল",
+    "error": "ত্রুটি",
+    "success": "সফল",
+    "loading": "লোড হচ্ছে...",
+    "save": "সংরক্ষণ",
+    "delete": "মুছে ফেলুন",
+    "edit": "সম্পাদনা",
+    "search": "অনুসন্ধান"
+  },
+  "auth": {
+    "loginTitle": "SAMI তে লগইন",
+    "loginError": "ভুল ইমেইল বা পাসওয়ার্ড",
+    "loginSuccess": "সফলভাবে লগইন হয়েছে",
+    "errors": {
+      "signUp": "নিবন্ধনের সময় ত্রুটি: {{error}}",
+      "signIn": "লগইন করার সময় ত্রুটি: {{error}}",
+      "logout": "লগআউট করার সময় ত্রুটি: {{error}}",
+      "resetPassword": "পাসওয়ার্ড রিসেট করার সময় ত্রুটি: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "হোম",
+    "planning": "পরিকল্পনা",
+    "notifications": "বিজ্ঞপ্তি",
+    "notes": "নোট",
+    "profile": "প্রোফাইল"
+  },
+  "dashboard": {
+    "searchYouth": "যুবক খুঁজুন...",
+    "planning": "ক্যালেন্ডার",
+    "appointments": "অ্যাপয়েন্টমেন্ট",
+    "notes": "নোট",
+    "title": "ড্যাশবোর্ড",
+    "welcome": "আপনার ড্যাশবোর্ডে স্বাগতম",
+    "upcomingEvents": "আসন্ন ইভেন্ট",
+    "noUpcomingEvents": "কোন আসন্ন ইভেন্ট নেই",
+    "unreadMessages": "অপঠিত বার্তা",
+    "noUnreadMessages": "কোন অপঠিত বার্তা নেই",
+    "recentNotes": "সাম্প্রতিক নোট",
+    "noRecentNotes": "কোন সাম্প্রতিক নোট নেই",
+    "importantNotifications": "গুরুত্বপূর্ণ বিজ্ঞপ্তি",
+    "noImportantNotifications": "কোন গুরুত্বপূর্ণ বিজ্ঞপ্তি নেই"
+  },
+  "login": {
+    "title": "লগইন",
+    "error": "লগইন ত্রুটি। অনুগ্রহ করে আপনার তথ্য যাচাই করুন।"
+  },
+  "planning": {
+    "title": "পরিকল্পনা",
+    "addEvent": "অ্যাপয়েন্টমেন্ট যোগ করুন",
+    "noEvents": "কোন অ্যাপয়েন্টমেন্ট নেই"
+  },
+  "notes": {
+    "title": "নোট",
+    "addNote": "নোট যোগ করুন",
+    "noNotes": "কোন নোট নেই"
+  },
+  "notifications": {
+    "title": "বিজ্ঞপ্তি",
+    "noNotifications": "কোন বিজ্ঞপ্তি নেই"
+  },
+  "profile": {
+    "title": "প্রোফাইল",
+    "name": "নাম",
+    "email": "ইমেইল",
+    "phone": "ফোন",
+    "update": "প্রোফাইল আপডেট করুন"
+  },
+  "messaging": {
+    "title": "বার্তা",
+    "typeMessage": "আপনার বার্তা টাইপ করুন...",
+    "selectConversation": "কথোপকথন নির্বাচন করুন",
+    "sendMessage": "বার্তা পাঠান",
+    "newMessage": "নতুন বার্তা",
+    "unreadMessages": "অপঠিত বার্তা",
+    "noMessages": "কোন বার্তা নেই",
+    "loading": "লোড হচ্ছে...",
+    "error": "ত্রুটি",
+    "typing": "টাইপ করছেন...",
+    "attachments": {
+      "add": "ফাইল যোগ করুন",
+      "remove": "অপসারণ করুন",
+      "image": "ছবি",
+      "file": "ফাইল",
+      "uploading": "আপলোড হচ্ছে...",
+      "error": "আপলোড করার সময় ত্রুটি",
+      "errorSize": "ফাইল খুব বড় (10MB এর বেশি)",
+      "errorType": "অবৈধ ফাইল",
+      "errorNameTooLong": "ফাইলের নাম খুব দীর্ঘ",
+      "errorTooManyFiles": "সর্বাধিক 5টি ফাইল",
+      "fileAttached": "ফাইল সংযুক্ত করা হয়েছে"
+    },
+    "translation": {
+      "show": "বার্তা অনুবাদ করুন",
+      "hide": "অনুবাদ লুকান",
+      "error": "অনুবাদ করার সময় ত্রুটি",
+      "translating": "অনুবাদ করা হচ্ছে...",
+      "translated": "অনুবাদ করা হয়েছে",
+      "original": "মূল বার্তা দেখান"
+    },
+    "reactions": {
+      "add": "প্রতিক্রিয়া যোগ করুন",
+      "remove": "প্রতিক্রিয়া অপসারণ করুন",
+      "maxReactions": "সর্বাধিক 5টি প্রতিক্রিয়া"
+    },
+    "roles": {
+      "youth": "যুবক",
+      "referent": "রেফারেন্ট",
+      "co-referent": "সহ-রেফারেন্ট"
+    },
+    "notifications": {
+      "notSupported": "বিজ্ঞপ্তি সমর্থিত নয়",
+      "firebaseNotSupported": "Firebase Messaging সমর্থিত নয়",
+      "permission": {
+        "denied": "বিজ্ঞপ্তি প্রত্যাখ্যান করা হয়েছে",
+        "granted": "বিজ্ঞপ্তি অনুমোদিত হয়েছে"
+      }
+    }
+  }
+} 

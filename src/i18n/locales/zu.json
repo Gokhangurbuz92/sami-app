@@ -1,0 +1,77 @@
+{
+  "common": {
+    "welcome": "Sawubona",
+    "login": "Ngena",
+    "logout": "Phuma",
+    "email": "I-imeyili",
+    "password": "Iphasiwedi",
+    "submit": "Thumela",
+    "cancel": "Khansela",
+    "error": "Iphutha",
+    "success": "Impumelelo",
+    "loading": "Iyalayisha...",
+    "save": "Gcina",
+    "delete": "Susa",
+    "edit": "Hlela",
+    "search": "Sesha"
+  },
+  "auth": {
+    "loginTitle": "Ngena ku-SAMI",
+    "loginError": "I-imeyili noma iphasiwedi ayilungile",
+    "loginSuccess": "Ungenile ngempumelelo",
+    "errors": {
+      "signUp": "Iphutha ngesikhathi sokubhalisa: {{error}}",
+      "signIn": "Iphutha ngesikhathi sokungena: {{error}}",
+      "logout": "Iphutha ngesikhathi sokuphuma: {{error}}",
+      "resetPassword": "Iphutha ngesikhathi sokuqala kabusha iphasiwedi: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Ikhaya",
+    "planning": "Ucwaningo",
+    "notifications": "Izaziso",
+    "notes": "Amanothi",
+    "profile": "Iphrofayili"
+  },
+  "dashboard": {
+    "searchYouth": "Sesha intsha...",
+    "planning": "Ikhalenda",
+    "appointments": "Izivakashi",
+    "notes": "Amanothi",
+    "title": "I-Dashboard",
+    "welcome": "Siyakwamukela ku-dashboard yakho",
+    "upcomingEvents": "Imicimbi Ezayo",
+    "noUpcomingEvents": "Ayikho imicimbi ezayo",
+    "unreadMessages": "Imiyalezo Engafundwanga",
+    "noUnreadMessages": "Ayikho imiyalezo engafundwanga",
+    "recentNotes": "Amanothi Akamuva",
+    "noRecentNotes": "Awakho amanothi amuva",
+    "importantNotifications": "Izaziso Ezibalulekile",
+    "noImportantNotifications": "Azikho izaziso ezibalulekile"
+  },
+  "login": {
+    "title": "Ngena",
+    "error": "Iphutha lokungena. Sicela uhlole ulwazi lwakho."
+  },
+  "planning": {
+    "title": "Ucwaningo",
+    "addEvent": "Engeza isivakashi",
+    "noEvents": "Akukho izivakashi"
+  },
+  "notes": {
+    "title": "Amanothi",
+    "addNote": "Engeza inothi",
+    "noNotes": "Akukho amanothi"
+  },
+  "notifications": {
+    "title": "Izaziso",
+    "noNotifications": "Akukho izaziso"
+  },
+  "profile": {
+    "title": "Iphrofayili",
+    "name": "Igama",
+    "email": "I-imeyili",
+    "phone": "Ucingo",
+    "update": "Buyekeza iphrofayili"
+  }
+} 

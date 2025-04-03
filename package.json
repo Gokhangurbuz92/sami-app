@@ -1,0 +1,63 @@
+{
+  "name": "app-sami",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^5.17.1",
+    "@mui/material": "^5.17.1",
+    "firebase": "^10.8.1",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-big-calendar": "^1.11.2",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.1.0",
+    "react-router-dom": "^6.22.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.64",
+    "@types/react-big-calendar": "^1.8.9",
+    "@types/react-dom": "^18.2.21",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
+    "@vite-pwa/assets-generator": "^1.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "i18next": "^24.2.3",
+    "typescript": "^5.8.2",
+    "vite": "^5.1.6",
+    "vite-plugin-pwa": "^1.0.0",
+    "workbox-window": "^7.3.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

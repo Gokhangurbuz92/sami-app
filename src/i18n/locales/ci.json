@@ -1,0 +1,69 @@
+{
+  "common": {
+    "welcome": "Akwaaba",
+    "login": "Kɔ",
+    "logout": "Kɔ",
+    "email": "Email",
+    "password": "Asɛm",
+    "submit": "Kɔ",
+    "cancel": "Kɔ",
+    "error": "Nkɔ",
+    "success": "Kɔ",
+    "loading": "Kɔ...",
+    "save": "Kɔ",
+    "delete": "Kɔ",
+    "edit": "Kɔ",
+    "search": "Kɔ"
+  },
+  "auth": {
+    "loginTitle": "Kɔ SAMI",
+    "loginError": "Email wala asɛm nkɔ",
+    "loginSuccess": "Kɔ",
+    "errors": {
+      "signUp": "Nkɔ wɔ kɔ a: {{error}}",
+      "signIn": "Nkɔ wɔ kɔ a: {{error}}",
+      "logout": "Nkɔ wɔ kɔ a: {{error}}",
+      "resetPassword": "Nkɔ wɔ kɔ a: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Kɔ",
+    "planning": "Kɔ",
+    "notifications": "Kɔ",
+    "notes": "Kɔ",
+    "profile": "Kɔ"
+  },
+  "dashboard": {
+    "searchYouth": "Kɔ...",
+    "planning": "Kɔ",
+    "appointments": "Kɔ",
+    "notes": "Kɔ",
+    "title": "Kɔ",
+    "welcome": "Akwaaba SAMI"
+  },
+  "login": {
+    "title": "Kɔ",
+    "error": "Nkɔ. Kɔ."
+  },
+  "planning": {
+    "title": "Kɔ",
+    "addEvent": "Kɔ",
+    "noEvents": "Kɔ"
+  },
+  "notes": {
+    "title": "Kɔ",
+    "addNote": "Kɔ",
+    "noNotes": "Kɔ"
+  },
+  "notifications": {
+    "title": "Kɔ",
+    "noNotifications": "Kɔ"
+  },
+  "profile": {
+    "title": "Kɔ",
+    "name": "Kɔ",
+    "email": "Kɔ",
+    "phone": "Kɔ",
+    "update": "Kɔ"
+  }
+} 

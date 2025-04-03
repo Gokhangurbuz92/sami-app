@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "Karibu",
+    "login": "Ingia",
+    "logout": "Toka",
+    "email": "Barua pepe",
+    "password": "Nywila",
+    "submit": "Wasilisha",
+    "cancel": "Ghairi",
+    "error": "Hitilafu",
+    "success": "Mafanikio",
+    "loading": "Inapakia...",
+    "save": "Hifadhi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "search": "Tafuta"
+  },
+  "auth": {
+    "loginTitle": "Ingia kwenye SAMI",
+    "loginError": "Barua pepe au nywila si sahihi",
+    "loginSuccess": "Umeingia kwa mafanikio",
+    "errors": {
+      "signUp": "Hitilafu wakati wa kujiandikisha: {{error}}",
+      "signIn": "Hitilafu wakati wa kuingia: {{error}}",
+      "logout": "Hitilafu wakati wa kutoka: {{error}}",
+      "resetPassword": "Hitilafu wakati wa kurekebisha nenosiri: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Nyumbani",
+    "planning": "Mipango",
+    "notifications": "Taarifa",
+    "notes": "Maelezo",
+    "profile": "Wasifu"
+  },
+  "dashboard": {
+    "searchYouth": "Tafuta vijana...",
+    "planning": "Kalenda",
+    "appointments": "Miadi",
+    "notes": "Maelezo",
+    "title": "Dashibodi",
+    "welcome": "Karibu kwenye dashibodi yako",
+    "upcomingEvents": "Matukio Yajayo",
+    "noUpcomingEvents": "Hakuna matukio yajayo",
+    "unreadMessages": "Ujumbe Usiosomwa",
+    "noUnreadMessages": "Hakuna ujumbe usiosomwa",
+    "recentNotes": "Vidokezo Vya Hivi Karibuni",
+    "noRecentNotes": "Hakuna vidokezo vya hivi karibuni",
+    "importantNotifications": "Taarifa Muhimu",
+    "noImportantNotifications": "Hakuna taarifa muhimu"
+  },
+  "login": {
+    "title": "Ingia",
+    "error": "Hitilafu ya kuingia. Tafadhali hakikisha taarifa zako."
+  },
+  "planning": {
+    "title": "Mipango",
+    "addEvent": "Ongeza mkutano",
+    "noEvents": "Hakuna miadi"
+  },
+  "notes": {
+    "title": "Maelezo",
+    "addNote": "Ongeza maelezo",
+    "noNotes": "Hakuna maelezo"
+  },
+  "notifications": {
+    "title": "Taarifa",
+    "noNotifications": "Hakuna taarifa"
+  },
+  "profile": {
+    "title": "Wasifu",
+    "name": "Jina",
+    "email": "Barua pepe",
+    "phone": "Simu",
+    "update": "Sasisha wasifu"
+  },
+  "messaging": {
+    "title": "Ujumbe",
+    "typeMessage": "Andika ujumbe wako...",
+    "selectConversation": "Chagua mazungumzo",
+    "sendMessage": "Tuma",
+    "newMessage": "Ujumbe mpya",
+    "unreadMessages": "Ujumbe usiosomwa",
+    "noMessages": "Hakuna ujumbe",
+    "loading": "Inapakia...",
+    "error": "Hitilafu imetokea",
+    "typing": "Anaandika...",
+    "attachments": {
+      "add": "Ongeza faili",
+      "remove": "Ondoa",
+      "image": "Picha",
+      "file": "Faili",
+      "uploading": "Inapakia...",
+      "error": "Hitilafu wakati wa kupakia",
+      "errorSize": "Faili ni kubwa sana (kiwango cha juu 10MB)",
+      "errorType": "Aina ya faili haitambuliki",
+      "errorNameTooLong": "Jina la faili ni refu sana",
+      "errorTooManyFiles": "Hauwezi kutuma zaidi ya faili 5 kwa wakati mmoja",
+      "fileAttached": "Faili imeambatishwa"
+    },
+    "translation": {
+      "show": "Tafsiri ujumbe",
+      "hide": "Ficha tafsiri",
+      "error": "Hitilafu wakati wa kutafsiri",
+      "translating": "Inatafsiri...",
+      "translated": "Ujumbe umetafsiriwa",
+      "original": "Onyesha ujumbe wa asili"
+    },
+    "reactions": {
+      "add": "Ongeza mwitikio",
+      "remove": "Ondoa mwitikio",
+      "maxReactions": "Hauwezi kuongeza zaidi ya mwitikio 5"
+    },
+    "roles": {
+      "youth": "Kijana",
+      "referent": "Mrejelezi",
+      "co-referent": "Mrejelezi msaidizi"
+    },
+    "notifications": {
+      "notSupported": "Taarifa hazitambuliki na kivinjari chako",
+      "firebaseNotSupported": "Firebase Messaging haitambuliki",
+      "permission": {
+        "denied": "Taarifa zimekataliwa",
+        "granted": "Taarifa zimewezeshwa"
+      }
+    }
+  }
+} 

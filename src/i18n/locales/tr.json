@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "Hoş geldiniz",
+    "login": "Giriş yap",
+    "logout": "Çıkış yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "submit": "Onayla",
+    "cancel": "İptal",
+    "error": "Hata",
+    "success": "Başarılı",
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "search": "Ara"
+  },
+  "auth": {
+    "loginTitle": "SAMI'ye Giriş Yap",
+    "loginError": "Geçersiz e-posta veya şifre",
+    "loginSuccess": "Başarıyla giriş yapıldı",
+    "errors": {
+      "signUp": "Kayıt olurken hata: {{error}}",
+      "signIn": "Giriş yaparken hata: {{error}}",
+      "logout": "Çıkış yaparken hata: {{error}}",
+      "resetPassword": "Şifre sıfırlama hatası: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "planning": "Planlama",
+    "notifications": "Bildirimler",
+    "notes": "Notlar",
+    "profile": "Profil"
+  },
+  "dashboard": {
+    "searchYouth": "Genç ara...",
+    "planning": "Takvim",
+    "appointments": "Randevular",
+    "notes": "Notlar",
+    "title": "Gösterge Paneli",
+    "welcome": "Gösterge paneline hoş geldiniz",
+    "upcomingEvents": "Yaklaşan Etkinlikler",
+    "noUpcomingEvents": "Yaklaşan etkinlik yok",
+    "unreadMessages": "Okunmamış Mesajlar",
+    "noUnreadMessages": "Okunmamış mesaj yok",
+    "recentNotes": "Son Notlar",
+    "noRecentNotes": "Son not yok",
+    "importantNotifications": "Önemli Bildirimler",
+    "noImportantNotifications": "Önemli bildirim yok"
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "error": "Giriş hatası. Lütfen bilgilerinizi kontrol edin."
+  },
+  "planning": {
+    "title": "Planlama",
+    "addEvent": "Randevu ekle",
+    "noEvents": "Randevu yok"
+  },
+  "notes": {
+    "title": "Notlar",
+    "addNote": "Not ekle",
+    "noNotes": "Not yok"
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "noNotifications": "Bildirim yok"
+  },
+  "profile": {
+    "title": "Profil",
+    "name": "İsim",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "update": "Profili güncelle"
+  },
+  "messaging": {
+    "title": "Mesajlar",
+    "typeMessage": "Mesajınızı yazın...",
+    "selectConversation": "Bir sohbet seçin",
+    "sendMessage": "Gönder",
+    "newMessage": "Yeni mesaj",
+    "unreadMessages": "Okunmamış mesajlar",
+    "noMessages": "Mesaj yok",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "typing": "Yazıyor...",
+    "attachments": {
+      "add": "Dosya ekle",
+      "remove": "Kaldır",
+      "image": "Resim",
+      "file": "Dosya",
+      "uploading": "Yükleniyor...",
+      "error": "Yükleme sırasında hata",
+      "errorSize": "Dosya çok büyük (maksimum 10MB)",
+      "errorType": "Dosya türü desteklenmiyor",
+      "errorNameTooLong": "Dosya adı çok uzun",
+      "errorTooManyFiles": "Aynı anda 5'ten fazla dosya gönderemezsiniz",
+      "fileAttached": "Dosya eklendi"
+    },
+    "translation": {
+      "show": "Mesajı çevir",
+      "hide": "Çeviriyi gizle",
+      "error": "Çeviri sırasında hata",
+      "translating": "Çevriliyor...",
+      "translated": "Mesaj çevrildi",
+      "original": "Orijinal mesajı göster"
+    },
+    "reactions": {
+      "add": "Tepki ekle",
+      "remove": "Tepkiyi kaldır",
+      "maxReactions": "5'ten fazla tepki ekleyemezsiniz"
+    },
+    "roles": {
+      "youth": "Genç",
+      "referent": "Referans",
+      "co-referent": "Yardımcı referans"
+    },
+    "notifications": {
+      "notSupported": "Tarayıcınız bildirimleri desteklemiyor",
+      "firebaseNotSupported": "Firebase Messaging desteklenmiyor",
+      "permission": {
+        "denied": "Bildirimler reddedildi",
+        "granted": "Bildirimler etkinleştirildi"
+      }
+    }
+  }
+} 

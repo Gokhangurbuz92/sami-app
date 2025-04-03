@@ -1,0 +1,69 @@
+{
+  "common": {
+    "welcome": "A jaraama",
+    "login": "Seŋ",
+    "logout": "Yaltu",
+    "email": "Email",
+    "password": "Finnde",
+    "submit": "Jokku",
+    "cancel": "Haɗtu",
+    "error": "Juumre",
+    "success": "Moƴƴere",
+    "loading": "Ɓaŋnga...",
+    "save": "Danndu",
+    "delete": "Momtu",
+    "edit": "Waddu",
+    "search": "Seŋtu"
+  },
+  "auth": {
+    "loginTitle": "Seŋ SAMI",
+    "loginError": "Email wala finnde juumre",
+    "loginSuccess": "Moƴƴere seŋaama",
+    "errors": {
+      "signUp": "Juumre nder waɗde: {{error}}",
+      "signIn": "Juumre nder seŋa: {{error}}",
+      "logout": "Juumre nder yaltu: {{error}}",
+      "resetPassword": "Juumre nder finnde waddu: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Wuro",
+    "planning": "Waddu",
+    "notifications": "Tintinɗe",
+    "notes": "Binndi",
+    "profile": "Joggo"
+  },
+  "dashboard": {
+    "searchYouth": "Seŋ sukaaɓe...",
+    "planning": "Kalendere",
+    "appointments": "Waddu",
+    "notes": "Binndi",
+    "title": "Dashboard",
+    "welcome": "A jaraama SAMI"
+  },
+  "login": {
+    "title": "Seŋ",
+    "error": "Juumre seŋa. Fadlan jokku joggo maa."
+  },
+  "planning": {
+    "title": "Waddu",
+    "addEvent": "Waddu kese kaw",
+    "noEvents": "Alaa waddu"
+  },
+  "notes": {
+    "title": "Binndi",
+    "addNote": "Binndi kese kaw",
+    "noNotes": "Alaa binndi"
+  },
+  "notifications": {
+    "title": "Tintinɗe",
+    "noNotifications": "Alaa tintinɗe"
+  },
+  "profile": {
+    "title": "Joggo",
+    "name": "Innde",
+    "email": "Email",
+    "phone": "Telefoon",
+    "update": "Joggo waddu"
+  }
+} 

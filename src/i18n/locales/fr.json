@@ -1,0 +1,238 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "login": "Se connecter",
+    "signUp": "S'inscrire",
+    "logout": "Se déconnecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "install": "Installer",
+    "installed": "Application installée avec succès !",
+    "installPrompt": "Installer l'application",
+    "installDescription": "Ajoutez SAMI à votre écran d'accueil pour un accès rapide",
+    "submit": "Valider",
+    "cancel": "Annuler",
+    "error": "Erreur",
+    "success": "Succès",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "search": "Rechercher",
+    "appName": "SAMI",
+    "offline": "Hors ligne",
+    "online": "En ligne",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminé"
+  },
+  "errors": {
+    "general": "Une erreur est survenue",
+    "network": "Erreur de connexion",
+    "offline": "Vous êtes hors ligne",
+    "unauthorized": "Non autorisé",
+    "notFound": "Page non trouvée",
+    "validation": "Veuillez vérifier les champs"
+  },
+  "auth": {
+    "loginTitle": "Connexion à SAMI",
+    "signUpTitle": "Créer un compte SAMI",
+    "loginError": "Erreur de connexion. Veuillez vérifier vos identifiants.",
+    "signUpError": "Erreur lors de la création du compte. Veuillez réessayer.",
+    "emailInUse": "Cette adresse email est déjà utilisée.",
+    "weakPassword": "Le mot de passe doit contenir au moins 6 caractères.",
+    "invalidEmail": "Veuillez entrer une adresse email valide.",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+    "emailHelper": "Exemple : nom@domaine.com",
+    "passwordHelper": "Minimum 6 caractères",
+    "passwordRequirements": "Le mot de passe doit contenir au moins 6 caractères",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "invalidCredentials": "Email ou mot de passe incorrect",
+    "loginSuccess": "Connexion réussie",
+    "signUpSuccess": "Compte créé avec succès",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "resetPasswordSuccess": "Un email de réinitialisation a été envoyé",
+    "resetPasswordError": "Erreur lors de la réinitialisation",
+    "verifyEmail": "Vérifier votre email",
+    "verifyEmailSent": "Email de vérification envoyé",
+    "forgotPassword": "Mot de passe oublié ?",
+    "emailNotFound": "Aucun compte n'existe avec cet email",
+    "enterEmail": "Entrez votre email",
+    "send": "Envoyer",
+    "errors": {
+      "signUp": "Erreur lors de l'inscription : {{error}}",
+      "signIn": "Erreur lors de la connexion : {{error}}",
+      "logout": "Erreur lors de la déconnexion : {{error}}",
+      "resetPassword": "Erreur lors de la réinitialisation du mot de passe : {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "planning": "Planning",
+    "notes": "Notes",
+    "notifications": "Notifications",
+    "profile": "Profil"
+  },
+  "dashboard": {
+    "searchYouth": "Rechercher un jeune...",
+    "planning": "Calendrier",
+    "appointments": "Rendez-vous",
+    "notes": "Notes",
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue sur votre tableau de bord",
+    "upcomingEvents": "Événements à venir",
+    "noUpcomingEvents": "Aucun événement à venir",
+    "unreadMessages": "Messages non lus",
+    "noUnreadMessages": "Aucun message non lu",
+    "recentNotes": "Notes récentes",
+    "noRecentNotes": "Aucune note récente",
+    "importantNotifications": "Notifications importantes",
+    "noImportantNotifications": "Aucune notification importante"
+  },
+  "notes": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette note ?",
+    "searchPlaceholder": "Rechercher dans les notes...",
+    "priority": {
+      "high": "Haute",
+      "medium": "Moyenne",
+      "low": "Basse"
+    },
+    "category": {
+      "general": "Général",
+      "medical": "Médical",
+      "social": "Social",
+      "education": "Éducation",
+      "other": "Autre"
+    },
+    "addNote": "Ajouter une note",
+    "editNote": "Modifier la note",
+    "noteTitle": "Titre de la note",
+    "noteContent": "Contenu",
+    "addTag": "Ajouter un tag",
+    "title": "Notes",
+    "noNotes": "Aucune note"
+  },
+  "youth": {
+    "editTitle": "Modifier le jeune",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "dateOfBirth": "Date de naissance",
+    "gender": "Genre",
+    "genderMale": "Masculin",
+    "genderFemale": "Féminin",
+    "genderOther": "Autre",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "email": "Email",
+    "confirmDelete": "Confirmer la suppression",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "newAppointment": "Nouveau rendez-vous",
+    "appointmentReminder": "Rappel de rendez-vous",
+    "newNote": "Nouvelle note",
+    "noteUpdated": "Note mise à jour",
+    "newYouth": "Nouveau jeune",
+    "youthUpdated": "Jeune mis à jour"
+  },
+  "login": {
+    "title": "Connexion",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "error": "Erreur de connexion. Veuillez vérifier vos informations."
+  },
+  "planning": {
+    "title": "Planning",
+    "addEvent": "Ajouter un événement",
+    "noEvents": "Aucun événement",
+    "allDay": "Toute la journée",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "today": "Aujourd'hui",
+    "month": "Mois",
+    "week": "Semaine",
+    "day": "Jour",
+    "agenda": "Agenda",
+    "date": "Date",
+    "time": "Heure",
+    "event": "Événement",
+    "noEventsInRange": "Aucun événement dans cette période",
+    "showMore": "Voir {{count}} événements supplémentaires",
+    "description": "Description",
+    "categories": {
+      "title": "Catégorie",
+      "rdv_medical": "Rendez-vous médical",
+      "school": "École",
+      "rdv_administrative": "Rendez-vous administratif",
+      "cleaning_room": "Ménage de chambre",
+      "laundry": "Lavage de linge",
+      "other": "Autre"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "update": "Mettre à jour le profil"
+  },
+  "messaging": {
+    "title": "Messages",
+    "typeMessage": "Tapez votre message...",
+    "selectConversation": "Sélectionnez une conversation",
+    "sendMessage": "Envoyer",
+    "newMessage": "Nouveau message",
+    "unreadMessages": "Messages non lus",
+    "noMessages": "Pas de messages",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "typing": "En train d'écrire...",
+    "attachments": {
+      "add": "Ajouter un fichier",
+      "remove": "Supprimer",
+      "image": "Image",
+      "file": "Fichier",
+      "uploading": "Téléchargement en cours...",
+      "error": "Erreur lors du téléchargement",
+      "errorSize": "Le fichier est trop volumineux (max 10MB)",
+      "errorType": "Type de fichier non supporté",
+      "errorNameTooLong": "Le nom du fichier est trop long",
+      "errorTooManyFiles": "Vous ne pouvez pas envoyer plus de 5 fichiers à la fois",
+      "fileAttached": "Fichier joint"
+    },
+    "translation": {
+      "show": "Traduire le message",
+      "hide": "Masquer la traduction",
+      "error": "Erreur lors de la traduction",
+      "translating": "Traduction en cours...",
+      "translated": "Message traduit",
+      "original": "Afficher le message original"
+    },
+    "reactions": {
+      "add": "Ajouter une réaction",
+      "remove": "Supprimer la réaction",
+      "maxReactions": "Vous ne pouvez pas ajouter plus de 5 réactions"
+    },
+    "roles": {
+      "youth": "Jeune",
+      "referent": "Référent",
+      "co-referent": "Co-référent"
+    },
+    "notifications": {
+      "notSupported": "Les notifications ne sont pas supportées par votre navigateur",
+      "firebaseNotSupported": "Firebase Messaging n'est pas supporté",
+      "permission": {
+        "denied": "Les notifications ont été refusées",
+        "granted": "Les notifications sont activées"
+      }
+    }
+  }
+} 

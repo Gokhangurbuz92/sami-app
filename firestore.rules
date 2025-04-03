@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Règles pour les utilisateurs authentifiés
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Règles pour les rendez-vous
+    match /appointments/{appointmentId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Règles pour les notes
+    match /notes/{noteId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Règles pour les messages
+    match /messages/{messageId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Règles pour les conversations
+    match /conversations/{conversationId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+} 

@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "ښه راغل",
+    "login": "ننوتل",
+    "logout": "وتل",
+    "email": "برېښنالیک",
+    "password": "پټنوم",
+    "submit": "لېږل",
+    "cancel": "لغوه کول",
+    "error": "تېروتنه",
+    "success": "بریالیتوب",
+    "loading": "لړ...",
+    "save": "خوندي کول",
+    "delete": "لرې کول",
+    "edit": "سمول",
+    "search": "لټون"
+  },
+  "auth": {
+    "loginTitle": "SAMI ته ننوتل",
+    "loginError": "برېښنالیک یا پټنوم ناسم دی",
+    "loginSuccess": "بریالیتوب سره ننوتل",
+    "errors": {
+      "signUp": "تېروتنه د نوم لیکنې په وخت کې: {{error}}",
+      "signIn": "تېروتنه د ننوتلو په وخت کې: {{error}}",
+      "logout": "تېروتنه د وتلو په وخت کې: {{error}}",
+      "resetPassword": "تېروتنه د پټنوم بیا تنظیمولو په وخت کې: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "کور",
+    "planning": "پلان جوړونه",
+    "notifications": "خبرتیاوې",
+    "notes": "نوټونه",
+    "profile": "پروفایل"
+  },
+  "dashboard": {
+    "searchYouth": "ځوان لټون...",
+    "planning": "کالینډر",
+    "appointments": "ملاقاتونه",
+    "notes": "نوټونه",
+    "title": "ډاشبورډ",
+    "welcome": "ستاسو ډشبورډ ته ښه راغلاست",
+    "upcomingEvents": "راتلونکي پیښې",
+    "noUpcomingEvents": "هیڅ راتلونکې پیښه نشته",
+    "unreadMessages": "نالوستل شوي پیغامونه",
+    "noUnreadMessages": "هیڅ نالوستل شوی پیغام نشته",
+    "recentNotes": "وروستي یادښتونه",
+    "noRecentNotes": "هیڅ وروستی یادښت نشته",
+    "importantNotifications": "مهم خبرتیاوې",
+    "noImportantNotifications": "هیڅ مهمه خبرتیا نشته"
+  },
+  "login": {
+    "title": "ننوتل",
+    "error": "د ننوتلو تېروتنه. لطفاً خپل معلومات وڅارئ."
+  },
+  "planning": {
+    "title": "پلان جوړونه",
+    "addEvent": "پېښه زیاتول",
+    "noEvents": "هېڅ پېښه نشته"
+  },
+  "notes": {
+    "title": "نوټونه",
+    "addNote": "نوټ زیاتول",
+    "noNotes": "هېڅ نوټ نشته"
+  },
+  "notifications": {
+    "title": "خبرتیاوې",
+    "noNotifications": "هېڅ خبرتیا نشته"
+  },
+  "profile": {
+    "title": "پروفایل",
+    "name": "نوم",
+    "email": "برېښنالیک",
+    "phone": "تېلېفون",
+    "update": "پروفایل تازه کول"
+  },
+  "messaging": {
+    "title": "پيغامونه",
+    "typeMessage": "خپل پيغام وليکئ...",
+    "selectConversation": "خبرې اترې وټاکئ",
+    "sendMessage": "پيغام واستوئ",
+    "newMessage": "نوی پيغام",
+    "unreadMessages": "نالوستل شوي پيغامونه",
+    "noMessages": "هیڅ پيغام نشته",
+    "loading": "بار کوي...",
+    "error": "تېروتنه",
+    "typing": "ليکل کوي...",
+    "attachments": {
+      "add": "فايل اضافه کړئ",
+      "remove": "لرې کړئ",
+      "image": "انځور",
+      "file": "فايل",
+      "uploading": "پورته کوي...",
+      "error": "د پورته کولو پر مهال تېروتنه",
+      "errorSize": "فايل ډېر لوی دی (له 10MB څخه زیات)",
+      "errorType": "ناسم فايل",
+      "errorNameTooLong": "د فايل نوم ډېر اوږد دی",
+      "errorTooManyFiles": "یوازې 5 فايلونه",
+      "fileAttached": "فايل نښلول شوی"
+    },
+    "translation": {
+      "show": "پيغام ژباړئ",
+      "hide": "ژباړه پټه کړئ",
+      "error": "د ژباړې پر مهال تېروتنه",
+      "translating": "ژباړل کوي...",
+      "translated": "ژباړل شوی",
+      "original": "اصلي پيغام وښایئ"
+    },
+    "reactions": {
+      "add": "غبرګون اضافه کړئ",
+      "remove": "غبرګون لرې کړئ",
+      "maxReactions": "یوازې 5 غبرګونونه"
+    },
+    "roles": {
+      "youth": "ځوان",
+      "referent": "مرجع",
+      "co-referent": "مرجع معاون"
+    },
+    "notifications": {
+      "notSupported": "خبرتیاوې نه ملاتړي",
+      "firebaseNotSupported": "Firebase Messaging نه ملاتړي",
+      "permission": {
+        "denied": "خبرتیاوې رد شوي",
+        "granted": "خبرتیاوې منل شوي"
+      }
+    }
+  }
+} 

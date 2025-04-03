@@ -1,0 +1,128 @@
+{
+  "common": {
+    "welcome": "Káàbọ̀",
+    "login": "Wọlé",
+    "logout": "Jáde",
+    "email": "Iméèlì",
+    "password": "Ọrọ̀ ìbò",
+    "submit": "Fìsílẹ̀",
+    "cancel": "Fagilé",
+    "error": "Àṣìṣe",
+    "success": "Àṣeyọrí",
+    "loading": "N gbé...",
+    "save": "Fipamọ́",
+    "delete": "Píparé",
+    "edit": "Àtúnṣe",
+    "search": "Wíwá"
+  },
+  "auth": {
+    "loginTitle": "Wọlé sí SAMI",
+    "loginError": "Iméèlì tàbí ọrọ̀ ìbò kò tọ́",
+    "loginSuccess": "Wọlé ní àṣeyọrí",
+    "errors": {
+      "signUp": "Àṣìṣe nígbà tí a ń ṣe ìforúkọsílẹ̀: {{error}}",
+      "signIn": "Àṣìṣe nígbà tí a ń wọlé: {{error}}",
+      "logout": "Àṣìṣe nígbà tí a ń jáde: {{error}}",
+      "resetPassword": "Àṣìṣe nígbà tí a ń tún ọrọ̀ ìbò ṣe: {{error}}"
+    }
+  },
+  "navigation": {
+    "home": "Ilé",
+    "planning": "Ìṣètò",
+    "notifications": "Ìkílo",
+    "notes": "Ìkọwé",
+    "profile": "Profáìlì"
+  },
+  "dashboard": {
+    "searchYouth": "Wá ọmọdé...",
+    "planning": "Kálẹ́ndà",
+    "appointments": "Àpèjọ",
+    "notes": "Ìkọwé",
+    "title": "Ibi Iṣẹ",
+    "welcome": "Kaabọ si ibi iṣẹ rẹ",
+    "upcomingEvents": "Àwọn iṣẹlẹ tí ó ń bọ",
+    "noUpcomingEvents": "Kò sí iṣẹlẹ tí ó ń bọ",
+    "unreadMessages": "Àwọn ifiranṣẹ tí a kò kà",
+    "noUnreadMessages": "Kò sí ifiranṣẹ tí a kò kà",
+    "recentNotes": "Àwọn akọsilẹ tuntun",
+    "noRecentNotes": "Kò sí akọsilẹ tuntun",
+    "importantNotifications": "Àwọn iwifunni pataki",
+    "noImportantNotifications": "Kò sí iwifunni pataki"
+  },
+  "login": {
+    "title": "Wọlé",
+    "error": "Àṣìṣe wọlé. Jọ̀wọ́ ṣàyẹ̀wò àwọn alaye rẹ."
+  },
+  "planning": {
+    "title": "Ìṣètò",
+    "addEvent": "Fí àpèjọ kún",
+    "noEvents": "Kò sí àpèjọ"
+  },
+  "notes": {
+    "title": "Ìkọwé",
+    "addNote": "Fí ìkọwé kún",
+    "noNotes": "Kò sí ìkọwé"
+  },
+  "notifications": {
+    "title": "Ìkílo",
+    "noNotifications": "Kò sí ìkílo"
+  },
+  "profile": {
+    "title": "Profáìlì",
+    "name": "Orúkọ",
+    "email": "Iméèlì",
+    "phone": "Fóònù",
+    "update": "Túnṣe profáìlì"
+  },
+  "messaging": {
+    "title": "Ifiranṣẹ",
+    "typeMessage": "Tẹ ifiranṣẹ rẹ...",
+    "selectConversation": "Yan ọrọ",
+    "sendMessage": "Firanṣẹ",
+    "newMessage": "Ifiranṣẹ tuntun",
+    "unreadMessages": "Ifiranṣẹ ti a ko ka",
+    "noMessages": "Ko si ifiranṣẹ",
+    "loading": "Nṣiṣẹ...",
+    "error": "Aṣiṣe",
+    "typing": "N tẹ...",
+    "attachments": {
+      "add": "Fi faili kun",
+      "remove": "Yọ kuro",
+      "image": "Aworan",
+      "file": "Faili",
+      "uploading": "N gbe soke...",
+      "error": "Aṣiṣe nigbati o n gbe soke",
+      "errorSize": "Faili ti o tobi ju (10MB lọ)",
+      "errorType": "Faili ti ko wulo",
+      "errorNameTooLong": "Orukọ faili ti o gun ju",
+      "errorTooManyFiles": "O pọ ju faili 5",
+      "fileAttached": "Faili ti a fi kun"
+    },
+    "translation": {
+      "show": "Tumọ ifiranṣẹ",
+      "hide": "Fi ifiranṣẹ kuro",
+      "error": "Aṣiṣe nigbati o n tumọ",
+      "translating": "N tumọ...",
+      "translated": "A ti tumọ",
+      "original": "Fi ifiranṣẹ atilẹba han"
+    },
+    "reactions": {
+      "add": "Fi idahun kun",
+      "remove": "Yọ idahun kuro",
+      "maxReactions": "O pọ ju idahun 5"
+    },
+    "roles": {
+      "youth": "Ọdọ",
+      "referent": "Oludamoran",
+      "co-referent": "Oludamoran afikun"
+    },
+    "notifications": {
+      "notSupported": "Ko ṣe atilẹyin iwifunni",
+      "firebaseNotSupported": "Ko ṣe atilẹyin Firebase Messaging",
+      "permission": {
+        "denied": "A kọ iwifunni",
+        "granted": "A fọwọsi iwifunni"
+      }
+    }
+  }
+} 

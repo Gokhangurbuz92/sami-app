@@ -1,0 +1,59 @@
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import { render } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n/config';
+
+// Mock de Firebase
+vi.mock('firebase/firestore', () => ({
+  collection: vi.fn(),
+  addDoc: vi.fn(),
+  updateDoc: vi.fn(),
+  deleteDoc: vi.fn(),
+  doc: vi.fn(),
+  query: vi.fn(),
+  where: vi.fn(),
+  getDocs: vi.fn(),
+  orderBy: vi.fn(),
+  onSnapshot: vi.fn(),
+}));
+
+// Mock des notifications
+vi.mock('../services/notificationService', () => ({
+  notificationService: {
+    createAppointmentNotification: vi.fn(),
+    createNoteNotification: vi.fn(),
+    createYouthNotification: vi.fn(),
+  },
+}));
+
+// Mock des composants et des contextes
+vi.mock('./contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: null,
+    loading: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+  }),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => {
+    return <div>{children}</div>;
+  },
+}));
+
+// Configuration globale pour les tests
+const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <BrowserRouter>
+      <I18nextProvider i18n={i18n}>
+        {children}
+      </I18nextProvider>
+    </BrowserRouter>
+  );
+};
+
+const customRender = (ui: React.ReactElement, options = {}) =>
+  render(ui, { wrapper: AllTheProviders, ...options });
+
+export * from '@testing-library/react';
+export { customRender as render }; 
