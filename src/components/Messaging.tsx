@@ -63,6 +63,7 @@ import Picker from '@emoji-mart/react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { translateText } from '../services/translation';
 import { userService } from '../services/userService';
+import axios from 'axios';
 
 // Constantes pour la configuration
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -601,20 +602,15 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       const message = messages.find((m) => m.id === messageId);
       if (!message) return;
 
-      const response = await fetch('https://translation.googleapis.com/language/translate/v2', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const res = await axios.post(
+        `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
+        {
           q: message.content,
-          target: i18n.language,
-          key: 'VOTRE_CLE_API_GOOGLE_TRANSLATE'
-        })
-      });
+          target: i18n.language
+        }
+      );
 
-      const data = await response.json();
-      const translatedText = data.data.translations[0].translatedText;
+      const translatedText = res.data.data.translations[0].translatedText;
 
       await updateDoc(doc(db, 'messages', messageId), {
         [`translations.${i18n.language}`]: translatedText
@@ -882,24 +878,19 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         throw new Error('Translation API key not configured');
       }
 
-      const response = await fetch('https://translation.googleapis.com/language/translate/v2', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const res = await axios.post(
+        `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
+        {
           q: message.content,
-          target: targetLang,
-          key: apiKey
-        })
-      });
+          target: targetLang
+        }
+      );
 
-      if (!response.ok) {
+      if (!res.data.data.translations.length) {
         throw new Error('Translation request failed');
       }
 
-      const data = await response.json();
-      const translatedText = data.data.translations[0].translatedText;
+      const translatedText = res.data.data.translations[0].translatedText;
 
       // Mettre à jour le message dans Firestore avec la traduction
       const messageRef = doc(db, 'messages', message.id);
