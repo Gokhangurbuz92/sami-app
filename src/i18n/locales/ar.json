@@ -38,20 +38,23 @@
     "planning": "الجدول الزمني",
     "appointments": "المواعيد",
     "notes": "ملاحظات",
-    "title": "لوحة التحكم",
-    "welcome": "مرحباً بك في لوحة التحكم",
+    "title": "لوحة القيادة",
+    "welcome": "مرحبًا بك في مساحتك الشخصية.",
     "upcomingEvents": "الأحداث القادمة",
-    "noUpcomingEvents": "لا توجد أحداث قادمة",
-    "unreadMessages": "الرسائل غير المقروءة",
-    "noUnreadMessages": "لا توجد رسائل غير مقروءة",
-    "recentNotes": "الملاحظات الأخيرة",
-    "noRecentNotes": "لا توجد ملاحظات حديثة",
-    "importantNotifications": "الإشعارات المهمة",
-    "noImportantNotifications": "لا توجد إشعارات مهمة"
+    "noUpcomingEvents": "لا توجد أحداث قادمة.",
+    "unreadMessages": "رسائل غير مقروءة",
+    "noUnreadMessages": "لا توجد رسائل غير مقروءة.",
+    "recentNotes": "ملاحظات حديثة",
+    "noRecentNotes": "لا توجد ملاحظات حديثة.",
+    "importantNotifications": "إشعارات مهمة",
+    "noImportantNotifications": "لا توجد إشعارات مهمة."
   },
   "login": {
     "title": "تسجيل الدخول",
-    "error": "خطأ في تسجيل الدخول. يرجى التحقق من بياناتك."
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "login": "تسجيل الدخول",
+    "error": "فشل تسجيل الدخول. تحقق من المعلومات."
   },
   "planning": {
     "title": "التخطيط",
@@ -76,32 +79,34 @@
   },
   "messaging": {
     "title": "الرسائل",
-    "typeMessage": "اكتب رسالتك...",
-    "selectConversation": "اختر محادثة",
+    "typeMessage": "اكتب رسالة...",
+    "selectConversation": "يرجى اختيار محادثة",
     "sendMessage": "إرسال",
     "newMessage": "رسالة جديدة",
     "unreadMessages": "رسائل غير مقروءة",
     "noMessages": "لا توجد رسائل",
     "loading": "جاري التحميل...",
     "error": "حدث خطأ",
-    "typing": "يكتب...",
+    "typing": "يكتب الآن...",
+    "messageSent": "تم إرسال الرسالة.",
+    "loadError": "حدث خطأ أثناء تحميل الرسائل.",
     "attachments": {
       "add": "إضافة ملف",
       "remove": "حذف",
       "image": "صورة",
       "file": "ملف",
       "uploading": "جاري الرفع...",
-      "error": "خطأ أثناء الرفع",
-      "errorSize": "الملف كبير جداً (الحد الأقصى 10 ميجابايت)",
-      "errorType": "نوع الملف غير مدعوم",
-      "errorNameTooLong": "اسم الملف طويل جداً",
-      "errorTooManyFiles": "لا يمكنك إرسال أكثر من 5 ملفات في وقت واحد",
-      "fileAttached": "تم إرفاق الملف"
+      "error": "خطأ في تحميل المرفق.",
+      "errorSize": "الملف كبير جدًا.",
+      "errorType": "نوع الملف غير مدعوم.",
+      "errorNameTooLong": "اسم الملف طويل جدًا.",
+      "errorTooManyFiles": "عدد كبير من الملفات المرفقة.",
+      "fileAttached": "تم إرفاق ملف."
     },
     "translation": {
-      "show": "ترجمة الرسالة",
+      "show": "ترجمة",
       "hide": "إخفاء الترجمة",
-      "error": "خطأ أثناء الترجمة",
+      "error": "فشل الترجمة.",
       "translating": "جاري الترجمة...",
       "translated": "تمت ترجمة الرسالة",
       "original": "عرض الرسالة الأصلية"
@@ -109,7 +114,7 @@
     "reactions": {
       "add": "إضافة رد فعل",
       "remove": "حذف رد الفعل",
-      "maxReactions": "لا يمكنك إضافة أكثر من 5 ردود فعل"
+      "maxReactions": "تم الوصول إلى الحد الأقصى من التفاعلات."
     },
     "roles": {
       "youth": "شاب",
@@ -117,10 +122,10 @@
       "co-referent": "مرجع مساعد"
     },
     "notifications": {
-      "notSupported": "الإشعارات غير مدعومة في متصفحك",
-      "firebaseNotSupported": "Firebase Messaging غير مدعوم",
+      "notSupported": "المتصفح لا يدعم الإشعارات.",
+      "firebaseNotSupported": "الإشعارات غير مدعومة في Firebase.",
       "permission": {
-        "denied": "تم رفض الإشعارات",
+        "denied": "تم رفض إذن الإشعارات.",
         "granted": "تم تفعيل الإشعارات"
       }
     }

@@ -38,20 +38,23 @@
     "planning": "کالینډر",
     "appointments": "ملاقاتونه",
     "notes": "نوټونه",
-    "title": "ډاشبورډ",
-    "welcome": "ستاسو ډشبورډ ته ښه راغلاست",
+    "title": "ډشبورډ",
+    "welcome": "خپل شخصي ځای ته ښه راغلاست.",
     "upcomingEvents": "راتلونکي پیښې",
-    "noUpcomingEvents": "هیڅ راتلونکې پیښه نشته",
-    "unreadMessages": "نالوستل شوي پیغامونه",
-    "noUnreadMessages": "هیڅ نالوستل شوی پیغام نشته",
+    "noUpcomingEvents": "هیڅ راتلونکې پیښه نشته.",
+    "unreadMessages": "نه لوستل شوي پیغامونه",
+    "noUnreadMessages": "هیڅ نه لوستل شوي پیغامونه نشته.",
     "recentNotes": "وروستي یادښتونه",
-    "noRecentNotes": "هیڅ وروستی یادښت نشته",
+    "noRecentNotes": "هیڅ یادښت نشته.",
     "importantNotifications": "مهم خبرتیاوې",
-    "noImportantNotifications": "هیڅ مهمه خبرتیا نشته"
+    "noImportantNotifications": "هیڅ مهم خبرتیا نشته."
   },
   "login": {
     "title": "ننوتل",
-    "error": "د ننوتلو تېروتنه. لطفاً خپل معلومات وڅارئ."
+    "email": "بریښنالیک",
+    "password": "پټ نوم",
+    "login": "ننوتل",
+    "error": "ننوتل ناکام شول. معلومات چک کړئ."
   },
   "planning": {
     "title": "پلان جوړونه",
@@ -76,32 +79,34 @@
   },
   "messaging": {
     "title": "پيغامونه",
-    "typeMessage": "خپل پيغام وليکئ...",
-    "selectConversation": "خبرې اترې وټاکئ",
+    "typeMessage": "پیغام ولیکئ...",
+    "selectConversation": "مهرباني وکړئ یوه مکالمه وټاکئ",
     "sendMessage": "پيغام واستوئ",
     "newMessage": "نوی پيغام",
     "unreadMessages": "نالوستل شوي پيغامونه",
     "noMessages": "هیڅ پيغام نشته",
     "loading": "بار کوي...",
     "error": "تېروتنه",
-    "typing": "ليکل کوي...",
+    "typing": "اوس لیکي...",
+    "messageSent": "پیغام واستول شو.",
+    "loadError": "پیغامونه نه شول پورته.",
     "attachments": {
       "add": "فايل اضافه کړئ",
       "remove": "لرې کړئ",
       "image": "انځور",
       "file": "فايل",
       "uploading": "پورته کوي...",
-      "error": "د پورته کولو پر مهال تېروتنه",
-      "errorSize": "فايل ډېر لوی دی (له 10MB څخه زیات)",
-      "errorType": "ناسم فايل",
-      "errorNameTooLong": "د فايل نوم ډېر اوږد دی",
-      "errorTooManyFiles": "یوازې 5 فايلونه",
-      "fileAttached": "فايل نښلول شوی"
+      "error": "د فایل اپلوډ کې تېروتنه.",
+      "errorSize": "فایل ډېر لوی دی.",
+      "errorType": "د فایل ډول نه منل کېږي.",
+      "errorNameTooLong": "د فایل نوم ډېر اوږد دی.",
+      "errorTooManyFiles": "ډېر فایلونه ضمیمه شوي دي.",
+      "fileAttached": "فایل ضمیمه شو."
     },
     "translation": {
-      "show": "پيغام ژباړئ",
+      "show": "ژباړه",
       "hide": "ژباړه پټه کړئ",
-      "error": "د ژباړې پر مهال تېروتنه",
+      "error": "ژباړه ناکامه شوه.",
       "translating": "ژباړل کوي...",
       "translated": "ژباړل شوی",
       "original": "اصلي پيغام وښایئ"
@@ -109,7 +114,7 @@
     "reactions": {
       "add": "غبرګون اضافه کړئ",
       "remove": "غبرګون لرې کړئ",
-      "maxReactions": "یوازې 5 غبرګونونه"
+      "maxReactions": "د غبرګونونو اعظمي حد ته رسیدلی."
     },
     "roles": {
       "youth": "ځوان",
@@ -117,10 +122,10 @@
       "co-referent": "مرجع معاون"
     },
     "notifications": {
-      "notSupported": "خبرتیاوې نه ملاتړي",
-      "firebaseNotSupported": "Firebase Messaging نه ملاتړي",
+      "notSupported": "ستاسو براوزر خبرتیاوې نه ملاتړ کوي.",
+      "firebaseNotSupported": "Firebase خبرتیاوې نه دي ملاتړ شوي.",
       "permission": {
-        "denied": "خبرتیاوې رد شوي",
+        "denied": "خبرتیاوو ته اجازه رد شوه.",
         "granted": "خبرتیاوې منل شوي"
       }
     }

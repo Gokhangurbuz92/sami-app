@@ -14,7 +14,7 @@
     "cancel": "Annuler",
     "error": "Erreur",
     "success": "Succès",
-    "loading": "Chargement...",
+    "loading": "Chargement en cours...",
     "save": "Enregistrer",
     "delete": "Supprimer",
     "edit": "Modifier",
@@ -27,7 +27,8 @@
     "confirm": "Confirmer",
     "back": "Retour",
     "next": "Suivant",
-    "done": "Terminé"
+    "done": "Terminé",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?"
   },
   "errors": {
     "general": "Une erreur est survenue",
@@ -68,14 +69,26 @@
       "signIn": "Erreur lors de la connexion : {{error}}",
       "logout": "Erreur lors de la déconnexion : {{error}}",
       "resetPassword": "Erreur lors de la réinitialisation du mot de passe : {{error}}"
-    }
+    },
+    "email": "Email",
+    "password": "Mot de passe",
+    "displayName": "Nom d'affichage",
+    "role": "Rôle",
+    "signUpFailed": "Échec de l'inscription : {{message}}",
+    "signInFailed": "Échec de la connexion : {{message}}",
+    "googleSignInFailed": "Échec de la connexion avec Google : {{message}}",
+    "logoutFailed": "Échec de la déconnexion : {{message}}",
+    "resetPasswordFailed": "Échec de la réinitialisation du mot de passe : {{message}}"
   },
   "navigation": {
     "home": "Accueil",
     "planning": "Planning",
     "notes": "Notes",
     "notifications": "Notifications",
-    "profile": "Profil"
+    "profile": "Profil",
+    "messaging": "Messagerie",
+    "userManagement": "Gestion des utilisateurs",
+    "assignation": "Assignation jeunes/référents"
   },
   "dashboard": {
     "searchYouth": "Rechercher un jeune...",
@@ -91,7 +104,19 @@
     "recentNotes": "Notes récentes",
     "noRecentNotes": "Aucune note récente",
     "importantNotifications": "Notifications importantes",
-    "noImportantNotifications": "Aucune notification importante"
+    "noImportantNotifications": "Aucune notification importante",
+    "referents": {
+      "title": "Mes référents",
+      "none": "Aucun référent assigné",
+      "error": "Impossible de charger vos référents",
+      "contact": "Contacter mon référent"
+    },
+    "youths": {
+      "title": "Mes jeunes",
+      "none": "Aucun jeune assigné",
+      "error": "Impossible de charger vos jeunes",
+      "message": "Envoyer un message"
+    }
   },
   "notes": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette note ?",
@@ -185,54 +210,69 @@
     "update": "Mettre à jour le profil"
   },
   "messaging": {
-    "title": "Messages",
-    "typeMessage": "Tapez votre message...",
+    "title": "Messagerie",
+    "typeMessage": "Écrivez un message...",
+    "send": "Envoyer",
     "selectConversation": "Sélectionnez une conversation",
-    "sendMessage": "Envoyer",
-    "newMessage": "Nouveau message",
-    "unreadMessages": "Messages non lus",
     "noMessages": "Pas de messages",
-    "loading": "Chargement...",
-    "error": "Une erreur est survenue",
+    "loading": "Chargement des messages...",
+    "messageSent": "Message envoyé",
+    "messageDeleted": "Message supprimé",
     "typing": "En train d'écrire...",
+    "loadError": "Erreur lors du chargement des messages",
+    "conversations": "Conversations",
+    "newConversation": "Nouvelle conversation",
+    "noContacts": "Aucun contact disponible",
+    "youCanOnlyMessageAssigned": "Vous pouvez uniquement échanger avec vos référents/jeunes assignés",
+    "errorUnauthorized": "Vous n'êtes pas autorisé à créer cette conversation",
     "attachments": {
-      "add": "Ajouter un fichier",
-      "remove": "Supprimer",
-      "image": "Image",
-      "file": "Fichier",
-      "uploading": "Téléchargement en cours...",
-      "error": "Erreur lors du téléchargement",
-      "errorSize": "Le fichier est trop volumineux (max 10MB)",
+      "errorSize": "Fichier trop volumineux (max 10Mo)",
       "errorType": "Type de fichier non supporté",
-      "errorNameTooLong": "Le nom du fichier est trop long",
-      "errorTooManyFiles": "Vous ne pouvez pas envoyer plus de 5 fichiers à la fois",
-      "fileAttached": "Fichier joint"
+      "errorNameTooLong": "Nom de fichier trop long",
+      "errorUpload": "Erreur lors de l'envoi du fichier",
+      "errorTooManyFiles": "Trop de fichiers (max 5)"
     },
-    "translation": {
-      "show": "Traduire le message",
+    "translations": {
+      "show": "Afficher la traduction",
       "hide": "Masquer la traduction",
-      "error": "Erreur lors de la traduction",
-      "translating": "Traduction en cours...",
-      "translated": "Message traduit",
-      "original": "Afficher le message original"
+      "translating": "Traduction en cours..."
     },
     "reactions": {
       "add": "Ajouter une réaction",
-      "remove": "Supprimer la réaction",
-      "maxReactions": "Vous ne pouvez pas ajouter plus de 5 réactions"
-    },
-    "roles": {
-      "youth": "Jeune",
-      "referent": "Référent",
-      "co-referent": "Co-référent"
+      "maxReactions": "Nombre maximum de réactions atteint"
     },
     "notifications": {
       "notSupported": "Les notifications ne sont pas supportées par votre navigateur",
-      "firebaseNotSupported": "Firebase Messaging n'est pas supporté",
       "permission": {
-        "denied": "Les notifications ont été refusées",
-        "granted": "Les notifications sont activées"
-      }
+        "denied": "Permission pour les notifications refusée"
+      },
+      "firebaseNotSupported": "Firebase Messaging n'est pas supporté dans ce navigateur"
     }
+  },
+  "roles": {
+    "jeune": "Jeune",
+    "referent": "Référent",
+    "coreferent": "Co-référent",
+    "admin": "Administrateur"
+  },
+  "userManagement": {
+    "allUsers": "Tous les utilisateurs",
+    "youths": "Jeunes",
+    "referents": "Référents",
+    "addUser": "Ajouter un utilisateur",
+    "name": "Nom",
+    "email": "Email",
+    "role": "Rôle",
+    "actions": "Actions",
+    "assignedReferents": "Référents assignés",
+    "assignedYouths": "Jeunes assignés",
+    "noReferentsAssigned": "Aucun référent assigné",
+    "noYouthsAssigned": "Aucun jeune assigné",
+    "referents": "Référents",
+    "assignReferents": "Assigner des référents",
+    "assignSuccess": "Assignation réussie !"
+  },
+  "app": {
+    "title": "SAMI"
   }
 } 

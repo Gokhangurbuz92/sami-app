@@ -2,9 +2,36 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Règles pour les utilisateurs authentifiés
+    // Fonction pour vérifier si l'utilisateur est admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+    
+    // Fonction pour vérifier si l'utilisateur est référent
+    function isReferent() {
+      let role = get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+      return role == "referent" || role == "coreferent";
+    }
+    
+    // Fonction pour vérifier si l'utilisateur est jeune
+    function isJeune() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "jeune";
+    }
+    
+    // Fonction pour obtenir les jeunes assignés à un référent
+    function getAssignedYouths() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.assignedYouths;
+    }
+    
+    // Fonction pour obtenir les référents assignés à un jeune
+    function getAssignedReferents() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.assignedReferents;
+    }
+    
+    // Règles pour les utilisateurs
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
     }
     
     // Règles pour les rendez-vous
@@ -17,14 +44,70 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
     
-    // Règles pour les messages
-    match /messages/{messageId} {
-      allow read, write: if request.auth != null;
-    }
-    
     // Règles pour les conversations
     match /conversations/{conversationId} {
-      allow read, write: if request.auth != null;
+      // Valider que l'utilisateur est un participant
+      allow read: if request.auth != null && 
+        (resource.data.participants.hasAny([request.auth.uid]) || isAdmin());
+      
+      // Règles de création/mise à jour des conversations
+      allow create: if request.auth != null && 
+        // L'utilisateur doit être dans les participants
+        request.resource.data.participants.hasAny([request.auth.uid]) &&
+        (
+          // Admin peut créer n'importe quelle conversation
+          isAdmin() ||
+          
+          // Un jeune peut créer une conversation uniquement avec ses référents assignés
+          (isJeune() && 
+           request.resource.data.participants.size() == 2 &&
+           request.resource.data.participants.hasAll([request.auth.uid]) &&
+           getAssignedReferents().hasAny(request.resource.data.participants)) ||
+          
+          // Un référent peut créer une conversation uniquement avec ses jeunes assignés
+          (isReferent() && 
+           request.resource.data.participants.size() == 2 &&
+           request.resource.data.participants.hasAll([request.auth.uid]) &&
+           getAssignedYouths().hasAny(request.resource.data.participants))
+        );
+      
+      // Mise à jour : il doit être participant
+      allow update: if request.auth != null && 
+        resource.data.participants.hasAny([request.auth.uid]);
+      
+      // Suppression : admin ou appartient à la conversation
+      allow delete: if request.auth != null && 
+        (isAdmin() || resource.data.participants.hasAny([request.auth.uid]));
+    }
+    
+    // Règles pour les messages
+    match /messages/{messageId} {
+      allow read: if request.auth != null && 
+        (
+          // Admin peut tout lire
+          isAdmin() ||
+          
+          // L'utilisateur doit être un participant de la conversation
+          get(/databases/$(database)/documents/conversations/$(resource.data.conversationId)).data.participants.hasAny([request.auth.uid])
+        );
+      
+      // Création d'un message
+      allow create: if request.auth != null && 
+        // L'expéditeur doit être l'utilisateur connecté
+        request.resource.data.senderId == request.auth.uid &&
+        
+        // Doit appartenir à la conversation
+        get(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId)).data.participants.hasAny([request.auth.uid]);
+      
+      // Modification de son propre message uniquement
+      allow update: if request.auth != null && 
+        (resource.data.senderId == request.auth.uid || 
+         // Ou ajout d'une réaction/traduction
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions', 'translations', 'translatedContent']));
+      
+      // Suppression de son propre message uniquement
+      allow delete: if request.auth != null && 
+        resource.data.senderId == request.auth.uid;
     }
   }
 } 

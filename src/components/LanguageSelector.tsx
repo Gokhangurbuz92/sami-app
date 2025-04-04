@@ -1,52 +1,49 @@
-import { useTranslation } from 'react-i18next';
-import { 
-  Select, 
-  MenuItem, 
-  FormControl, 
-  InputLabel,
-  SelectChangeEvent
-} from '@mui/material';
+import React, { useEffect } from "react";
+import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import i18n, { getTextDirection } from "../i18n/config";
 
 const languages = [
-  { code: 'fr', name: 'Français' },
-  { code: 'en', name: 'English' },
-  { code: 'ar', name: 'العربية' },
-  { code: 'ps', name: 'پښتو' },
-  { code: 'tr', name: 'Türkçe' },
-  { code: 'so', name: 'Soomaali' },
-  { code: 'ml', name: 'Mandenkan' },
-  { code: 'gn', name: 'Guinéen' },
-  { code: 'ci', name: 'Ivoirien' },
-  { code: 'bn', name: 'বাংলা' },
-  { code: 'ur', name: 'اردو' },
-  { code: 'sw', name: 'Kiswahili' },
-  { code: 'ti', name: 'ትግርኛ' },
-  { code: 'wo', name: 'Wolof' },
-  { code: 'yo', name: 'Yorùbá' },
-  { code: 'zu', name: 'isiZulu' }
+  { code: "fr", label: "Français" },
+  { code: "en", label: "English" },
+  { code: "ar", label: "العربية" },
+  { code: "ps", label: "پښتو" },
+  { code: "tr", label: "Türkçe" },
+  { code: "so", label: "Soomaali" },
+  { code: "bn", label: "বাংলা" }
 ];
 
-export default function LanguageSelector() {
-  const { i18n } = useTranslation();
+const LanguageSelector: React.FC = () => {
+  const currentLang = i18n.language || "fr";
 
-  const handleChange = (event: SelectChangeEvent) => {
-    i18n.changeLanguage(event.target.value);
+  useEffect(() => {
+    const direction = getTextDirection(currentLang);
+    document.documentElement.dir = direction;
+  }, [currentLang]);
+
+  const handleChange = (event: any) => {
+    const lang = event.target.value;
+    i18n.changeLanguage(lang);
+    document.documentElement.dir = getTextDirection(lang);
   };
 
   return (
     <FormControl size="small" sx={{ minWidth: 120 }}>
-      <InputLabel>Langue</InputLabel>
+      <InputLabel id="lang-label">Langue</InputLabel>
       <Select
-        value={i18n.language}
+        labelId="lang-label"
+        id="lang-select"
+        value={currentLang}
         label="Langue"
         onChange={handleChange}
       >
         {languages.map((lang) => (
           <MenuItem key={lang.code} value={lang.code}>
-            {lang.name}
+            {lang.label}
           </MenuItem>
         ))}
       </Select>
     </FormControl>
   );
-} 
+};
+
+export default LanguageSelector;
