@@ -62,7 +62,7 @@ const InstallPWA: React.FC = () => {
             transition: 'all 0.3s ease',
             '&:hover': {
               transform: 'scale(1.05)',
-              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)'
             }
           }}
         >
@@ -74,7 +74,7 @@ const InstallPWA: React.FC = () => {
               sx={{
                 boxShadow: 'none',
                 '&:hover': {
-                  boxShadow: 'none',
+                  boxShadow: 'none'
                 }
               }}
             >
@@ -91,7 +91,7 @@ const InstallPWA: React.FC = () => {
                 textTransform: 'none',
                 fontWeight: 600,
                 px: 3,
-                py: 1.5,
+                py: 1.5
               }}
             >
               {t('common.install')}
@@ -111,4 +111,4 @@ const InstallPWA: React.FC = () => {
   );
 };
 
-export default InstallPWA; 
+export default InstallPWA;

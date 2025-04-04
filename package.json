@@ -11,6 +11,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.14.0",
@@ -27,6 +30,9 @@
     "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.14.0",
     "@types/react": "^18.2.64",
     "@types/react-big-calendar": "^1.8.9",
     "@types/react-dom": "^18.2.21",
@@ -34,8 +40,10 @@
     "@typescript-eslint/parser": "^7.1.1",
     "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "axios": "^1.8.4",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.1",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
@@ -47,6 +55,7 @@
     "typescript": "^5.8.2",
     "vite": "^5.1.6",
     "vite-plugin-pwa": "^1.0.0",
+    "vitest": "^3.1.1",
     "workbox-window": "^7.3.0"
   },
   "eslintConfig": {

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Avatar, 
-  Card, 
-  CardContent, 
-  Grid, 
+import {
+  Box,
+  Typography,
+  Avatar,
+  Card,
+  CardContent,
+  Grid,
   Skeleton,
   Link,
-  Button,
   IconButton
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
@@ -44,13 +43,17 @@ export default function AssignedYouths() {
       try {
         // Récupérer les données du référent pour obtenir les jeunes assignés
         const referentDoc = await userService.getUserById(currentUser.uid);
-        
-        if (!referentDoc || !referentDoc.assignedYouths || referentDoc.assignedYouths.length === 0) {
+
+        if (
+          !referentDoc ||
+          !referentDoc.assignedYouths ||
+          referentDoc.assignedYouths.length === 0
+        ) {
           setJeunes([]);
           setLoading(false);
           return;
         }
-        
+
         // Utiliser fetchYouths pour obtenir les détails des jeunes
         const jeunesList = await fetchYouths(referentDoc.assignedYouths);
         setJeunes(jeunesList as Jeune[]);
@@ -100,9 +103,7 @@ export default function AssignedYouths() {
           <Typography variant="h6" gutterBottom>
             {t('dashboard.youths.title')}
           </Typography>
-          <Typography color="error">
-            {error}
-          </Typography>
+          <Typography color="error">{error}</Typography>
         </CardContent>
       </Card>
     );
@@ -116,9 +117,7 @@ export default function AssignedYouths() {
         </Typography>
 
         {jeunes.length === 0 ? (
-          <Typography>
-            {t('dashboard.youths.none')}
-          </Typography>
+          <Typography>{t('dashboard.youths.none')}</Typography>
         ) : (
           <Grid container spacing={2}>
             {jeunes.map((jeune) => (
@@ -126,17 +125,15 @@ export default function AssignedYouths() {
                 <Card variant="outlined" sx={{ height: '100%' }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar 
-                        src={jeune.photoURL} 
+                      <Avatar
+                        src={jeune.photoURL}
                         alt={jeune.displayName}
                         sx={{ width: 50, height: 50 }}
                       >
                         {jeune.displayName.charAt(0).toUpperCase()}
                       </Avatar>
                       <Box sx={{ ml: 2, flexGrow: 1 }}>
-                        <Typography variant="subtitle1">
-                          {jeune.displayName}
-                        </Typography>
+                        <Typography variant="subtitle1">{jeune.displayName}</Typography>
                         {jeune.email && (
                           <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
                             <EmailIcon fontSize="small" sx={{ mr: 0.5 }} />
@@ -146,8 +143,8 @@ export default function AssignedYouths() {
                           </Box>
                         )}
                       </Box>
-                      <IconButton 
-                        color="primary" 
+                      <IconButton
+                        color="primary"
                         onClick={() => startConversation(jeune.uid)}
                         aria-label={t('dashboard.youths.message')}
                       >
@@ -163,4 +160,4 @@ export default function AssignedYouths() {
       </CardContent>
     </Card>
   );
-} 
+}

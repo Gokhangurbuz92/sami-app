@@ -33,7 +33,7 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
     content: '',
     category: 'general',
     priority: 'medium',
-    tags: [],
+    tags: []
   });
   const [newTag, setNewTag] = useState('');
 
@@ -46,7 +46,7 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
         content: '',
         category: 'general',
         priority: 'medium',
-        tags: [],
+        tags: []
       });
     }
   }, [note]);
@@ -86,7 +86,7 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
     if (newTag.trim() && !formData.tags?.includes(newTag.trim())) {
       setFormData({
         ...formData,
-        tags: [...(formData.tags || []), newTag.trim()],
+        tags: [...(formData.tags || []), newTag.trim()]
       });
       setNewTag('');
     }
@@ -95,18 +95,15 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
   const handleRemoveTag = (tagToRemove: string) => {
     setFormData({
       ...formData,
-      tags: formData.tags?.filter(tag => tag !== tagToRemove),
+      tags: formData.tags?.filter((tag) => tag !== tagToRemove)
     });
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>
-        {note ? t('notes.editNote') : t('notes.addNote')}
-      </DialogTitle>
+      <DialogTitle>{note ? t('notes.editNote') : t('notes.addNote')}</DialogTitle>
       <DialogContent>
         <TextField
-          autoFocus
           margin="dense"
           label={t('notes.title')}
           fullWidth
@@ -126,7 +123,9 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
           <InputLabel>{t('notes.category')}</InputLabel>
           <Select
             value={formData.category || 'general'}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value as Note['category'] })}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value as Note['category'] })
+            }
           >
             <MenuItem value="general">{t('notes.categories.general')}</MenuItem>
             <MenuItem value="medical">{t('notes.categories.medical')}</MenuItem>
@@ -138,7 +137,9 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
           <InputLabel>{t('notes.priority')}</InputLabel>
           <Select
             value={formData.priority || 'medium'}
-            onChange={(e) => setFormData({ ...formData, priority: e.target.value as Note['priority'] })}
+            onChange={(e) =>
+              setFormData({ ...formData, priority: e.target.value as Note['priority'] })
+            }
           >
             <MenuItem value="low">{t('notes.priorities.low')}</MenuItem>
             <MenuItem value="medium">{t('notes.priorities.medium')}</MenuItem>
@@ -149,11 +150,7 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
           <Typography variant="subtitle2">{t('notes.tags')}</Typography>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
             {formData.tags?.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                onDelete={() => handleRemoveTag(tag)}
-              />
+              <Chip key={tag} label={tag} onDelete={() => handleRemoveTag(tag)} />
             ))}
           </Box>
           <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
@@ -175,4 +172,4 @@ export default function NoteForm({ open, onClose, note, onSave }: NoteFormProps)
       </DialogActions>
     </Dialog>
   );
-} 
+}

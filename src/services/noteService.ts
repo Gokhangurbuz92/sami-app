@@ -1,4 +1,15 @@
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, getDocs, orderBy, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  onSnapshot
+} from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { notificationService } from './notificationService';
 
@@ -20,14 +31,14 @@ export const noteService = {
     const noteRef = await addDoc(collection(db, 'notes'), {
       ...note,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     });
 
     const newNote = {
       id: noteRef.id,
       ...note,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     await notificationService.createNoteNotification(
@@ -44,7 +55,7 @@ export const noteService = {
     const noteRef = doc(db, 'notes', id);
     await updateDoc(noteRef, {
       ...note,
-      updatedAt: new Date(),
+      updatedAt: new Date()
     });
 
     if (note.title || note.content) {
@@ -72,36 +83,32 @@ export const noteService = {
     );
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt.toDate(),
-      updatedAt: doc.data().updatedAt.toDate(),
+      updatedAt: doc.data().updatedAt.toDate()
     })) as Note[];
   },
 
   async searchNotes(userId: string, searchTerm: string): Promise<Note[]> {
     const notesRef = collection(db, 'notes');
-    const q = query(
-      notesRef,
-      where('createdBy', '==', userId),
-      orderBy('createdAt', 'desc')
-    );
+    const q = query(notesRef, where('createdBy', '==', userId), orderBy('createdAt', 'desc'));
 
     const querySnapshot = await getDocs(q);
-    const notes = querySnapshot.docs.map(doc => ({
+    const notes = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt.toDate(),
-      updatedAt: doc.data().updatedAt.toDate(),
+      updatedAt: doc.data().updatedAt.toDate()
     })) as Note[];
 
-    return notes.filter(note => {
+    return notes.filter((note) => {
       const searchLower = searchTerm.toLowerCase();
       return (
         note.title.toLowerCase().includes(searchLower) ||
         note.content.toLowerCase().includes(searchLower) ||
-        note.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        note.tags.some((tag) => tag.toLowerCase().includes(searchLower))
       );
     });
   },
@@ -116,13 +123,13 @@ export const noteService = {
     );
 
     return onSnapshot(q, (snapshot) => {
-      const notes = snapshot.docs.map(doc => ({
+      const notes = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt.toDate(),
-        updatedAt: doc.data().updatedAt.toDate(),
+        updatedAt: doc.data().updatedAt.toDate()
       })) as Note[];
       callback(notes);
     });
   }
-}; 
+};

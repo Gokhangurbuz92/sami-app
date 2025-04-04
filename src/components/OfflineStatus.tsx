@@ -47,4 +47,4 @@ const OfflineStatus: React.FC = () => {
   );
 };
 
-export default React.memo(OfflineStatus); 
+export default React.memo(OfflineStatus);

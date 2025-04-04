@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  ToggleButtonGroup, 
-  ToggleButton, 
+import {
+  Box,
+  Container,
+  Typography,
+  ToggleButtonGroup,
+  ToggleButton,
   Paper,
   Button,
   Dialog,
@@ -31,7 +31,7 @@ const eventCategories = [
   { id: 'admin', name: 'rdv_administrative', color: '#44ff44' },
   { id: 'cleaning', name: 'cleaning_room', color: '#ff8844' },
   { id: 'laundry', name: 'laundry', color: '#8844ff' },
-  { id: 'other', name: 'other', color: '#888888' },
+  { id: 'other', name: 'other', color: '#888888' }
 ];
 
 interface EventFormData {
@@ -70,11 +70,11 @@ export default function Planning() {
     time: t('planning.time'),
     event: t('planning.event'),
     noEventsInRange: t('planning.noEventsInRange'),
-    showMore: (total: number) => t('planning.showMore', { count: total }),
+    showMore: (total: number) => t('planning.showMore', { count: total })
   };
 
   const eventStyleGetter = (event: CustomEvent) => {
-    const category = eventCategories.find(cat => cat.id === event.category) || eventCategories[5];
+    const category = eventCategories.find((cat) => cat.id === event.category) || eventCategories[5];
     return {
       style: {
         backgroundColor: category.color,
@@ -83,8 +83,8 @@ export default function Planning() {
         color: 'white',
         border: '0px',
         display: 'block',
-        padding: '2px 5px',
-      },
+        padding: '2px 5px'
+      }
     };
   };
 
@@ -105,7 +105,7 @@ export default function Planning() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
@@ -119,7 +119,7 @@ export default function Planning() {
       category: formData.category,
       description: formData.description
     };
-    setEvents(prev => [...prev, newEvent]);
+    setEvents((prev) => [...prev, newEvent]);
     handleCloseDialog();
   };
 
@@ -138,7 +138,7 @@ export default function Planning() {
             </Button>
           </Grid>
         </Grid>
-        
+
         <Paper sx={{ p: 2, mb: 2 }}>
           <ToggleButtonGroup
             value={view}
@@ -235,4 +235,4 @@ export default function Planning() {
       </Box>
     </Container>
   );
-} 
+}

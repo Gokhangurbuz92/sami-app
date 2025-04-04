@@ -1,4 +1,15 @@
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, getDocs, orderBy, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  onSnapshot
+} from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { youthService } from '../youthService';
 import { notificationService } from '../notificationService';
@@ -16,7 +27,7 @@ describe('youthService', () => {
     dateOfBirth: '2000-01-01',
     createdBy: 'user1',
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   };
 
   const mockCollection = {
@@ -27,10 +38,10 @@ describe('youthService', () => {
         data: () => ({
           ...mockYouth,
           createdAt: { toDate: () => new Date() },
-          updatedAt: { toDate: () => new Date() },
-        }),
-      },
-    ],
+          updatedAt: { toDate: () => new Date() }
+        })
+      }
+    ]
   };
 
   beforeEach(() => {
@@ -46,27 +57,31 @@ describe('youthService', () => {
         firstName: 'John',
         lastName: 'Doe',
         dateOfBirth: '2000-01-01',
-        createdBy: 'user1',
+        createdBy: 'user1'
       });
 
       expect(addDoc).toHaveBeenCalledWith(collection(db, 'youth'), expect.any(Object));
       expect(notificationService.createYouthNotification).toHaveBeenCalled();
-      expect(result).toEqual(expect.objectContaining({
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-      }));
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe'
+        })
+      );
     });
 
     it('should handle errors during creation', async () => {
       vi.mocked(addDoc).mockRejectedValue(new Error('Creation failed'));
 
-      await expect(youthService.createYouth({
-        firstName: 'John',
-        lastName: 'Doe',
-        dateOfBirth: '2000-01-01',
-        createdBy: 'user1',
-      })).rejects.toThrow('Creation failed');
+      await expect(
+        youthService.createYouth({
+          firstName: 'John',
+          lastName: 'Doe',
+          dateOfBirth: '2000-01-01',
+          createdBy: 'user1'
+        })
+      ).rejects.toThrow('Creation failed');
     });
   });
 
@@ -76,7 +91,7 @@ describe('youthService', () => {
       vi.mocked(updateDoc).mockResolvedValue(undefined);
 
       await youthService.updateYouth('1', {
-        firstName: 'Jane',
+        firstName: 'Jane'
       });
 
       expect(updateDoc).toHaveBeenCalledWith(mockDocRef, expect.any(Object));
@@ -85,9 +100,11 @@ describe('youthService', () => {
     it('should handle errors during update', async () => {
       vi.mocked(updateDoc).mockRejectedValue(new Error('Update failed'));
 
-      await expect(youthService.updateYouth('1', {
-        firstName: 'Jane',
-      })).rejects.toThrow('Update failed');
+      await expect(
+        youthService.updateYouth('1', {
+          firstName: 'Jane'
+        })
+      ).rejects.toThrow('Update failed');
     });
   });
 
@@ -110,17 +127,23 @@ describe('youthService', () => {
 
   describe('searchYouth', () => {
     it('should search for youth and return results', async () => {
-      vi.mocked(getDocs).mockResolvedValue(mockCollection);
+      const mockQueryResult = vi.fn() as unknown as ReturnType<typeof query>;
+      vi.mocked(query).mockReturnValue(mockQueryResult);
+      vi.mocked(getDocs).mockResolvedValue(mockCollection as any);
 
       const results = await youthService.searchYouth('John', 'user1');
 
-      expect(getDocs).toHaveBeenCalledWith(expect.any(Object));
+      expect(query).toHaveBeenCalled();
+      expect(getDocs).toHaveBeenCalledWith(mockQueryResult);
+      
       expect(results).toHaveLength(1);
-      expect(results[0]).toEqual(expect.objectContaining({
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-      }));
+      expect(results[0]).toEqual(
+        expect.objectContaining({
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe'
+        })
+      );
     });
 
     it('should handle errors during search', async () => {
@@ -134,12 +157,16 @@ describe('youthService', () => {
     it('should set up a real-time subscription', () => {
       const mockCallback = vi.fn();
       const mockUnsubscribe = vi.fn();
+      
+      const mockQueryResult = vi.fn() as unknown as ReturnType<typeof query>;
+      vi.mocked(query).mockReturnValue(mockQueryResult);
       vi.mocked(onSnapshot).mockReturnValue(mockUnsubscribe);
 
       const unsubscribe = youthService.subscribeToYouth('user1', mockCallback);
 
-      expect(onSnapshot).toHaveBeenCalledWith(expect.any(Object), expect.any(Function));
+      expect(query).toHaveBeenCalled();
+      expect(onSnapshot).toHaveBeenCalledWith(mockQueryResult, expect.any(Function));
       expect(unsubscribe).toBe(mockUnsubscribe);
     });
   });
-}); 
+});

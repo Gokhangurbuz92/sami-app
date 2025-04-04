@@ -19,4 +19,4 @@ export const translateText = async (text: string, targetLang: string): Promise<s
     console.error('Erreur de traduction:', error);
     throw new Error('Échec de la traduction');
   }
-}; 
+};

@@ -1,10 +1,10 @@
 import '../i18n/config';
 import React, { useState } from 'react';
-import { 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
   Paper,
   Alert,
   Link,
@@ -41,7 +41,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validationError = validateForm();
     if (validationError) {
       alert(validationError);
@@ -142,12 +142,7 @@ const Login = () => {
               >
                 {t('common.cancel')}
               </Button>
-              <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                disabled={loading}
-              >
+              <Button fullWidth type="submit" variant="contained" disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : t('auth.resetPassword')}
               </Button>
             </Stack>
@@ -183,9 +178,7 @@ const Login = () => {
                 disabled={loading}
                 helperText={isSignUp ? t('auth.passwordHelper') : ''}
               />
-              <FormHelperText>
-                {isSignUp && t('auth.passwordRequirements')}
-              </FormHelperText>
+              <FormHelperText>{isSignUp && t('auth.passwordRequirements')}</FormHelperText>
 
               <Button
                 fullWidth
@@ -197,8 +190,10 @@ const Login = () => {
               >
                 {loading ? (
                   <CircularProgress size={24} />
+                ) : isSignUp ? (
+                  t('common.signUp')
                 ) : (
-                  isSignUp ? t('common.signUp') : t('common.login')
+                  t('common.login')
                 )}
               </Button>
             </form>

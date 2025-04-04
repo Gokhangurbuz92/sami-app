@@ -2,15 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Paper,
-  Container,
-  Alert
-} from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, Container, Alert } from '@mui/material';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -42,7 +34,7 @@ export function Login() {
           marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
         <Paper
@@ -52,7 +44,7 @@ export function Login() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            width: '100%',
+            width: '100%'
           }}
         >
           <Typography component="h1" variant="h5">
@@ -72,7 +64,6 @@ export function Login() {
               label={t('login.email')}
               name="email"
               autoComplete="email"
-              autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -102,4 +93,4 @@ export function Login() {
       </Box>
     </Container>
   );
-} 
+}

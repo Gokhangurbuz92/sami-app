@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { 
-  List, 
-  ListItem, 
-  ListItemText, 
+import {
+  List,
+  ListItem,
+  ListItemText,
   ListItemSecondaryAction,
   IconButton,
   Paper,
@@ -48,7 +48,7 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
     if (window.confirm(t('notes.confirmDelete'))) {
       try {
         await noteService.deleteNote(noteId);
-        setNotes(notes.filter(note => note.id !== noteId));
+        setNotes(notes.filter((note) => note.id !== noteId));
       } catch (error) {
         console.error('Error deleting note:', error);
       }
@@ -83,10 +83,11 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
     }
   };
 
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -103,7 +104,7 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
               <InputAdornment position="start">
                 <SearchIcon />
               </InputAdornment>
-            ),
+            )
           }}
         />
       </Box>
@@ -115,8 +116,8 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
             divider
             sx={{
               '&:hover': {
-                backgroundColor: 'action.hover',
-              },
+                backgroundColor: 'action.hover'
+              }
             }}
           >
             <ListItemText
@@ -142,12 +143,7 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
                   </Typography>
                   <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     {note.tags.map((tag, index) => (
-                      <Chip
-                        key={index}
-                        label={tag}
-                        size="small"
-                        variant="outlined"
-                      />
+                      <Chip key={index} label={tag} size="small" variant="outlined" />
                     ))}
                   </Box>
                 </Box>
@@ -162,11 +158,7 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
               >
                 <EditIcon />
               </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={() => handleDelete(note.id)}
-              >
+              <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(note.id)}>
                 <DeleteIcon />
               </IconButton>
             </ListItemSecondaryAction>
@@ -175,4 +167,4 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
       </List>
     </Paper>
   );
-} 
+}

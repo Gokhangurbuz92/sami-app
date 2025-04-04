@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Tabs, 
-  Tab, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
-  Button, 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
   DialogTitle,
   TextField,
   MenuItem,
@@ -49,11 +49,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`user-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -61,13 +57,12 @@ function TabPanel(props: TabPanelProps) {
 function a11yProps(index: number) {
   return {
     id: `user-tab-${index}`,
-    'aria-controls': `user-tabpanel-${index}`,
+    'aria-controls': `user-tabpanel-${index}`
   };
 }
 
 export default function UserManagement() {
   const { t } = useTranslation();
-  const { currentUser } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
   const [youths, setYouths] = useState<User[]>([]);
@@ -109,8 +104,8 @@ export default function UserManagement() {
       // Récupérer tous les utilisateurs
       setUsers([...youthList, ...referentList, ...coreferentList]);
     } catch (error) {
-      console.error("Erreur lors de la récupération des utilisateurs:", error);
-      setError("Erreur lors de la récupération des utilisateurs");
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
+      setError('Erreur lors de la récupération des utilisateurs');
     } finally {
       setLoading(false);
     }
@@ -150,14 +145,14 @@ export default function UserManagement() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewUser(prev => ({
+    setNewUser((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
   const handleRoleChange = (e: SelectChangeEvent<User['role']>) => {
-    setNewUser(prev => ({
+    setNewUser((prev) => ({
       ...prev,
       role: e.target.value as User['role']
     }));
@@ -174,13 +169,13 @@ export default function UserManagement() {
       // Ici vous devez intégrer cette fonction avec votre système d'authentification
       // Par exemple en utilisant la fonction signUp du contexte d'authentification
       const { email, password, displayName, role } = newUser;
-      
+
       // Vérifier que tous les champs sont remplis
       if (!email || !password || !displayName || !role) {
-        setError("Veuillez remplir tous les champs");
+        setError('Veuillez remplir tous les champs');
         return;
       }
-      
+
       // Créer l'utilisateur
       await userService.createUser({
         uid: `temp-${Date.now()}`, // Ceci devrait être remplacé par l'UID généré par Firebase Auth
@@ -188,7 +183,7 @@ export default function UserManagement() {
         displayName,
         role
       });
-      
+
       // Fermer le dialogue et rafraîchir la liste des utilisateurs
       handleCloseDialog();
       fetchUsers();
@@ -200,27 +195,31 @@ export default function UserManagement() {
 
   const handleSaveAssignments = async () => {
     if (!selectedYouth) return;
-    
+
     try {
       setError(null);
-      
+
       // Récupérer les assignations actuelles
       const currentAssignments = selectedYouth.assignedReferents || [];
-      
+
       // Déterminer les référents à ajouter et à retirer
-      const referentsToAdd = selectedReferents.filter(refId => !currentAssignments.includes(refId));
-      const referentsToRemove = currentAssignments.filter(refId => !selectedReferents.includes(refId));
-      
+      const referentsToAdd = selectedReferents.filter(
+        (refId) => !currentAssignments.includes(refId)
+      );
+      const referentsToRemove = currentAssignments.filter(
+        (refId) => !selectedReferents.includes(refId)
+      );
+
       // Ajouter de nouveaux référents
       for (const refId of referentsToAdd) {
         await userService.assignReferentToYouth(selectedYouth.uid, refId);
       }
-      
+
       // Retirer les référents désélectionnés
       for (const refId of referentsToRemove) {
         await userService.removeReferentFromYouth(selectedYouth.uid, refId);
       }
-      
+
       // Fermer le dialogue et rafraîchir la liste des utilisateurs
       handleCloseAssignDialog();
       fetchUsers();
@@ -243,13 +242,15 @@ export default function UserManagement() {
   };
 
   const getReferentName = (id: string): string => {
-    const referent = referents.find(r => r.uid === id);
+    const referent = referents.find((r) => r.uid === id);
     return referent ? referent.displayName : id;
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -257,18 +258,21 @@ export default function UserManagement() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="user management tabs">
           <Tab label={t('userManagement.allUsers')} {...a11yProps(0)} />
           <Tab label={t('userManagement.youths')} {...a11yProps(1)} />
           <Tab label={t('userManagement.referents')} {...a11yProps(2)} />
         </Tabs>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleOpenDialog}
-          sx={{ m: 1 }}
-        >
+        <Button variant="contained" color="primary" onClick={handleOpenDialog} sx={{ m: 1 }}>
           {t('userManagement.addUser')}
         </Button>
       </Box>
@@ -366,9 +370,13 @@ export default function UserManagement() {
                     {referent.assignedYouths && referent.assignedYouths.length > 0 ? (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {referent.assignedYouths.map((youthId) => {
-                          const youth = youths.find(y => y.uid === youthId);
+                          const youth = youths.find((y) => y.uid === youthId);
                           return (
-                            <Chip key={youthId} label={youth ? youth.displayName : youthId} size="small" />
+                            <Chip
+                              key={youthId}
+                              label={youth ? youth.displayName : youthId}
+                              size="small"
+                            />
                           );
                         })}
                       </Box>
@@ -394,7 +402,6 @@ export default function UserManagement() {
         <DialogContent>
           <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '100%' } }}>
             <TextField
-              autoFocus
               margin="dense"
               id="email"
               name="email"
@@ -499,4 +506,4 @@ export default function UserManagement() {
       </Dialog>
     </Box>
   );
-} 
+}

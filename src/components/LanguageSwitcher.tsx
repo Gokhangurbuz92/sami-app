@@ -10,10 +10,14 @@ const LanguageSwitcher: React.FC = () => {
 
   return (
     <div>
-      <button type="button" onClick={() => changeLanguage('fr')}>FR</button>
-      <button type="button" onClick={() => changeLanguage('ar')}>AR</button>
+      <button type="button" onClick={() => changeLanguage('fr')}>
+        FR
+      </button>
+      <button type="button" onClick={() => changeLanguage('ar')}>
+        AR
+      </button>
     </div>
   );
 };
 
-export default LanguageSwitcher; 
+export default LanguageSwitcher;

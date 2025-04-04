@@ -13,11 +13,11 @@ interface RoleRouteProps {
 /**
  * Composant qui protège les routes en fonction des rôles autorisés
  */
-export function RoleRoute({ 
-  children, 
-  allowedRoles = [], 
-  requiredPermission, 
-  redirectTo = '/' 
+export function RoleRoute({
+  children,
+  allowedRoles = [],
+  requiredPermission,
+  redirectTo = '/'
 }: RoleRouteProps) {
   const { currentUser, userRole, checkPermission, loading } = useAuth();
 
@@ -51,7 +51,10 @@ export function RoleRoute({
 /**
  * Route accessible uniquement aux administrateurs
  */
-export function AdminRoute({ children, redirectTo = '/' }: Omit<RoleRouteProps, 'allowedRoles' | 'requiredPermission'>) {
+export function AdminRoute({
+  children,
+  redirectTo = '/'
+}: Omit<RoleRouteProps, 'allowedRoles' | 'requiredPermission'>) {
   return (
     <RoleRoute allowedRoles={['admin']} redirectTo={redirectTo}>
       {children}
@@ -62,7 +65,10 @@ export function AdminRoute({ children, redirectTo = '/' }: Omit<RoleRouteProps, 
 /**
  * Route accessible uniquement aux référents et co-référents
  */
-export function ReferentRoute({ children, redirectTo = '/' }: Omit<RoleRouteProps, 'allowedRoles' | 'requiredPermission'>) {
+export function ReferentRoute({
+  children,
+  redirectTo = '/'
+}: Omit<RoleRouteProps, 'allowedRoles' | 'requiredPermission'>) {
   return (
     <RoleRoute allowedRoles={['referent', 'coreferent']} redirectTo={redirectTo}>
       {children}
@@ -73,7 +79,10 @@ export function ReferentRoute({ children, redirectTo = '/' }: Omit<RoleRouteProp
 /**
  * Route accessible uniquement aux jeunes
  */
-export function JeuneRoute({ children, redirectTo = '/' }: Omit<RoleRouteProps, 'allowedRoles' | 'requiredPermission'>) {
+export function JeuneRoute({
+  children,
+  redirectTo = '/'
+}: Omit<RoleRouteProps, 'allowedRoles' | 'requiredPermission'>) {
   return (
     <RoleRoute allowedRoles={['jeune']} redirectTo={redirectTo}>
       {children}
@@ -84,14 +93,14 @@ export function JeuneRoute({ children, redirectTo = '/' }: Omit<RoleRouteProps, 
 /**
  * Route accessible selon une permission spécifique
  */
-export function PermissionRoute({ 
-  children, 
-  requiredPermission, 
-  redirectTo = '/' 
+export function PermissionRoute({
+  children,
+  requiredPermission,
+  redirectTo = '/'
 }: Omit<RoleRouteProps, 'allowedRoles'> & { requiredPermission: keyof RolePermissions }) {
   return (
     <RoleRoute requiredPermission={requiredPermission} redirectTo={redirectTo}>
       {children}
     </RoleRoute>
   );
-} 
+}

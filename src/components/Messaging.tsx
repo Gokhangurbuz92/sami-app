@@ -1,7 +1,29 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Typography, Paper, TextField, Button, IconButton, CircularProgress, Snackbar, Alert, Fab } from '@mui/material';
-import { AttachFile as AttachFileIcon, Send as SendIcon, Add as AddIcon } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  IconButton,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Fab,
+  FormControlLabel,
+  Switch
+} from '@mui/material';
+import {
+  AttachFile as AttachFileIcon,
+  Send as SendIcon,
+  Add as AddIcon,
+  Translate as TranslateIcon,
+  EmojiEmotions as EmojiIcon,
+  ThumbUp as ThumbUpIcon,
+  Image as ImageIcon,
+  InsertDriveFile as FileIcon
+} from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { storage } from '../config/firebase';
 import { ref, uploadBytesResumable, getDownloadURL, UploadTask } from 'firebase/storage';
@@ -17,20 +39,24 @@ import {
   Menu,
   MenuItem,
   Chip,
-  Stack,
-  Dialog,
-  DialogContent,
-  DialogTitle,
+  Stack
 } from '@mui/material';
 import {
-  Message as MessageIcon,
-  EmojiEmotions as EmojiIcon,
-  ThumbUp as ThumbUpIcon,
-  Translate as TranslateIcon,
-  Image as ImageIcon,
-  InsertDriveFile as FileIcon,
-} from '@mui/icons-material';
-import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc, doc, limit, Timestamp, startAfter, getDocs, getDoc } from 'firebase/firestore';
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+  doc,
+  limit,
+  Timestamp,
+  startAfter,
+  getDocs,
+  getDoc
+} from 'firebase/firestore';
 import { db } from '../config/firebase';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
@@ -113,9 +139,12 @@ interface MessagingProps {
 }
 
 // Fonction pour vérifier si une conversation est autorisée
-const isConversationAllowed = async (conversation: Conversation, currentUser: any): Promise<boolean> => {
+const isConversationAllowed = async (
+  conversation: Conversation,
+  currentUser: any
+): Promise<boolean> => {
   const participants = conversation.participants;
-  
+
   // Vérifier si l'utilisateur est un participant
   if (!participants.includes(currentUser.uid)) return false;
 
@@ -130,13 +159,13 @@ const isConversationAllowed = async (conversation: Conversation, currentUser: an
     // Si c'est un jeune, il peut parler à ses référents uniquement
     if (userData.role === 'jeune') {
       const allowedUsers = userData.assignedReferents || [];
-      return participants.every(p => p === currentUser.uid || allowedUsers.includes(p));
+      return participants.every((p) => p === currentUser.uid || allowedUsers.includes(p));
     }
 
     // Si c'est un référent ou co-référent, il peut parler à ses jeunes uniquement
     if (userData.role === 'referent' || userData.role === 'coreferent') {
       const allowedUsers = userData.assignedYouths || [];
-      return participants.every(p => p === currentUser.uid || allowedUsers.includes(p));
+      return participants.every((p) => p === currentUser.uid || allowedUsers.includes(p));
     }
 
     return false;
@@ -147,59 +176,74 @@ const isConversationAllowed = async (conversation: Conversation, currentUser: an
 };
 
 // Fonction pour vérifier si une conversation peut être créée entre deux utilisateurs
-const canCreateConversation = async (currentUserId: string, otherUserId: string): Promise<boolean> => {
+const canCreateConversation = async (
+  currentUserId: string,
+  otherUserId: string
+): Promise<boolean> => {
   try {
     const currentUserData = await userService.getUserById(currentUserId);
     const otherUserData = await userService.getUserById(otherUserId);
-    
+
     if (!currentUserData || !otherUserData) return false;
-    
+
     // Si l'un est admin, autoriser la conversation
     if (currentUserData.role === 'admin' || otherUserData.role === 'admin') return true;
-    
+
     // Jeune peut parler à son référent
-    if (currentUserData.role === 'jeune' && (otherUserData.role === 'referent' || otherUserData.role === 'coreferent')) {
+    if (
+      currentUserData.role === 'jeune' &&
+      (otherUserData.role === 'referent' || otherUserData.role === 'coreferent')
+    ) {
       return currentUserData.assignedReferents?.includes(otherUserId) || false;
     }
-    
+
     // Référent peut parler à son jeune
-    if ((currentUserData.role === 'referent' || currentUserData.role === 'coreferent') && otherUserData.role === 'jeune') {
+    if (
+      (currentUserData.role === 'referent' || currentUserData.role === 'coreferent') &&
+      otherUserData.role === 'jeune'
+    ) {
       return currentUserData.assignedYouths?.includes(otherUserId) || false;
     }
-    
+
     // Pas de conversation entre jeunes ou entre référents
     return false;
   } catch (error) {
-    console.error('Erreur lors de la vérification des autorisations pour créer une conversation:', error);
+    console.error(
+      'Erreur lors de la vérification des autorisations pour créer une conversation:',
+      error
+    );
     return false;
   }
 };
 
 // Fonction pour créer une nouvelle conversation
-const createConversation = async (currentUserId: string, otherUserId: string): Promise<string | null> => {
+const createConversation = async (
+  currentUserId: string,
+  otherUserId: string
+): Promise<string | null> => {
   try {
     // Vérifier si les utilisateurs peuvent communiquer
     const isAllowed = await canCreateConversation(currentUserId, otherUserId);
     if (!isAllowed) {
       throw new Error('Vous ne pouvez pas créer de conversation avec cet utilisateur');
     }
-    
+
     // Vérifier si une conversation existe déjà
     const conversationsQuery = query(
       collection(db, 'conversations'),
       where('participants', 'array-contains', currentUserId)
     );
-    
+
     const querySnapshot = await getDocs(conversationsQuery);
-    const existingConversation = querySnapshot.docs.find(doc => {
+    const existingConversation = querySnapshot.docs.find((doc) => {
       const data = doc.data();
       return data.participants.includes(otherUserId);
     });
-    
+
     if (existingConversation) {
       return existingConversation.id;
     }
-    
+
     // Créer une nouvelle conversation
     const conversationRef = await addDoc(collection(db, 'conversations'), {
       participants: [currentUserId, otherUserId],
@@ -209,7 +253,7 @@ const createConversation = async (currentUserId: string, otherUserId: string): P
       typing: {},
       lastRead: {}
     });
-    
+
     return conversationRef.id;
   } catch (error) {
     console.error('Erreur lors de la création de la conversation:', error);
@@ -230,7 +274,11 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { currentUser } = useAuth();
   const { t, i18n } = useTranslation();
-  const [previewFile, setPreviewFile] = useState<{ url: string; type: string; name: string } | null>(null);
+  const [previewFile, setPreviewFile] = useState<{
+    url: string;
+    type: string;
+    name: string;
+  } | null>(null);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [isTyping, setIsTyping] = useState<{ [key: string]: boolean }>({});
   const [lastRead, setLastRead] = useState<{
@@ -250,6 +298,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   const [lastLoadedMessage, setLastLoadedMessage] = useState<string | null>(null);
   const [availableContacts, setAvailableContacts] = useState<any[]>([]);
   const [showContactsDialog, setShowContactsDialog] = useState(false);
+  const [autoTranslate, setAutoTranslate] = useState<boolean>(false);
 
   // Effet pour gérer l'initialConversationId
   useEffect(() => {
@@ -259,45 +308,51 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   }, [initialConversationId]);
 
   // Fonction pour marquer les messages comme lus
-  const markMessagesAsRead = useCallback(async (conversationId: string) => {
-    if (!currentUser) return;
-    
-    try {
-      const conversationRef = doc(db, 'conversations', conversationId);
-      await updateDoc(conversationRef, {
-        [`lastRead.${currentUser.uid}`]: serverTimestamp()
-      });
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour de lastRead:', error);
-    }
-  }, [currentUser]);
+  const markMessagesAsRead = useCallback(
+    async (conversationId: string) => {
+      if (!currentUser) return;
+
+      try {
+        const conversationRef = doc(db, 'conversations', conversationId);
+        await updateDoc(conversationRef, {
+          [`lastRead.${currentUser.uid}`]: serverTimestamp()
+        });
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour de lastRead:', error);
+      }
+    },
+    [currentUser]
+  );
 
   // Fonction pour gérer l'indicateur de frappe
-  const handleTyping = useCallback((conversationId: string) => {
-    if (!currentUser) return;
+  const handleTyping = useCallback(
+    (conversationId: string) => {
+      if (!currentUser) return;
 
-    setIsTyping(prev => ({ ...prev, [conversationId]: true }));
+      setIsTyping((prev) => ({ ...prev, [conversationId]: true }));
 
-    // Effacer le timeout précédent s'il existe
-    if (typingTimeoutRef.current[conversationId]) {
-      clearTimeout(typingTimeoutRef.current[conversationId]);
-    }
+      // Effacer le timeout précédent s'il existe
+      if (typingTimeoutRef.current[conversationId]) {
+        clearTimeout(typingTimeoutRef.current[conversationId]);
+      }
 
-    // Définir un nouveau timeout
-    typingTimeoutRef.current[conversationId] = setTimeout(() => {
-      setIsTyping(prev => ({ ...prev, [conversationId]: false }));
-    }, TYPING_TIMEOUT);
+      // Définir un nouveau timeout
+      typingTimeoutRef.current[conversationId] = setTimeout(() => {
+        setIsTyping((prev) => ({ ...prev, [conversationId]: false }));
+      }, TYPING_TIMEOUT);
 
-    // Mettre à jour le statut de frappe dans Firestore
-    try {
-      const conversationRef = doc(db, 'conversations', conversationId);
-      updateDoc(conversationRef, {
-        [`typing.${currentUser.uid}`]: serverTimestamp()
-      });
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour du statut de frappe:', error);
-    }
-  }, [currentUser]);
+      // Mettre à jour le statut de frappe dans Firestore
+      try {
+        const conversationRef = doc(db, 'conversations', conversationId);
+        updateDoc(conversationRef, {
+          [`typing.${currentUser.uid}`]: serverTimestamp()
+        });
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour du statut de frappe:', error);
+      }
+    },
+    [currentUser]
+  );
 
   // Fonction pour faire défiler jusqu'au dernier message
   const scrollToBottom = () => {
@@ -357,7 +412,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
           }
         });
       } catch (error) {
-        console.error('Erreur lors de l\'initialisation des notifications:', error);
+        console.error("Erreur lors de l'initialisation des notifications:", error);
       }
     };
 
@@ -368,7 +423,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     // Nettoyer les notifications lors du démontage
     return () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.ready.then(registration => {
+        navigator.serviceWorker.ready.then((registration) => {
           registration.unregister();
         });
       }
@@ -389,11 +444,11 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     );
 
     const unsubscribeConversations = onSnapshot(conversationsQuery, async (snapshot) => {
-      const conversationsData = snapshot.docs.map(doc => ({
+      const conversationsData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data()
       })) as Conversation[];
-      
+
       // Filtrer les conversations autorisées
       const filteredConversations = [];
       for (const conversation of conversationsData) {
@@ -401,7 +456,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
           filteredConversations.push(conversation);
         }
       }
-      
+
       setConversations(filteredConversations);
       setLoading(false);
     });
@@ -421,7 +476,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         limit(MAX_MESSAGES_PER_PAGE)
       ),
       (snapshot) => {
-        const newMessages = snapshot.docs.map(doc => ({
+        const newMessages = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data()
         })) as Message[];
@@ -442,30 +497,29 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   useEffect(() => {
     if (!selectedConversation) return;
 
-    const unsubscribe = onSnapshot(
-      doc(db, 'conversations', selectedConversation),
-      (doc) => {
-        const data = doc.data() as ConversationData | undefined;
-        if (data?.typing) {
-          const typingUsers = Object.entries(data.typing)
-            .filter(([uid, timestamp]) => {
-              return uid !== currentUser?.uid && 
-                     timestamp instanceof Timestamp && 
-                     Date.now() - timestamp.toMillis() < TYPING_CHECK_INTERVAL;
-            })
-            .map(([uid]) => uid);
-          
-          setIsTyping(prev => ({
-            ...prev,
-            [selectedConversation]: typingUsers.length > 0
-          }));
-        }
+    const unsubscribe = onSnapshot(doc(db, 'conversations', selectedConversation), (doc) => {
+      const data = doc.data() as ConversationData | undefined;
+      if (data?.typing) {
+        const typingUsers = Object.entries(data.typing)
+          .filter(([uid, timestamp]) => {
+            return (
+              uid !== currentUser?.uid &&
+              timestamp instanceof Timestamp &&
+              Date.now() - timestamp.toMillis() < TYPING_CHECK_INTERVAL
+            );
+          })
+          .map(([uid]) => uid);
 
-        if (data?.lastRead) {
-          setLastRead(data.lastRead);
-        }
+        setIsTyping((prev) => ({
+          ...prev,
+          [selectedConversation]: typingUsers.length > 0
+        }));
       }
-    );
+
+      if (data?.lastRead) {
+        setLastRead(data.lastRead);
+      }
+    });
 
     return () => unsubscribe();
   }, [selectedConversation, currentUser]);
@@ -508,7 +562,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
     const files = Array.from(event.target.files);
     const validFiles = files.filter(validateFile);
-    
+
     // Limiter le nombre de fichiers
     if (validFiles.length > MAX_ATTACHMENTS) {
       alert(t('messaging.attachments.errorTooManyFiles'));
@@ -538,19 +592,19 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   }, [previewFile]);
 
   const handleEmojiSelect = (emoji: any) => {
-    setNewMessage(prev => prev + emoji.native);
+    setNewMessage((prev) => prev + emoji.native);
     setEmojiAnchorEl(null);
   };
 
   const handleTranslate = async (messageId: string) => {
     try {
-      const message = messages.find(m => m.id === messageId);
+      const message = messages.find((m) => m.id === messageId);
       if (!message) return;
 
       const response = await fetch('https://translation.googleapis.com/language/translate/v2', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           q: message.content,
@@ -574,7 +628,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   const handleReaction = async (messageId: string, emoji: string) => {
     if (!currentUser) return;
 
-    const message = messages.find(m => m.id === messageId);
+    const message = messages.find((m) => m.id === messageId);
     if (!message) return;
 
     // Effacer le timeout précédent s'il existe
@@ -586,7 +640,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     reactionTimeoutRef.current[messageId] = setTimeout(async () => {
       const reactions = message.reactions || {};
       const userReactions = reactions[currentUser.uid] || [];
-      
+
       if (userReactions.includes(emoji)) {
         userReactions.splice(userReactions.indexOf(emoji), 1);
       } else if (userReactions.length < MAX_REACTIONS_PER_USER) {
@@ -610,12 +664,13 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
   // Mémoriser les fonctions de callback pour éviter les re-rendus inutiles
   const handleSendMessage = useCallback(async () => {
-    if ((!newMessage.trim() && attachments.length === 0) || !selectedConversation || !currentUser) return;
+    if ((!newMessage.trim() && attachments.length === 0) || !selectedConversation || !currentUser)
+      return;
 
     setLoading(true);
     try {
       const sanitizedContent = sanitizeMessageContent(newMessage);
-      
+
       if (attachments.length > MAX_ATTACHMENTS) {
         showNotification(t('messaging.attachments.errorTooManyFiles'), 'error');
         return;
@@ -629,15 +684,16 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
           const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
           const storageRef = ref(storage, `messages/${selectedConversation}/${fileName}`);
-          
+
           const uploadTask = uploadBytesResumable(storageRef, file);
-          
+
           if ('on' in uploadTask && typeof uploadTask.on === 'function') {
             const task = uploadTask as unknown as UploadTask;
-            task.on('state_changed',
+            task.on(
+              'state_changed',
               (snapshot: { bytesTransferred: number; totalBytes: number }) => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadProgress(prev => ({ ...prev, [file.name]: progress }));
+                setUploadProgress((prev) => ({ ...prev, [file.name]: progress }));
               },
               (error: Error) => {
                 console.error('Erreur de téléchargement:', error);
@@ -684,7 +740,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       setUploadProgress({});
       showNotification(t('messaging.messageSent'), 'success');
     } catch (error) {
-      console.error('Erreur lors de l\'envoi du message:', error);
+      console.error("Erreur lors de l'envoi du message:", error);
       showNotification(t('messaging.error'), 'error');
     } finally {
       setLoading(false);
@@ -692,112 +748,124 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   }, [newMessage, attachments, selectedConversation, currentUser, t]);
 
   // Mémoriser le rendu du contenu du message
-  const renderMessageContent = useCallback((message: Message) => {
-    return (
-      <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body1">
-            {showTranslations.has(message.id) && message.translations?.[i18n.language]
-              ? message.translations[i18n.language]
-              : message.content}
-          </Typography>
-          {shouldShowTranslateButton(message) && (
-            <Tooltip title={t('messaging.translation.show')}>
-              <IconButton
-                size="small"
-                onClick={() => translateMessage(message)}
-                disabled={translatingMessages.has(message.id)}
-              >
-                <TranslateIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
-        {message.attachments?.map((attachment, index) => (
-          <Box key={index} sx={{ mt: 1 }}>
-            {attachment.type === 'image' ? (
-              <img
-                src={attachment.url}
-                alt={attachment.name}
-                style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
-              />
-            ) : (
-              <Button
-                startIcon={<FileIcon />}
-                href={attachment.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {attachment.name}
-              </Button>
+  const renderMessageContent = useCallback(
+    (message: Message) => {
+      return (
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="body1">
+              {showTranslations.has(message.id) && message.translations?.[i18n.language]
+                ? message.translations[i18n.language]
+                : message.content}
+            </Typography>
+            {shouldShowTranslateButton(message) && (
+              <Tooltip title={t('messaging.translation.show')}>
+                <IconButton
+                  size="small"
+                  onClick={() => translateMessage(message)}
+                  disabled={translatingMessages.has(message.id)}
+                >
+                  <TranslateIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             )}
           </Box>
-        ))}
-        {message.reactions && Object.entries(message.reactions).length > 0 && (
-          <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
-            {Object.entries(message.reactions).map(([userId, emojis]) => (
-              <Chip
-                key={userId}
-                label={emojis.join(' ')}
-                size="small"
-                onClick={(e) => handleReaction(message.id, emojis[0])}
-              />
-            ))}
-          </Stack>
-        )}
-      </Box>
-    );
-  }, [showTranslations, i18n.language, handleReaction, t, translatingMessages]);
+          {message.attachments?.map((attachment, index) => (
+            <Box key={index} sx={{ mt: 1 }}>
+              {attachment.type === 'image' ? (
+                <img
+                  src={attachment.url}
+                  alt={attachment.name}
+                  style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+                />
+              ) : (
+                <Button
+                  startIcon={<FileIcon />}
+                  href={attachment.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {attachment.name}
+                </Button>
+              )}
+            </Box>
+          ))}
+          {message.reactions && Object.entries(message.reactions).length > 0 && (
+            <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+              {Object.entries(message.reactions).map(([userId, emojis]) => (
+                <Chip
+                  key={userId}
+                  label={emojis.join(' ')}
+                  size="small"
+                  onClick={(e) => handleReaction(message.id, emojis[0])}
+                />
+              ))}
+            </Stack>
+          )}
+        </Box>
+      );
+    },
+    [showTranslations, i18n.language, handleReaction, t, translatingMessages, shouldShowTranslateButton, translateMessage]
+  );
 
   // Mémoriser le composant de message pour éviter les re-rendus inutiles
-  const MessageItem = useCallback(({ message }: { message: Message }) => {
-    const isOwnMessage = message.senderId === currentUser?.uid;
-    
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
-          mb: 2
-        }}
-      >
-        <Paper
+  const MessageItem = useCallback(
+    ({ message }: { message: Message }) => {
+      const isOwnMessage = message.senderId === currentUser?.uid;
+      const isTranslatable = !isOwnMessage && message.content && message.content.trim().length > 0;
+
+      return (
+        <Box
           sx={{
-            p: 2,
-            maxWidth: '70%',
-            backgroundColor: isOwnMessage ? 'primary.light' : 'grey.100',
-            color: isOwnMessage ? 'white' : 'text.primary'
+            display: 'flex',
+            justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
+            mb: 2
           }}
         >
-          {renderMessageContent(message)}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
-            <Typography variant="caption" sx={{ opacity: 0.7 }}>
-              {message.senderName}
-            </Typography>
-            <Box>
-              <IconButton
-                size="small"
-                onClick={(e) => setTranslateAnchorEl(e.currentTarget)}
-              >
-                <TranslateIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={(e) => setEmojiAnchorEl(e.currentTarget)}
-              >
-                <EmojiIcon fontSize="small" />
-              </IconButton>
+          <Paper
+            sx={{
+              p: 2,
+              maxWidth: '70%',
+              backgroundColor: isOwnMessage ? 'primary.light' : 'grey.100',
+              color: isOwnMessage ? 'white' : 'text.primary'
+            }}
+          >
+            {renderMessageContent(message)}
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}
+            >
+              <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                {message.senderName}
+                {isTranslatable && <span title={t('messaging.translatable')}> 🌐</span>}
+              </Typography>
+              <Box>
+                {isTranslatable && (
+                  <Button 
+                    size="small" 
+                    startIcon={<TranslateIcon fontSize="small" />}
+                    onClick={() => translateMessage(message)}
+                    disabled={translatingMessages.has(message.id)}
+                    sx={{ mr: 1, fontSize: '0.75rem' }}
+                  >
+                    {t('messaging.translate.button')}
+                  </Button>
+                )}
+                <IconButton size="small" onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
+                  <EmojiIcon fontSize="small" />
+                </IconButton>
+              </Box>
             </Box>
-          </Box>
-        </Paper>
-      </Box>
-    );
-  }, [currentUser, renderMessageContent]);
+          </Paper>
+        </Box>
+      );
+    },
+    [currentUser, renderMessageContent, t, translatingMessages, translateMessage]
+  );
 
   // Fonction pour traduire un message
   const translateMessage = async (message: Message) => {
     if (!message.content || translatingMessages.has(message.id)) return;
-    
+
     const targetLang = i18n.language;
     if (message.translations?.[targetLang]) {
       toggleTranslation(message.id);
@@ -805,7 +873,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     }
 
     try {
-      setTranslatingMessages(prev => new Set([...prev, message.id]));
+      setTranslatingMessages((prev) => new Set([...prev, message.id]));
+      showNotification(t('messaging.translation.inProgress'), 'success');
 
       // Utiliser une clé API sécurisée depuis les variables d'environnement
       const apiKey = process.env.REACT_APP_GOOGLE_TRANSLATE_API_KEY;
@@ -816,7 +885,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       const response = await fetch('https://translation.googleapis.com/language/translate/v2', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           q: message.content,
@@ -844,7 +913,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       console.error('Erreur lors de la traduction:', error);
       alert(t('messaging.translationError'));
     } finally {
-      setTranslatingMessages(prev => {
+      setTranslatingMessages((prev) => {
         const next = new Set(prev);
         next.delete(message.id);
         return next;
@@ -854,7 +923,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
   // Fonction pour basculer l'affichage de la traduction
   const toggleTranslation = (messageId: string) => {
-    setShowTranslations(prev => {
+    setShowTranslations((prev) => {
       const next = new Set(prev);
       if (next.has(messageId)) {
         next.delete(messageId);
@@ -865,18 +934,42 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     });
   };
 
+  // Fonction pour activer/désactiver la traduction automatique
+  const toggleAutoTranslate = () => {
+    setAutoTranslate(prev => !prev);
+    showNotification(
+      autoTranslate 
+        ? t('messaging.translation.autoDisabled')
+        : t('messaging.translation.autoEnabled'),
+      'success'
+    );
+  };
+
+  // Effet pour traduire automatiquement les nouveaux messages
+  useEffect(() => {
+    if (autoTranslate && messages.length > 0) {
+      messages.forEach(message => {
+        if (shouldShowTranslateButton(message)) {
+          translateMessage(message);
+        }
+      });
+    }
+  }, [autoTranslate, messages, shouldShowTranslateButton, translateMessage]);
+
   // Fonction pour détecter si un message doit être traduit
   const shouldShowTranslateButton = (message: Message) => {
-    return message.senderId !== currentUser?.uid && // Ne pas traduire ses propres messages
-           !translatingMessages.has(message.id) && // Ne pas montrer pendant la traduction
-           (!message.translations?.[i18n.language] || // Pas encore traduit dans la langue actuelle
-            !showTranslations.has(message.id)); // Ou la traduction n'est pas affichée
+    return (
+      message.senderId !== currentUser?.uid && // Ne pas traduire ses propres messages
+      !translatingMessages.has(message.id) && // Ne pas montrer pendant la traduction
+      (!message.translations?.[i18n.language] || // Pas encore traduit dans la langue actuelle
+        !showTranslations.has(message.id))
+    ); // Ou la traduction n'est pas affichée
   };
 
   // Nettoyer les timeouts lors du démontage
   useEffect(() => {
     return () => {
-      Object.values(reactionTimeoutRef.current).forEach(timeout => {
+      Object.values(reactionTimeoutRef.current).forEach((timeout) => {
         clearTimeout(timeout);
       });
     };
@@ -923,13 +1016,13 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         return;
       }
 
-      const newMessages = snapshot.docs.map(doc => ({
+      const newMessages = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data()
       })) as Message[];
 
       setLastLoadedMessage(newMessages[newMessages.length - 1].createdAt as any);
-      setMessages(prev => [...prev, ...newMessages.reverse()]);
+      setMessages((prev) => [...prev, ...newMessages.reverse()]);
     } catch (error) {
       console.error('Erreur lors du chargement des messages:', error);
       showNotification(t('messaging.loadError'), 'error');
@@ -950,46 +1043,49 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   useEffect(() => {
     const loadAvailableContacts = async () => {
       if (!currentUser) return;
-      
+
       try {
         const userData = await userService.getUserById(currentUser.uid);
         if (!userData) return;
-        
+
         const contacts = [];
-        
+
         // Si l'utilisateur est un jeune, charger ses référents
         if (userData.role === 'jeune' && userData.assignedReferents?.length) {
           const referents = await Promise.all(
-            userData.assignedReferents.map(id => userService.getUserById(id))
+            userData.assignedReferents.map((id) => userService.getUserById(id))
           );
           contacts.push(...referents.filter(Boolean));
         }
-        
+
         // Si l'utilisateur est un référent, charger ses jeunes
-        if ((userData.role === 'referent' || userData.role === 'coreferent') && userData.assignedYouths?.length) {
+        if (
+          (userData.role === 'referent' || userData.role === 'coreferent') &&
+          userData.assignedYouths?.length
+        ) {
           const youths = await Promise.all(
-            userData.assignedYouths.map(id => userService.getUserById(id))
+            userData.assignedYouths.map((id) => userService.getUserById(id))
           );
           contacts.push(...youths.filter(Boolean));
         }
-        
+
         setAvailableContacts(contacts);
       } catch (error) {
         console.error('Erreur lors du chargement des contacts:', error);
       }
     };
-    
+
     loadAvailableContacts();
   }, [currentUser]);
-  
+
   // Fonction pour démarrer une nouvelle conversation
   const startNewConversation = async (otherUserId: string) => {
     if (!currentUser) return;
-    
+
     try {
       setLoading(true);
       const conversationId = await createConversation(currentUser.uid, otherUserId);
-      
+
       if (conversationId) {
         setSelectedConversation(conversationId);
         setShowContactsDialog(false);
@@ -1007,9 +1103,9 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   // Ajouter le bouton pour créer une nouvelle conversation
   const renderNewConversationButton = () => {
     return (
-      <Fab 
-        color="primary" 
-        size="small" 
+      <Fab
+        color="primary"
+        size="small"
         onClick={() => setShowContactsDialog(true)}
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
       >
@@ -1017,7 +1113,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       </Fab>
     );
   };
-  
+
   // Ajouter la boîte de dialogue pour sélectionner un contact
   const renderContactsDialog = () => {
     return (
@@ -1033,16 +1129,16 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             <Typography>{t('messaging.noContacts')}</Typography>
           ) : (
             <List>
-              {availableContacts.map(contact => (
-                <ListItem 
-                  button 
-                  key={contact.uid} 
+              {availableContacts.map((contact) => (
+                <ListItem
+                  button
+                  key={contact.uid}
                   onClick={() => startNewConversation(contact.uid)}
                 >
                   <ListItemAvatar>
                     <Avatar>{contact.displayName?.[0] || '?'}</Avatar>
                   </ListItemAvatar>
-                  <ListItemText 
+                  <ListItemText
                     primary={contact.displayName || contact.email}
                     secondary={t(`roles.${contact.role}`)}
                   />
@@ -1090,7 +1186,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             <Typography variant="h6">{t('messaging.conversations')}</Typography>
           </Box>
           <List sx={{ p: 0 }}>
-            {conversations.map(conv => (
+            {conversations.map((conv) => (
               <ListItem
                 button
                 key={conv.id}
@@ -1099,10 +1195,12 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                 sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}
               >
                 <ListItemAvatar>
-                  <Avatar>{conv.participants.find(p => p !== currentUser?.uid)?.[0] || '?'}</Avatar>
+                  <Avatar>
+                    {conv.participants.find((p) => p !== currentUser?.uid)?.[0] || '?'}
+                  </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={conv.participants.find(p => p !== currentUser?.uid)}
+                  primary={conv.participants.find((p) => p !== currentUser?.uid)}
                   secondary={
                     <Typography
                       component="span"
@@ -1113,16 +1211,14 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
-                        maxWidth: 200,
+                        maxWidth: 200
                       }}
                     >
                       {conv.lastMessage}
                     </Typography>
                   }
                 />
-                {conv.unreadCount > 0 && (
-                  <Badge badgeContent={conv.unreadCount} color="primary" />
-                )}
+                {conv.unreadCount > 0 && <Badge badgeContent={conv.unreadCount} color="primary" />}
               </ListItem>
             ))}
           </List>
@@ -1133,10 +1229,33 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         <Paper sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           {selectedConversation ? (
             <>
-              <Box 
-                sx={{ 
-                  flex: 1, 
-                  overflow: 'auto', 
+              <Box sx={{ 
+                p: 1, 
+                display: 'flex', 
+                justifyContent: 'flex-end', 
+                borderBottom: '1px solid rgba(0, 0, 0, 0.12)' 
+              }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={autoTranslate}
+                      onChange={toggleAutoTranslate}
+                      color="primary"
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography variant="caption">
+                      {t('messaging.translation.auto')}
+                    </Typography>
+                  }
+                  sx={{ mr: 1 }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  overflow: 'auto',
                   p: 2,
                   display: 'flex',
                   flexDirection: 'column-reverse'
@@ -1161,7 +1280,9 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                       <Chip
                         key={index}
                         label={file.name}
-                        onDelete={() => setAttachments(prev => prev.filter((_, i) => i !== index))}
+                        onDelete={() =>
+                          setAttachments((prev) => prev.filter((_, i) => i !== index))
+                        }
                         onClick={() => handlePreviewFile(file)}
                         icon={file.type.startsWith('image/') ? <ImageIcon /> : <FileIcon />}
                       />
@@ -1182,10 +1303,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                     onChange={handleFileSelect}
                     multiple
                   />
-                  <IconButton
-                    color="primary"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
+                  <IconButton color="primary" onClick={() => fileInputRef.current?.click()}>
                     <AttachFileIcon />
                   </IconButton>
                   <TextField
@@ -1197,10 +1315,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     disabled={loading}
                   />
-                  <IconButton
-                    color="primary"
-                    onClick={(e) => setEmojiAnchorEl(e.currentTarget)}
-                  >
+                  <IconButton color="primary" onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
                     <EmojiIcon />
                   </IconButton>
                   <IconButton
@@ -1238,11 +1353,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
           open={Boolean(emojiAnchorEl)}
           onClose={() => setEmojiAnchorEl(null)}
         >
-          <Picker
-            data={data}
-            onEmojiSelect={handleEmojiSelect}
-            theme="light"
-          />
+          <Picker data={data} onEmojiSelect={handleEmojiSelect} theme="light" />
         </Menu>
 
         <Menu
@@ -1286,4 +1397,4 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   );
 };
 
-export default Messaging; 
+export default Messaging;

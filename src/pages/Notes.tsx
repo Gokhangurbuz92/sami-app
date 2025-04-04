@@ -16,12 +16,9 @@ const Notes: React.FC = () => {
         </Typography>
         <NotesList />
       </Paper>
-      <NoteForm
-        open={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-      />
+      <NoteForm open={isFormOpen} onClose={() => setIsFormOpen(false)} />
     </Box>
   );
 };
 
-export default Notes; 
+export default Notes;

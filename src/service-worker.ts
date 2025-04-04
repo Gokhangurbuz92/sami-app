@@ -2,7 +2,7 @@
 
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
-import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
+import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, NetworkFirst } from 'workbox-strategies';
 
@@ -15,7 +15,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 // Cache pour les fichiers statiques
 registerRoute(
-  ({ request }) => 
+  ({ request }) =>
     request.destination === 'style' ||
     request.destination === 'script' ||
     request.destination === 'image',
@@ -24,9 +24,9 @@ registerRoute(
     plugins: [
       new ExpirationPlugin({
         maxEntries: 60,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
-      }),
-    ],
+        maxAgeSeconds: 30 * 24 * 60 * 60 // 30 jours
+      })
+    ]
   })
 );
 
@@ -38,9 +38,9 @@ registerRoute(
     plugins: [
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 24 * 60 * 60, // 24 heures
-      }),
-    ],
+        maxAgeSeconds: 24 * 60 * 60 // 24 heures
+      })
+    ]
   })
 );
 
@@ -52,9 +52,9 @@ registerRoute(
     plugins: [
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 24 * 60 * 60, // 24 heures
-      }),
-    ],
+        maxAgeSeconds: 24 * 60 * 60 // 24 heures
+      })
+    ]
   })
 );
 
@@ -62,4 +62,4 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-}); 
+});

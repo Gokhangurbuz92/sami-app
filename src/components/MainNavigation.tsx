@@ -29,7 +29,7 @@ import {
   Chat
 } from '@mui/icons-material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from './LanguageSelector';
 
 const drawerWidth = 240;
 
@@ -45,56 +45,49 @@ export function MainNavigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { 
-    currentUser, 
-    logout, 
-    checkPermission, 
-    isAdmin, 
-    isReferent, 
-    isJeune
-  } = useAuth();
+  const { currentUser, logout, checkPermission, isAdmin, isReferent, isJeune } = useAuth();
 
   // Définition des éléments de menu avec leurs permissions
   const allMenuItems: MenuItem[] = [
-    { 
-      text: t('navigation.home'), 
-      icon: <Home />, 
+    {
+      text: t('navigation.home'),
+      icon: <Home />,
       path: '/',
       permissionRequired: 'canAccessDashboard'
     },
-    { 
-      text: t('navigation.planning'), 
-      icon: <CalendarMonth />, 
+    {
+      text: `📅 ${t('navigation.planning')}`,
+      icon: <CalendarMonth />,
       path: '/planning',
       permissionRequired: 'canAccessAppointments'
     },
-    { 
-      text: t('navigation.notes'), 
-      icon: <Note />, 
+    {
+      text: `📝 ${t('navigation.notes')}`,
+      icon: <Note />,
       path: '/notes',
       permissionRequired: 'canAccessNotes'
     },
-    { 
-      text: t('navigation.notifications'), 
-      icon: <NotificationsIcon />, 
+    {
+      text: `🔔 ${t('navigation.notifications')}`,
+      icon: <NotificationsIcon />,
       path: '/notifications',
       permissionRequired: 'canAccessNotifications'
     },
-    { 
-      text: t('navigation.profile'), 
-      icon: <AccountCircle />, 
+    {
+      text: `👤 ${t('navigation.profile')}`,
+      icon: <AccountCircle />,
       path: '/profile'
     },
-    { 
-      text: t('navigation.messaging'), 
-      icon: <Chat />, 
+    {
+      text: `✉️ ${t('navigation.messaging')}`,
+      icon: <Chat />,
       path: '/messaging',
       permissionRequired: 'canAccessMessaging',
-      roles: ['jeune', 'referent', 'coreferent']  // Exclure les admins
+      roles: ['jeune', 'referent', 'coreferent'] // Exclure les admins
     },
-    { 
-      text: t('navigation.userManagement'), 
-      icon: <People />, 
+    {
+      text: t('navigation.userManagement'),
+      icon: <People />,
       path: '/admin/users',
       permissionRequired: 'canAccessUserManagement',
       roles: ['admin']
@@ -102,7 +95,7 @@ export function MainNavigation() {
   ];
 
   // Filtrer les éléments de menu en fonction des permissions de l'utilisateur
-  const filteredMenuItems = allMenuItems.filter(item => {
+  const filteredMenuItems = allMenuItems.filter((item) => {
     // Si aucune permission ou rôle n'est requis, afficher l'élément
     if (!item.permissionRequired && !item.roles) {
       return true;
@@ -118,7 +111,7 @@ export function MainNavigation() {
       if (isAdmin && item.roles.includes('admin')) {
         return true;
       }
-      if ((isReferent) && (item.roles.includes('referent') || item.roles.includes('coreferent'))) {
+      if (isReferent && (item.roles.includes('referent') || item.roles.includes('coreferent'))) {
         return true;
       }
       if (isJeune && item.roles.includes('jeune')) {
@@ -156,15 +149,12 @@ export function MainNavigation() {
       <Divider />
       <List>
         {filteredMenuItems.map((item) => (
-          <ListItemButton
-            key={item.text}
-            onClick={() => handleNavigation(item.path)}
-          >
+          <ListItemButton key={item.text} onClick={() => handleNavigation(item.path)}>
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItemButton>
         ))}
-        
+
         {isAdmin && (
           <ListItem button component={Link} to="/admin-assignation">
             <ListItemIcon>
@@ -173,7 +163,7 @@ export function MainNavigation() {
             <ListItemText primary="Assignation" />
           </ListItem>
         )}
-        
+
         <Divider />
         <ListItemButton onClick={handleLogout}>
           <ListItemIcon>
@@ -192,7 +182,7 @@ export function MainNavigation() {
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          ml: { sm: `${drawerWidth}px` }
         }}
       >
         <Toolbar>
@@ -221,11 +211,11 @@ export function MainNavigation() {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true,
+            keepMounted: true
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
           }}
         >
           {drawer}
@@ -234,7 +224,7 @@ export function MainNavigation() {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
           }}
           open
         >
@@ -250,4 +240,4 @@ export function MainNavigation() {
       </Box>
     </Box>
   );
-} 
+}

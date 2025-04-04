@@ -32,4 +32,4 @@ const MessagingPage: React.FC = () => {
   );
 };
 
-export default MessagingPage; 
+export default MessagingPage;

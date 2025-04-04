@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Avatar, 
-  Card, 
-  CardContent, 
-  Grid, 
+import {
+  Box,
+  Typography,
+  Avatar,
+  Card,
+  CardContent,
+  Grid,
   Skeleton,
-  Link,
-  Divider
+  Link
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
@@ -43,13 +42,13 @@ export default function AssignedReferents() {
       try {
         // Récupérer les données du jeune pour obtenir ses référents assignés
         const jeuneDoc = await userService.getUserById(currentUser.uid);
-        
+
         if (!jeuneDoc || !jeuneDoc.assignedReferents || jeuneDoc.assignedReferents.length === 0) {
           setReferents([]);
           setLoading(false);
           return;
         }
-        
+
         // Utiliser fetchReferents pour obtenir les détails des référents
         const referentsList = await fetchReferents(jeuneDoc.assignedReferents);
         setReferents(referentsList as Referent[]);
@@ -94,9 +93,7 @@ export default function AssignedReferents() {
           <Typography variant="h6" gutterBottom>
             {t('dashboard.referents.title')}
           </Typography>
-          <Typography color="error">
-            {error}
-          </Typography>
+          <Typography color="error">{error}</Typography>
         </CardContent>
       </Card>
     );
@@ -110,25 +107,21 @@ export default function AssignedReferents() {
         </Typography>
 
         {referents.length === 0 ? (
-          <Typography>
-            {t('dashboard.referents.none')}
-          </Typography>
+          <Typography>{t('dashboard.referents.none')}</Typography>
         ) : (
           <Grid container spacing={2}>
             {referents.map((referent) => (
               <Grid item xs={12} sm={6} key={referent.uid}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar 
-                    src={referent.photoURL} 
+                  <Avatar
+                    src={referent.photoURL}
                     alt={referent.displayName}
                     sx={{ width: 50, height: 50 }}
                   >
                     {referent.displayName.charAt(0).toUpperCase()}
                   </Avatar>
                   <Box sx={{ ml: 2 }}>
-                    <Typography variant="subtitle1">
-                      {referent.displayName}
-                    </Typography>
+                    <Typography variant="subtitle1">{referent.displayName}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       {t(`roles.${referent.role}`)}
                     </Typography>
@@ -157,4 +150,4 @@ export default function AssignedReferents() {
       </CardContent>
     </Card>
   );
-} 
+}

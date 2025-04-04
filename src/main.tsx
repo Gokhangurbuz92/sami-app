@@ -17,12 +17,12 @@ const updateSW = registerSW({
     }
   },
   onOfflineReady() {
-    console.log('L\'application est prête pour une utilisation hors ligne');
-  },
+    console.log("L'application est prête pour une utilisation hors ligne");
+  }
 });
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-); 
+);

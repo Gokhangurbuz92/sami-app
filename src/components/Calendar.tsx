@@ -1,11 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar as BigCalendar, momentLocalizer, SlotInfo, Event } from 'react-big-calendar';
 import moment from 'moment';
 import { useAuth } from '../contexts/AuthContext';
-import { appointmentService } from '../services/appointmentService';
-import { Appointment } from '../services/appointmentService';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, Chip, Typography, Snackbar, Alert } from '@mui/material';
+import { appointmentService, Appointment } from '../services/appointmentService';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  Typography,
+  Snackbar,
+  Alert
+} from '@mui/material';
 
 interface CalendarEvent {
   title: string;
@@ -28,7 +43,6 @@ const Calendar: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [newEvent, setNewEvent] = useState<{
     title: string;
     description: string;
@@ -42,7 +56,7 @@ const Calendar: React.FC = () => {
     start: '',
     end: '',
     status: 'scheduled',
-    participants: [],
+    participants: []
   });
 
   // Constantes de validation
@@ -111,7 +125,7 @@ const Calendar: React.FC = () => {
     try {
       setLoading(true);
       const appointments = await appointmentService.getAppointments(user.uid);
-      const calendarEvents = appointments.map(appointment => ({
+      const calendarEvents = appointments.map((appointment) => ({
         title: appointment.title,
         start: appointment.start,
         end: appointment.end,
@@ -134,24 +148,23 @@ const Calendar: React.FC = () => {
     loadAppointments();
   }, [loadAppointments]);
 
-  const handleDateSelect = (selectInfo: any) => {
-    setSelectedDate(selectInfo.start);
+  const handleDateSelect = (selectInfo: SlotInfo) => {
     setNewEvent({
       title: '',
       description: '',
-      start: selectInfo.startStr,
-      end: selectInfo.endStr,
+      start: moment(selectInfo.start).format('YYYY-MM-DDTHH:mm'),
+      end: moment(selectInfo.end).format('YYYY-MM-DDTHH:mm'),
       status: 'scheduled',
-      participants: [],
+      participants: []
     });
     setOpenDialog(true);
   };
 
-  const handleEventClick = async (clickInfo: any) => {
+  const handleEventClick = async (clickInfo: { event: { id: string } }) => {
     if (window.confirm(t('calendar.confirmDelete'))) {
       try {
         await appointmentService.deleteAppointment(clickInfo.event.id);
-        setEvents(events.filter(event => event.resource.id !== clickInfo.event.id));
+        setEvents(events.filter((event) => event.resource.id !== clickInfo.event.id));
         showNotification(t('calendar.success.delete'), 'success');
       } catch (error) {
         console.error('Error deleting appointment:', error);
@@ -162,7 +175,6 @@ const Calendar: React.FC = () => {
 
   const handleDialogClose = () => {
     setOpenDialog(false);
-    setSelectedDate(null);
     setError(null);
     setSuccess(null);
   };
@@ -178,7 +190,7 @@ const Calendar: React.FC = () => {
         description: newEvent.description.trim(),
         status: newEvent.status,
         participants: newEvent.participants,
-        createdBy: user?.uid || '',
+        createdBy: user?.uid || ''
       };
 
       await appointmentService.createAppointment(appointment);
@@ -191,15 +203,25 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const getEventColor = (status: string) => {
-    switch (status) {
+  // Fonction pour obtenir la couleur en fonction du statut
+  const eventStyleGetter = (event: CalendarEvent) => {
+    let backgroundColor;
+    switch (event.resource.status) {
       case 'completed':
-        return '#4caf50';
+        backgroundColor = '#4caf50';
+        break;
       case 'cancelled':
-        return '#f44336';
+        backgroundColor = '#f44336';
+        break;
       default:
-        return '#1976d2';
+        backgroundColor = '#1976d2';
     }
+    
+    return {
+      style: {
+        backgroundColor
+      }
+    };
   };
 
   return (
@@ -239,20 +261,22 @@ const Calendar: React.FC = () => {
         onSelectEvent={handleEventClick}
         height="auto"
         loading={loading}
+        eventPropGetter={eventStyleGetter}
       />
 
       <Dialog open={openDialog} onClose={handleDialogClose} maxWidth="sm" fullWidth>
         <DialogTitle>{t('calendar.addEvent')}</DialogTitle>
         <DialogContent>
           <TextField
-            autoFocus
             margin="dense"
             label={t('calendar.eventTitle')}
             fullWidth
             value={newEvent.title}
             onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
             error={newEvent.title.length > MAX_TITLE_LENGTH}
-            helperText={newEvent.title.length > MAX_TITLE_LENGTH ? t('calendar.errors.titleTooLong') : ''}
+            helperText={
+              newEvent.title.length > MAX_TITLE_LENGTH ? t('calendar.errors.titleTooLong') : ''
+            }
           />
           <TextField
             margin="dense"
@@ -263,14 +287,23 @@ const Calendar: React.FC = () => {
             value={newEvent.description}
             onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
             error={newEvent.description.length > MAX_DESCRIPTION_LENGTH}
-            helperText={newEvent.description.length > MAX_DESCRIPTION_LENGTH ? t('calendar.errors.descriptionTooLong') : ''}
+            helperText={
+              newEvent.description.length > MAX_DESCRIPTION_LENGTH
+                ? t('calendar.errors.descriptionTooLong')
+                : ''
+            }
           />
           <FormControl fullWidth margin="dense">
             <InputLabel>{t('calendar.eventStatus')}</InputLabel>
             <Select
               value={newEvent.status}
               label={t('calendar.eventStatus')}
-              onChange={(e) => setNewEvent({ ...newEvent, status: e.target.value as 'scheduled' | 'completed' | 'cancelled' })}
+              onChange={(e) =>
+                setNewEvent({
+                  ...newEvent,
+                  status: e.target.value as 'scheduled' | 'completed' | 'cancelled'
+                })
+              }
             >
               <MenuItem value="scheduled">{t('calendar.statusScheduled')}</MenuItem>
               <MenuItem value="completed">{t('calendar.statusCompleted')}</MenuItem>
@@ -289,7 +322,7 @@ const Calendar: React.FC = () => {
                   onDelete={() => {
                     setNewEvent({
                       ...newEvent,
-                      participants: newEvent.participants.filter((_, i) => i !== index),
+                      participants: newEvent.participants.filter((_, i) => i !== index)
                     });
                   }}
                 />
@@ -300,15 +333,19 @@ const Calendar: React.FC = () => {
               label={t('calendar.addParticipant')}
               fullWidth
               error={newEvent.participants.length >= MAX_PARTICIPANTS}
-              helperText={newEvent.participants.length >= MAX_PARTICIPANTS ? t('calendar.errors.tooManyParticipants') : ''}
-              onKeyPress={(e) => {
+              helperText={
+                newEvent.participants.length >= MAX_PARTICIPANTS
+                  ? t('calendar.errors.tooManyParticipants')
+                  : ''
+              }
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   const input = e.target as HTMLInputElement;
                   if (input.value.trim() && newEvent.participants.length < MAX_PARTICIPANTS) {
                     setNewEvent({
                       ...newEvent,
-                      participants: [...newEvent.participants, input.value.trim()],
+                      participants: [...newEvent.participants, input.value.trim()]
                     });
                     input.value = '';
                   }
@@ -319,9 +356,9 @@ const Calendar: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>{t('common.cancel')}</Button>
-          <Button 
-            onClick={handleAddEvent} 
-            variant="contained" 
+          <Button
+            onClick={handleAddEvent}
+            variant="contained"
             color="primary"
             disabled={!newEvent.title.trim()}
           >
@@ -333,4 +370,4 @@ const Calendar: React.FC = () => {
   );
 };
 
-export default Calendar; 
+export default Calendar;

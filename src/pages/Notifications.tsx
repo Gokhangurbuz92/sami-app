@@ -1,4 +1,14 @@
-import { Box, Paper, Typography, Grid, List, ListItem, ListItemText, ListItemIcon, Divider } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider
+} from '@mui/material';
 import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
@@ -13,13 +23,13 @@ export default function Notifications() {
             <Typography variant="h6" gutterBottom>
               {t('navigation.notifications')}
             </Typography>
-            
+
             <List>
               <ListItem>
                 <ListItemIcon>
                   <NotificationsIcon color="primary" />
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary="Nouveau rendez-vous"
                   secondary="Un nouveau rendez-vous a été planifié pour demain"
                 />
@@ -29,7 +39,7 @@ export default function Notifications() {
                 <ListItemIcon>
                   <NotificationsIcon color="primary" />
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary="Mise à jour du profil"
                   secondary="Le profil d'un jeune a été mis à jour"
                 />
@@ -39,10 +49,7 @@ export default function Notifications() {
                 <ListItemIcon>
                   <NotificationsIcon color="primary" />
                 </ListItemIcon>
-                <ListItemText 
-                  primary="Nouvelle note"
-                  secondary="Une nouvelle note a été ajoutée"
-                />
+                <ListItemText primary="Nouvelle note" secondary="Une nouvelle note a été ajoutée" />
               </ListItem>
             </List>
           </Paper>
@@ -50,4 +57,4 @@ export default function Notifications() {
       </Grid>
     </Box>
   );
-} 
+}

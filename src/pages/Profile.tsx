@@ -11,16 +11,18 @@ export default function Profile() {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center',
-              mb: 3
-            }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                mb: 3
+              }}
+            >
               <Avatar
-                sx={{ 
-                  width: 100, 
-                  height: 100, 
+                sx={{
+                  width: 100,
+                  height: 100,
                   mb: 2,
                   bgcolor: 'primary.main'
                 }}
@@ -30,12 +32,7 @@ export default function Profile() {
               <Typography variant="h6" gutterBottom>
                 {user?.email}
               </Typography>
-              <Button 
-                variant="outlined" 
-                color="error" 
-                onClick={signOut}
-                sx={{ mt: 2 }}
-              >
+              <Button variant="outlined" color="error" onClick={signOut} sx={{ mt: 2 }}>
                 {t('common.logout')}
               </Button>
             </Box>
@@ -45,13 +42,11 @@ export default function Profile() {
               <Typography variant="subtitle1" gutterBottom>
                 Informations du profil
               </Typography>
-              <Typography color="text.secondary">
-                Plus d'informations à venir...
-              </Typography>
+              <Typography color="text.secondary">Plus d&apos;informations à venir...</Typography>
             </Box>
           </Paper>
         </Grid>
       </Grid>
     </Box>
   );
-} 
+}

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
+import {
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
@@ -20,7 +20,7 @@ interface User extends FirebaseUser {
 // Définition des permissions en fonction des rôles
 export interface RolePermissions {
   canAccessDashboard: boolean;
-  canAccessYouths: boolean;  
+  canAccessYouths: boolean;
   canAccessReferents: boolean;
   canAccessMessaging: boolean;
   canAccessMessagingWithYouths: boolean;
@@ -33,7 +33,12 @@ export interface RolePermissions {
 
 interface AuthContextType {
   currentUser: User | null;
-  signUp: (email: string, password: string, displayName: string, role: FirestoreUser['role']) => Promise<User>;
+  signUp: (
+    email: string,
+    password: string,
+    displayName: string,
+    role: FirestoreUser['role']
+  ) => Promise<User>;
   signIn: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -67,11 +72,21 @@ const DEFAULT_PERMISSIONS: RolePermissions = {
 
 const AuthContext = createContext<AuthContextType>({
   currentUser: null,
-  signUp: async () => { throw new Error('Not implemented'); },
-  signIn: async () => { throw new Error('Not implemented'); },
-  logout: async () => { throw new Error('Not implemented'); },
-  resetPassword: async () => { throw new Error('Not implemented'); },
-  signInWithGoogle: async () => { throw new Error('Not implemented'); },
+  signUp: async () => {
+    throw new Error('Not implemented');
+  },
+  signIn: async () => {
+    throw new Error('Not implemented');
+  },
+  logout: async () => {
+    throw new Error('Not implemented');
+  },
+  resetPassword: async () => {
+    throw new Error('Not implemented');
+  },
+  signInWithGoogle: async () => {
+    throw new Error('Not implemented');
+  },
   loading: true,
   error: null,
   userRole: null,
@@ -151,7 +166,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (!userPermissions) return false;
     return userPermissions[permission];
   };
-  
+
   // Boolean helpers pour vérifier le rôle facilement
   const isAdmin = userRole === 'admin';
   const isReferent = userRole === 'referent' || userRole === 'coreferent';
@@ -161,7 +176,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Observer les changements d'authentification
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user as User | null);
-      
+
       if (user) {
         try {
           // Récupérer les informations du profil utilisateur depuis Firestore
@@ -174,7 +189,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUserPermissions(DEFAULT_PERMISSIONS);
           }
         } catch (error) {
-          console.error("Erreur lors de la récupération du rôle:", error);
+          console.error('Erreur lors de la récupération du rôle:', error);
           setUserRole(null);
           setUserPermissions(DEFAULT_PERMISSIONS);
         }
@@ -182,29 +197,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUserRole(null);
         setUserPermissions(DEFAULT_PERMISSIONS);
       }
-      
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName: string, role: FirestoreUser['role']): Promise<User> => {
+  const signUp = async (
+    email: string,
+    password: string,
+    displayName: string,
+    role: FirestoreUser['role']
+  ): Promise<User> => {
     try {
       setError(null);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user as User;
-      
+
       await userService.createUser({
         uid: user.uid,
         email: user.email || email,
         displayName,
-        role,
+        role
       });
-      
+
       setUserRole(role);
       setUserPermissions(computePermissions(role));
-      
+
       return user;
     } catch (error) {
       const err = error as Error;
@@ -219,14 +239,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user as User;
-      
+
       // Récupérer les informations du profil utilisateur depuis Firestore
       const userData = await userService.getUserById(user.uid);
       if (userData) {
         setUserRole(userData.role);
         setUserPermissions(computePermissions(userData.role));
       }
-      
+
       return user;
     } catch (error) {
       const err = error as Error;
@@ -241,10 +261,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user as User;
-      
+
       // Vérifier si l'utilisateur existe déjà dans Firestore
       const existingUser = await userService.getUserById(user.uid);
-      
+
       // Si l'utilisateur n'existe pas, créer un document utilisateur
       if (!existingUser) {
         const defaultRole: FirestoreUser['role'] = 'jeune';
@@ -252,7 +272,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           uid: user.uid,
           email: user.email || '',
           displayName: user.displayName || 'Utilisateur Google',
-          role: defaultRole,
+          role: defaultRole
         });
         setUserRole(defaultRole);
         setUserPermissions(computePermissions(defaultRole));
@@ -260,7 +280,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUserRole(existingUser.role);
         setUserPermissions(computePermissions(existingUser.role));
       }
-      
+
       return user;
     } catch (error) {
       const err = error as Error;
@@ -313,9 +333,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkPermission
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
-}; 
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+};

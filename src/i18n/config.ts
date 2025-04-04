@@ -14,7 +14,7 @@ import bn from './locales/bn.json';
 // 📌 Langues supportées et leur direction
 const rtlLanguages = ['ar', 'ps', 'ur', 'fa', 'he'];
 
-export const getTextDirection = (lang: string) => rtlLanguages.includes(lang) ? 'rtl' : 'ltr';
+export const getTextDirection = (lang: string) => (rtlLanguages.includes(lang) ? 'rtl' : 'ltr');
 
 export const isRTL = (lang: string) => getTextDirection(lang) === 'rtl';
 

@@ -1,4 +1,15 @@
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, getDocs, orderBy, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  onSnapshot
+} from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { notificationService } from './notificationService';
 
@@ -17,18 +28,20 @@ export interface Appointment {
 
 export const appointmentService = {
   // Créer un nouveau rendez-vous
-  async createAppointment(appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Appointment> {
+  async createAppointment(
+    appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Appointment> {
     const appointmentRef = await addDoc(collection(db, 'appointments'), {
       ...appointment,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     });
 
     const newAppointment = {
       id: appointmentRef.id,
       ...appointment,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     // Créer une notification pour le nouveau rendez-vous
@@ -47,14 +60,14 @@ export const appointmentService = {
     const appointmentRef = doc(db, 'appointments', id);
     await updateDoc(appointmentRef, {
       ...appointment,
-      updatedAt: new Date(),
+      updatedAt: new Date()
     });
 
     // Créer une notification pour la mise à jour du rendez-vous
     if (appointment.status) {
       const statusMessages = {
         completed: 'a été marqué comme terminé',
-        cancelled: 'a été annulé',
+        cancelled: 'a été annulé'
       };
 
       if (statusMessages[appointment.status]) {
@@ -77,42 +90,34 @@ export const appointmentService = {
   // Récupérer les rendez-vous d'un utilisateur
   async getAppointments(userId: string): Promise<Appointment[]> {
     const appointmentsRef = collection(db, 'appointments');
-    const q = query(
-      appointmentsRef,
-      where('createdBy', '==', userId),
-      orderBy('start', 'desc')
-    );
+    const q = query(appointmentsRef, where('createdBy', '==', userId), orderBy('start', 'desc'));
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       start: doc.data().start.toDate(),
       end: doc.data().end.toDate(),
       createdAt: doc.data().createdAt.toDate(),
-      updatedAt: doc.data().updatedAt.toDate(),
+      updatedAt: doc.data().updatedAt.toDate()
     })) as Appointment[];
   },
 
   // Écouter les rendez-vous en temps réel
   subscribeToAppointments(userId: string, callback: (appointments: Appointment[]) => void) {
     const appointmentsRef = collection(db, 'appointments');
-    const q = query(
-      appointmentsRef,
-      where('createdBy', '==', userId),
-      orderBy('start', 'desc')
-    );
+    const q = query(appointmentsRef, where('createdBy', '==', userId), orderBy('start', 'desc'));
 
     return onSnapshot(q, (snapshot) => {
-      const appointments = snapshot.docs.map(doc => ({
+      const appointments = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         start: doc.data().start.toDate(),
         end: doc.data().end.toDate(),
         createdAt: doc.data().createdAt.toDate(),
-        updatedAt: doc.data().updatedAt.toDate(),
+        updatedAt: doc.data().updatedAt.toDate()
       })) as Appointment[];
       callback(appointments);
     });
   }
-}; 
+};

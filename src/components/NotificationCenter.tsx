@@ -39,7 +39,7 @@ export default function NotificationCenter() {
 
     const unsubscribe = notificationService.subscribeToNotifications(user.uid, (notifs) => {
       setNotifications(notifs);
-      setUnreadCount(notifs.filter(n => !n.read).length);
+      setUnreadCount(notifs.filter((n) => !n.read).length);
     });
 
     return () => unsubscribe();
@@ -102,18 +102,14 @@ export default function NotificationCenter() {
         PaperProps={{
           sx: {
             maxHeight: 400,
-            width: 360,
-          },
+            width: 360
+          }
         }}
       >
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6">{t('notifications.title')}</Typography>
           {unreadCount > 0 && (
-            <Button
-              startIcon={<CheckIcon />}
-              onClick={handleMarkAllAsRead}
-              size="small"
-            >
+            <Button startIcon={<CheckIcon />} onClick={handleMarkAllAsRead} size="small">
               {t('notifications.markAllAsRead')}
             </Button>
           )}
@@ -132,13 +128,11 @@ export default function NotificationCenter() {
               sx={{
                 bgcolor: notification.read ? 'inherit' : 'action.hover',
                 '&:hover': {
-                  bgcolor: 'action.selected',
-                },
+                  bgcolor: 'action.selected'
+                }
               }}
             >
-              <ListItemIcon>
-                {getNotificationIcon(notification.type)}
-              </ListItemIcon>
+              <ListItemIcon>{getNotificationIcon(notification.type)}</ListItemIcon>
               <ListItemText
                 primary={notification.title}
                 secondary={
@@ -170,4 +164,4 @@ export default function NotificationCenter() {
       </Menu>
     </>
   );
-} 
+}

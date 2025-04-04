@@ -17,28 +17,28 @@ import OfflineStatus from './components/OfflineStatus';
 import MessagingPage from './pages/MessagingPage';
 import UserManagement from './components/UserManagement';
 import AdminAssignation from './pages/AdminAssignation';
-import { AdminRoute, ReferentRoute, JeuneRoute, PermissionRoute } from './components/RouteGuards';
+import { AdminRoute, PermissionRoute } from './components/RouteGuards';
 
 // Création du thème avec support RTL
 const createAppTheme = (direction: 'ltr' | 'rtl') =>
   createTheme({
     direction,
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif'
     },
     components: {
       MuiButton: {
         styleOverrides: {
           root: {
-            textTransform: 'none',
-          },
-        },
-      },
-    },
+            textTransform: 'none'
+          }
+        }
+      }
+    }
   });
 
 function AppContent() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser } = useAuth();
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
   const theme = createAppTheme(direction);
 
@@ -68,43 +68,43 @@ function AppContent() {
               {/* Route commune à tous les utilisateurs */}
               <Route path="/" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
-              
+
               {/* Routes communes aux jeunes et aux référents */}
-              <Route 
-                path="/planning" 
+              <Route
+                path="/planning"
                 element={
                   <PermissionRoute requiredPermission="canAccessAppointments">
                     <Planning />
                   </PermissionRoute>
-                } 
+                }
               />
-              <Route 
-                path="/notes" 
+              <Route
+                path="/notes"
                 element={
                   <PermissionRoute requiredPermission="canAccessNotes">
                     <Notes />
                   </PermissionRoute>
-                } 
+                }
               />
-              <Route 
-                path="/notifications" 
+              <Route
+                path="/notifications"
                 element={
                   <PermissionRoute requiredPermission="canAccessNotifications">
                     <Notifications />
                   </PermissionRoute>
-                } 
+                }
               />
-              
+
               {/* Routes spécifiques aux jeunes et référents qui peuvent accéder à la messagerie */}
-              <Route 
-                path="/messaging" 
+              <Route
+                path="/messaging"
                 element={
                   <PermissionRoute requiredPermission="canAccessMessaging">
                     <MessagingPage />
                   </PermissionRoute>
-                } 
+                }
               />
-              
+
               {/* Routes spécifiques aux administrateurs */}
               <Route
                 path="/admin/users"
@@ -114,7 +114,7 @@ function AppContent() {
                   </AdminRoute>
                 }
               />
-              
+
               <Route
                 path="/admin-assignation"
                 element={
@@ -123,7 +123,7 @@ function AppContent() {
                   </AdminRoute>
                 }
               />
-              
+
               {/* Redirection par défaut en fonction du rôle */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -148,4 +148,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

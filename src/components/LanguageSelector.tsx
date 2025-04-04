@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
-import i18n, { getTextDirection } from "../i18n/config";
+import React, { useEffect } from 'react';
+import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import i18n, { getTextDirection } from '../i18n/config';
 
 const languages = [
-  { code: "fr", label: "Français" },
-  { code: "en", label: "English" },
-  { code: "ar", label: "العربية" },
-  { code: "ps", label: "پښتو" },
-  { code: "tr", label: "Türkçe" },
-  { code: "so", label: "Soomaali" },
-  { code: "bn", label: "বাংলা" }
+  { code: 'fr', label: 'Français' },
+  { code: 'en', label: 'English' },
+  { code: 'ar', label: 'العربية' },
+  { code: 'ps', label: 'پښتو' },
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'so', label: 'Soomaali' },
+  { code: 'bn', label: 'বাংলা' }
 ];
 
 const LanguageSelector: React.FC = () => {
-  const currentLang = i18n.language || "fr";
+  const currentLang = i18n.language || 'fr';
 
   useEffect(() => {
     const direction = getTextDirection(currentLang);

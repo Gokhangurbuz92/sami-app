@@ -27,4 +27,4 @@ declare module 'workbox-window' {
     addEventListener(type: string, listener: EventListener): void;
     removeEventListener(type: string, listener: EventListener): void;
   }
-} 
+}

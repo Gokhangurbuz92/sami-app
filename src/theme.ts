@@ -6,39 +6,39 @@ const theme = createTheme({
   direction: isRTL(i18n.language) ? 'rtl' : 'ltr',
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#1976d2'
     },
     secondary: {
-      main: '#dc004e',
+      main: '#dc004e'
     },
     background: {
       default: '#F5F6FA',
-      paper: '#ffffff',
+      paper: '#ffffff'
     },
     text: {
       primary: '#2C3E50',
-      secondary: '#7F8C8D',
+      secondary: '#7F8C8D'
     },
     error: {
       main: '#E74C3C',
       light: '#F1948A',
-      dark: '#C0392B',
+      dark: '#C0392B'
     },
     success: {
       main: '#27AE60',
       light: '#58D68D',
-      dark: '#1E8449',
+      dark: '#1E8449'
     },
     warning: {
       main: '#F1C40F',
       light: '#F4D03F',
-      dark: '#D4AC0D',
+      dark: '#D4AC0D'
     },
     info: {
       main: '#3498DB',
       light: '#5DADE2',
-      dark: '#2980B9',
-    },
+      dark: '#2980B9'
+    }
   },
   typography: {
     fontFamily: [
@@ -48,130 +48,130 @@ const theme = createTheme({
       'Roboto',
       '"Helvetica Neue"',
       'Arial',
-      'sans-serif',
+      'sans-serif'
     ].join(','),
     h1: {
       fontSize: '2.5rem',
       fontWeight: 600,
-      color: '#1B4B82',
+      color: '#1B4B82'
     },
     h2: {
       fontSize: '2rem',
       fontWeight: 600,
-      color: '#1B4B82',
+      color: '#1B4B82'
     },
     h3: {
       fontSize: '1.75rem',
       fontWeight: 600,
-      color: '#1B4B82',
+      color: '#1B4B82'
     },
     h4: {
       fontSize: '1.5rem',
       fontWeight: 500,
-      color: '#1B4B82',
+      color: '#1B4B82'
     },
     h5: {
       fontSize: '1.25rem',
       fontWeight: 500,
-      color: '#1B4B82',
+      color: '#1B4B82'
     },
     h6: {
       fontSize: '1rem',
       fontWeight: 500,
-      color: '#1B4B82',
+      color: '#1B4B82'
     },
     body1: {
       fontSize: '1rem',
-      lineHeight: 1.5,
+      lineHeight: 1.5
     },
     body2: {
       fontSize: '0.875rem',
-      lineHeight: 1.5,
-    },
+      lineHeight: 1.5
+    }
   },
   components: {
     MuiTextField: {
       defaultProps: {
-        variant: 'outlined',
-      },
+        variant: 'outlined'
+      }
     },
     MuiButton: {
       defaultProps: {
-        variant: 'contained',
+        variant: 'contained'
       },
       styleOverrides: {
         root: {
           borderRadius: 8,
           textTransform: 'none',
           fontWeight: 500,
-          padding: '8px 16px',
+          padding: '8px 16px'
         },
         contained: {
           boxShadow: 'none',
           '&:hover': {
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          },
-        },
-      },
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          }
+        }
+      }
     },
     MuiCard: {
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }
+      }
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-        },
-      },
+          borderRadius: 12
+        }
+      }
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
           backgroundColor: '#1B4B82',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }
+      }
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
           backgroundColor: '#ffffff',
-          borderRight: '1px solid rgba(0,0,0,0.1)',
-        },
-      },
+          borderRight: '1px solid rgba(0,0,0,0.1)'
+        }
+      }
     },
     MuiListItemButton: {
       styleOverrides: {
         root: {
           borderRadius: 8,
           '&:hover': {
-            backgroundColor: 'rgba(27, 75, 130, 0.08)',
-          },
-        },
-      },
+            backgroundColor: 'rgba(27, 75, 130, 0.08)'
+          }
+        }
+      }
     },
     MuiChip: {
       styleOverrides: {
         root: {
           borderRadius: 16,
-          fontWeight: 500,
+          fontWeight: 500
         },
         colorPrimary: {
           backgroundColor: '#1B4B82',
-          color: '#ffffff',
+          color: '#ffffff'
         },
         colorSecondary: {
           backgroundColor: '#E67E22',
-          color: '#ffffff',
-        },
-      },
-    },
-  },
+          color: '#ffffff'
+        }
+      }
+    }
+  }
 });
 
-export default theme; 
+export default theme;
