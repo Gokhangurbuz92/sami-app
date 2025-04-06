@@ -9,7 +9,7 @@ Elle permet une communication simple et multilingue entre jeunes et référents 
 
 ---
 
-## 🏠 SAMI App – Application pour le Foyer SAMI (MNA)
+## 🏠 Description détaillée
 
 Bienvenue dans l'application officielle du **Foyer SAMI** à Strasbourg, gérée par la **Fondation de la Maison du Diaconat de Mulhouse**.
 
