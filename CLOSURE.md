@@ -22,6 +22,8 @@
 - **Services** : Auth, Firestore, Storage, Messaging
 - **Email Verification** : activée et testée
 - **Sécurité** : règles Firestore sécurisées
+- **Configuration** : `.env` et `google-services.json` synchronisés
+- **Storage Bucket** : `app-sami-1ba47.appspot.com`
 
 ### 3. 🧠 Technologies
 
@@ -54,6 +56,8 @@ L'application est **prête à être déployée** sur Google Play Store. Elle ré
 - ✅ **Bundle Android** : Fichier AAB final généré et disponible dans `android/app/build/outputs/bundle/release/`
 - ✅ **Nettoyage** : Suppression des fichiers temporaires et `.DS_Store`
 - ✅ **Documentation** : CLOSURE.md et README.md complets et formatés
+- ✅ **Firebase** : Configuration correcte et synchronisée avec le bon package Android
+- ✅ **Google Translate** : API activée et configurée pour le multilingue
 
 ## 🏁 Clôture Officielle
 
