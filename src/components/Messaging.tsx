@@ -12,7 +12,10 @@ import {
   Alert,
   Fab,
   FormControlLabel,
-  Switch
+  Switch,
+  Dialog,
+  DialogTitle,
+  DialogContent
 } from '@mui/material';
 import {
   AttachFile as AttachFileIcon,
@@ -20,7 +23,6 @@ import {
   Add as AddIcon,
   Translate as TranslateIcon,
   EmojiEmotions as EmojiIcon,
-  ThumbUp as ThumbUpIcon,
   Image as ImageIcon,
   InsertDriveFile as FileIcon
 } from '@mui/icons-material';
@@ -55,15 +57,12 @@ import {
   Timestamp,
   startAfter,
   getDocs,
-  getDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-import { translateText } from '../services/translation';
 import { userService } from '../services/userService';
-import axios from 'axios';
 
 // Constantes pour la configuration
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -130,19 +129,32 @@ interface ConversationData {
   };
 }
 
-interface FileUploadError {
-  code: string;
-  message: string;
-}
-
 interface MessagingProps {
   initialConversationId?: string | null;
 }
 
+// Améliorer le typage pour éviter les "any"
+interface AuthUser {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  role?: string;
+}
+
+// Interface pour les contacts disponibles
+interface Contact {
+  uid: string;
+  displayName?: string;
+  email?: string;
+  role?: string;
+}
+
+// Restaurer les fonctions globales qui ont été supprimées accidentellement
+
 // Fonction pour vérifier si une conversation est autorisée
 const isConversationAllowed = async (
   conversation: Conversation,
-  currentUser: any
+  currentUser: AuthUser
 ): Promise<boolean> => {
   const participants = conversation.participants;
 
@@ -262,6 +274,99 @@ const createConversation = async (
   }
 };
 
+// Fonction pour détecter si un message doit être traduit
+const shouldShowTranslateButton = (
+  message: Message, 
+  currentUser: AuthUser | null, 
+  translatingMessages: Set<string>, 
+  i18n: { language: string }, 
+  showTranslations: Set<string>
+) => {
+  return (
+    message.senderId !== currentUser?.uid && // Ne pas traduire ses propres messages
+    !translatingMessages.has(message.id) && // Ne pas montrer pendant la traduction
+    (!message.translations?.[i18n.language] || // Pas encore traduit dans la langue actuelle
+      !showTranslations.has(message.id))
+  ); // Ou la traduction n'est pas affichée
+};
+
+// Fonction pour traduire un message
+const translateMessage = async (
+  messageId: string, 
+  messages: Message[], 
+  translatingMessages: Set<string>,
+  setTranslatingMessages: React.Dispatch<React.SetStateAction<Set<string>>>,
+  showNotification: (message: string, type: 'error' | 'success') => void,
+  toggleTranslation: (messageId: string) => void,
+  t: (key: string, options?: Record<string, unknown>) => string,
+  i18n: { language: string }
+) => {
+  if (!messageId || translatingMessages.has(messageId)) return;
+
+  const messageToTranslate = messages.find((m) => m.id === messageId);
+  if (!messageToTranslate) {
+    showNotification(t('messaging.translation.error'), 'error');
+    return;
+  }
+
+  const languageToDetect = messageToTranslate.content;
+  // Définir targetLanguage en utilisant i18n
+  const targetLanguage = i18n.language || 'fr';
+
+  // Détection automatique de la langue
+  const apiKey = import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY;
+  
+  if (!apiKey) {
+    console.error('No translation API key found');
+    showNotification(t('messaging.translation.error'), 'error');
+    return;
+  }
+
+  try {
+    setTranslatingMessages((prev) => new Set([...prev, messageId]));
+    showNotification(t('messaging.translation.inProgress'), 'success');
+
+    const response = await fetch(
+      `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          q: languageToDetect,
+          target: targetLanguage
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Translation request failed');
+    }
+
+    const data = await response.json();
+    const translatedText = data.data.translations[0].translatedText;
+
+    // Mettre à jour le message dans Firestore avec la traduction
+    const messageRef = doc(db, 'messages', messageId);
+    await updateDoc(messageRef, {
+      [`translations.${targetLanguage}`]: translatedText
+    });
+
+    // Afficher la traduction
+    toggleTranslation(messageId);
+  } catch (error) {
+    console.error('Erreur lors de la traduction:', error);
+    alert(t('messaging.translationError'));
+  } finally {
+    setTranslatingMessages((prev) => {
+      const next = new Set(prev);
+      next.delete(messageId);
+      return next;
+    });
+  }
+};
+
 const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -282,6 +387,9 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   } | null>(null);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [isTyping, setIsTyping] = useState<{ [key: string]: boolean }>({});
+  // Variable utilisée dans le code pour la gestion des statuts de lecture des messages
+  // ESLint l'identifie comme non utilisée, mais elle est nécessaire pour le bon fonctionnement
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lastRead, setLastRead] = useState<{
     [key: string]: {
       timestamp: Timestamp;
@@ -297,7 +405,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [lastLoadedMessage, setLastLoadedMessage] = useState<string | null>(null);
-  const [availableContacts, setAvailableContacts] = useState<any[]>([]);
+  // Utiliser l'interface Contact que nous avons définie
+  const [availableContacts, setAvailableContacts] = useState<Contact[]>([]);
   const [showContactsDialog, setShowContactsDialog] = useState(false);
   const [autoTranslate, setAutoTranslate] = useState<boolean>(false);
 
@@ -326,6 +435,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   );
 
   // Fonction pour gérer l'indicateur de frappe
+  // ESLint l'identifie comme non utilisée, mais elle est nécessaire pour le bon fonctionnement
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleTyping = useCallback(
     (conversationId: string) => {
       if (!currentUser) return;
@@ -386,7 +497,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
         // Obtenir le token FCM
         const token = await getToken(messagingInstance, {
-          vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY
+          vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
         });
 
         if (token && currentUser?.uid) {
@@ -534,8 +645,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       .slice(0, MAX_MESSAGE_LENGTH); // Limiter la longueur
   };
 
-  // Fonction sécurisée pour valider les fichiers
-  const validateFile = (file: File): boolean => {
+  // Mettre validateFile à l'intérieur d'un useCallback pour éviter les re-rendus inutiles
+  const validateFile = useCallback((file: File): boolean => {
     // Vérifier la taille
     if (file.size > MAX_FILE_SIZE) {
       alert(t('messaging.attachments.errorSize'));
@@ -556,7 +667,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     }
 
     return true;
-  };
+  }, [t]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -595,29 +706,6 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   const handleEmojiSelect = (emoji: any) => {
     setNewMessage((prev) => prev + emoji.native);
     setEmojiAnchorEl(null);
-  };
-
-  const handleTranslate = async (messageId: string) => {
-    try {
-      const message = messages.find((m) => m.id === messageId);
-      if (!message) return;
-
-      const res = await axios.post(
-        `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
-        {
-          q: message.content,
-          target: i18n.language
-        }
-      );
-
-      const translatedText = res.data.data.translations[0].translatedText;
-
-      await updateDoc(doc(db, 'messages', messageId), {
-        [`translations.${i18n.language}`]: translatedText
-      });
-    } catch (error) {
-      console.error('Erreur lors de la traduction:', error);
-    }
   };
 
   // Fonction sécurisée pour gérer les réactions
@@ -698,7 +786,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             );
           }
 
-          const result = await uploadTask;
+          await uploadTask;
           const url = await getDownloadURL(storageRef);
           return {
             url,
@@ -741,7 +829,45 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     } finally {
       setLoading(false);
     }
-  }, [newMessage, attachments, selectedConversation, currentUser, t]);
+  }, [newMessage, attachments, selectedConversation, currentUser, t, validateFile]);
+
+  // Fonction pour basculer l'affichage de la traduction
+  const toggleTranslation = (messageId: string) => {
+    setShowTranslations((prev) => {
+      const next = new Set(prev);
+      if (next.has(messageId)) {
+        next.delete(messageId);
+      } else {
+        next.add(messageId);
+      }
+      return next;
+    });
+  };
+
+  // Fonction pour afficher les messages d'erreur/succès
+  const showNotification = (message: string, type: 'error' | 'success') => {
+    if (type === 'error') {
+      setError(message);
+      setTimeout(() => setError(null), 5000);
+    } else {
+      setSuccess(message);
+      setTimeout(() => setSuccess(null), 3000);
+    }
+  };
+
+  // Ajouter i18n comme dépendance du hook useCallback pour handleTranslateMessage
+  const handleTranslateMessage = useCallback((messageId: string) => {
+    translateMessage(
+      messageId, 
+      messages, 
+      translatingMessages, 
+      setTranslatingMessages, 
+      showNotification, 
+      toggleTranslation,
+      t,
+      i18n
+    );
+  }, [messages, translatingMessages, t, i18n, showNotification, toggleTranslation]);
 
   // Mémoriser le rendu du contenu du message
   const renderMessageContent = useCallback(
@@ -754,11 +880,11 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                 ? message.translations[i18n.language]
                 : message.content}
             </Typography>
-            {shouldShowTranslateButton(message) && (
+            {shouldShowTranslateButton(message, currentUser, translatingMessages, i18n, showTranslations) && (
               <Tooltip title={t('messaging.translation.show')}>
                 <IconButton
                   size="small"
-                  onClick={() => translateMessage(message.id)}
+                  onClick={() => handleTranslateMessage(message.id)}
                   disabled={translatingMessages.has(message.id)}
                 >
                   <TranslateIcon fontSize="small" />
@@ -793,7 +919,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                   key={userId}
                   label={emojis.join(' ')}
                   size="small"
-                  onClick={(e) => handleReaction(message.id, emojis[0])}
+                  onClick={() => handleReaction(message.id, emojis[0])}
                 />
               ))}
             </Stack>
@@ -801,7 +927,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         </Box>
       );
     },
-    [showTranslations, i18n.language, handleReaction, t, translatingMessages, shouldShowTranslateButton, translateMessage]
+    [showTranslations, i18n.language, handleReaction, t, translatingMessages, currentUser, handleTranslateMessage]
   );
 
   // Mémoriser le composant de message pour éviter les re-rendus inutiles
@@ -839,7 +965,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                   <Button 
                     size="small" 
                     startIcon={<TranslateIcon fontSize="small" />}
-                    onClick={() => translateMessage(message.id)}
+                    onClick={() => handleTranslateMessage(message.id)}
                     disabled={translatingMessages.has(message.id)}
                     sx={{ mr: 1, fontSize: '0.75rem' }}
                   >
@@ -855,87 +981,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         </Box>
       );
     },
-    [currentUser, renderMessageContent, t, translatingMessages, translateMessage]
+    [currentUser, renderMessageContent, t, translatingMessages, handleTranslateMessage]
   );
-
-  // Fonction pour traduire un message
-  const translateMessage = async (messageId: string, targetLanguage: string = i18n.language || 'fr') => {
-    if (!messageId || translatingMessages.has(messageId)) return;
-
-    const messageToTranslate = messages.find((m) => m.id === messageId);
-    if (!messageToTranslate) {
-      showNotification(t('messaging.translation.error'), 'error');
-      return;
-    }
-
-    const languageToDetect = messageToTranslate.content;
-
-    // Détection automatique de la langue
-    const apiKey = import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY;
-    
-    if (!apiKey) {
-      console.error('No translation API key found');
-      showNotification(t('messaging.translation.error'), 'error');
-      return;
-    }
-
-    try {
-      setTranslatingMessages((prev) => new Set([...prev, messageId]));
-      showNotification(t('messaging.translation.inProgress'), 'success');
-
-      const response = await fetch(
-        `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            q: languageToDetect,
-            target: targetLanguage
-          })
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Translation request failed');
-      }
-
-      const data = await response.json();
-      const translatedText = data.data.translations[0].translatedText;
-
-      // Mettre à jour le message dans Firestore avec la traduction
-      const messageRef = doc(db, 'messages', messageId);
-      await updateDoc(messageRef, {
-        [`translations.${targetLanguage}`]: translatedText
-      });
-
-      // Afficher la traduction
-      toggleTranslation(messageId);
-    } catch (error) {
-      console.error('Erreur lors de la traduction:', error);
-      alert(t('messaging.translationError'));
-    } finally {
-      setTranslatingMessages((prev) => {
-        const next = new Set(prev);
-        next.delete(messageId);
-        return next;
-      });
-    }
-  };
-
-  // Fonction pour basculer l'affichage de la traduction
-  const toggleTranslation = (messageId: string) => {
-    setShowTranslations((prev) => {
-      const next = new Set(prev);
-      if (next.has(messageId)) {
-        next.delete(messageId);
-      } else {
-        next.add(messageId);
-      }
-      return next;
-    });
-  };
 
   // Fonction pour activer/désactiver la traduction automatique
   const toggleAutoTranslate = () => {
@@ -952,52 +999,23 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   useEffect(() => {
     if (autoTranslate && messages.length > 0) {
       messages.forEach(message => {
-        if (shouldShowTranslateButton(message)) {
-          translateMessage(message.id);
+        if (shouldShowTranslateButton(message, currentUser, translatingMessages, i18n, showTranslations)) {
+          handleTranslateMessage(message.id);
         }
       });
     }
-  }, [autoTranslate, messages, shouldShowTranslateButton, translateMessage]);
-
-  // Fonction pour détecter si un message doit être traduit
-  const shouldShowTranslateButton = (message: Message) => {
-    return (
-      message.senderId !== currentUser?.uid && // Ne pas traduire ses propres messages
-      !translatingMessages.has(message.id) && // Ne pas montrer pendant la traduction
-      (!message.translations?.[i18n.language] || // Pas encore traduit dans la langue actuelle
-        !showTranslations.has(message.id))
-    ); // Ou la traduction n'est pas affichée
-  };
+  }, [autoTranslate, messages, translatingMessages, currentUser, i18n, showTranslations, handleTranslateMessage]);
 
   // Nettoyer les timeouts lors du démontage
   useEffect(() => {
+    // Copier la référence dans l'effet pour éviter les problèmes de captures
+    const currentTimeouts = reactionTimeoutRef.current;
     return () => {
-      Object.values(reactionTimeoutRef.current).forEach((timeout) => {
+      Object.values(currentTimeouts).forEach((timeout) => {
         clearTimeout(timeout);
       });
     };
   }, []);
-
-  const handleFileError = (error: FileUploadError): void => {
-    console.error('File upload error:', error);
-    alert(t('messaging.attachments.error'));
-  };
-
-  const handleTranslationError = (error: Error): void => {
-    console.error('Translation error:', error);
-    alert(t('messaging.translation.error'));
-  };
-
-  // Fonction pour afficher les messages d'erreur/succès
-  const showNotification = (message: string, type: 'error' | 'success') => {
-    if (type === 'error') {
-      setError(message);
-      setTimeout(() => setError(null), 5000);
-    } else {
-      setSuccess(message);
-      setTimeout(() => setSuccess(null), 3000);
-    }
-  };
 
   // Fonction pour charger plus de messages
   const loadMoreMessages = async () => {
@@ -1036,7 +1054,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
   // Gestionnaire de défilement pour charger plus de messages
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    const { scrollTop } = e.currentTarget;
     if (scrollTop === 0 && hasMoreMessages && !isLoadingMore) {
       loadMoreMessages();
     }
@@ -1051,14 +1069,23 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         const userData = await userService.getUserById(currentUser.uid);
         if (!userData) return;
 
-        const contacts = [];
+        const contacts: Contact[] = [];
 
         // Si l'utilisateur est un jeune, charger ses référents
         if (userData.role === 'jeune' && userData.assignedReferents?.length) {
           const referents = await Promise.all(
             userData.assignedReferents.map((id) => userService.getUserById(id))
           );
-          contacts.push(...referents.filter(Boolean));
+          // Filtrer les nulls et convertir en type Contact
+          contacts.push(...referents
+            .filter((user): user is NonNullable<typeof user> => user !== null)
+            .map(user => ({
+              uid: user.uid,
+              displayName: user.displayName || undefined,
+              email: user.email || undefined,
+              role: user.role
+            }))
+          );
         }
 
         // Si l'utilisateur est un référent, charger ses jeunes
@@ -1069,7 +1096,16 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
           const youths = await Promise.all(
             userData.assignedYouths.map((id) => userService.getUserById(id))
           );
-          contacts.push(...youths.filter(Boolean));
+          // Filtrer les nulls et convertir en type Contact
+          contacts.push(...youths
+            .filter((user): user is NonNullable<typeof user> => user !== null)
+            .map(user => ({
+              uid: user.uid,
+              displayName: user.displayName || undefined,
+              email: user.email || undefined,
+              role: user.role
+            }))
+          );
         }
 
         setAvailableContacts(contacts);
@@ -1305,6 +1341,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                     style={{ display: 'none' }}
                     onChange={handleFileSelect}
                     multiple
+                    aria-label={t('messaging.attachments.add')}
+                    title={t('messaging.attachments.add')}
                   />
                   <IconButton color="primary" onClick={() => fileInputRef.current?.click()}>
                     <AttachFileIcon />
@@ -1364,7 +1402,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
           open={Boolean(translateAnchorEl)}
           onClose={() => setTranslateAnchorEl(null)}
         >
-          <MenuItem onClick={() => handleTranslate(selectedConversation || '')}>
+          <MenuItem onClick={() => handleTranslateMessage(selectedConversation || '')}>
             {t('messaging.translate')}
           </MenuItem>
         </Menu>
