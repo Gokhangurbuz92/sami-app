@@ -44,4 +44,29 @@ Pour toute demande d'évolution ou de maintenance future :
 
 ---
 
+# 🎯 Clôture du projet : Application SAMI – Foyer Strasbourg
+
+✅ Tous les objectifs du projet ont été atteints avec succès :
+
+- Application développée avec React + Firebase (Auth, Firestore, Storage, Messaging)
+- Envoi d'e-mails de vérification à l'inscription
+- Authentification sécurisée avec redirection si email non validé
+- Application Android compilée en `.aab` et **signée**
+- Interface traduite, responsive et lisible pour tous les publics
+- Intégration des pictogrammes et couleurs officielles du Diaconat
+- Règles de sécurité Firebase configurées
+- Code propre, optimisé, sans clé sensible
+
+📦 Le bundle `app-release.aab` est prêt à être publié sur le Google Play Store  
+🔐 Clé utilisée : `sami-key`  
+📁 Package final : `com.gokhangurbuz.samiapp`
+
+📆 Date de clôture : **6 avril 2024**  
+🧑‍💻 Projet réalisé par : [@Gokhangurbuz92](https://github.com/Gokhangurbuz92)  
+🏢 Pour : **Foyer SAMI – Fondation du Diaconat de Strasbourg**
+
+🚀 L'application est prête à décoller et à améliorer le quotidien des jeunes et des professionnels du foyer !
+
+---
+
 *Ce document a été généré lors de la clôture officielle du projet.* 
