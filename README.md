@@ -1,4 +1,4 @@
-## 📱 SAMI App – Application mobile pour foyers MNA
+# 📱 SAMI App – Application mobile pour foyers MNA
 
 Cette application est destinée aux jeunes du foyer SAMI à Strasbourg, géré par la Fondation de la Maison du Diaconat.
 Elle permet une communication simple et multilingue entre jeunes et référents (messagerie, notifications, traductions automatiques, etc.)
@@ -9,7 +9,7 @@ Elle permet une communication simple et multilingue entre jeunes et référents 
 
 ---
 
-# 🏠 SAMI App – Application pour le Foyer SAMI (MNA)
+## 🏠 SAMI App – Application pour le Foyer SAMI (MNA)
 
 Bienvenue dans l'application officielle du **Foyer SAMI** à Strasbourg, gérée par la **Fondation de la Maison du Diaconat de Mulhouse**.
 

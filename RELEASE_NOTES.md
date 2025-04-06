@@ -18,4 +18,4 @@ Elle permet d'envoyer des messages traduits automatiquement, gérer des notifica
 
 - Application développée avec React, TypeScript et Capacitor
 - Intégration complète avec Firebase
-- Optimisée pour les performances et la sécurité 
+- Optimisée pour les performances et la sécurité
