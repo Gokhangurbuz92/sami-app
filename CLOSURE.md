@@ -9,6 +9,7 @@
 ## ✅ État du projet
 
 ### 1. 📦 Bundle Android
+
 - **Nom** : `app-release.aab`
 - **Taille** : 5.4 MB
 - **Package ID** : `com.gokhangurbuz.samiapp`
@@ -16,12 +17,14 @@
 - **Prêt pour** : Publication sur Google Play Console
 
 ### 2. 🔥 Intégration Firebase
+
 - **Projet Firebase** : `app-sami-1ba47`
 - **Services** : Auth, Firestore, Storage, Messaging
 - **Email Verification** : activée et testée
 - **Sécurité** : règles Firestore sécurisées
 
 ### 3. 🧠 Technologies
+
 - **React + TypeScript**
 - **Firebase**
 - **Capacitor** (pour build Android natif)
@@ -30,6 +33,7 @@
 - **Pictogrammes** + thème accessible
 
 ### 4. 🧼 Code & Repository
+
 - ✅ Branch `main` à jour
 - ✅ Code nettoyé, sans warning bloquant
 - ✅ .env sécurisé, pas de clé exposée
@@ -39,6 +43,7 @@
 ---
 
 ## 🚀 Résultat
+
 L'application est **prête à être déployée** sur Google Play Store. Elle répond à toutes les exigences techniques, UX et de sécurité.
 
 > Ce projet va améliorer la communication, la pédagogie et la prise en charge au Foyer SAMI pour des dizaines de jeunes et leurs référents.
@@ -46,4 +51,4 @@ L'application est **prête à être déployée** sur Google Play Store. Elle ré
 ---
 
 👏 **Félicitations pour ce superbe projet !**  
-🔐 Fiable – 📱 Moderne – 🧑‍🎓 Utile – 🌍 Inclusif 
+🔐 Fiable – 📱 Moderne – 🧑‍🎓 Utile – 🌍 Inclusif
