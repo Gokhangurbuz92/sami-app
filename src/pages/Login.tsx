@@ -1,5 +1,5 @@
 import '../i18n/config';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -11,10 +11,15 @@ import {
   CircularProgress,
   FormHelperText,
   Stack,
-  Divider
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
 
@@ -25,9 +30,25 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [showResetPassword, setShowResetPassword] = useState(false);
-  const { signIn, signUp, resetPassword, error } = useAuth();
+  const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [checkingVerification, setCheckingVerification] = useState(false);
+  const { signIn, signUp, resetPassword, error, sendVerificationEmail } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
+
+  // Vérifier si nous arrivons de la page d'inscription avec un paramètre de vérification
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const needVerification = params.get('needVerification');
+    const userEmail = params.get('email');
+    
+    if (needVerification === 'true' && userEmail) {
+      setVerificationEmail(userEmail);
+      setVerificationDialogOpen(true);
+    }
+  }, [location]);
 
   const validateForm = () => {
     if (!email.includes('@') || !email.includes('.')) {
@@ -52,11 +73,14 @@ const Login = () => {
 
     try {
       if (isSignUp) {
-        await signUp(email, password);
+        await signUp(email, password, email.split('@')[0], 'jeune');
+        // Afficher le dialogue de vérification
+        setVerificationEmail(email);
+        setVerificationDialogOpen(true);
       } else {
         await signIn(email, password);
+        navigate('/');
       }
-      navigate('/');
     } catch (err) {
       console.error('Auth error:', err);
     } finally {
@@ -81,6 +105,24 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResendVerification = async () => {
+    if (!verificationEmail) return;
+    
+    setCheckingVerification(true);
+    try {
+      await sendVerificationEmail();
+      alert(t('auth.verificationEmailSent'));
+    } catch (err) {
+      console.error('Resend verification error:', err);
+    } finally {
+      setCheckingVerification(false);
+    }
+  };
+
+  const handleCloseVerificationDialog = () => {
+    setVerificationDialogOpen(false);
   };
 
   return (
@@ -117,6 +159,32 @@ const Login = () => {
             {error}
           </Alert>
         )}
+
+        {/* Dialog de vérification d'email */}
+        <Dialog open={verificationDialogOpen} onClose={handleCloseVerificationDialog}>
+          <DialogTitle>{t('auth.verifyEmail')}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {t('auth.verificationEmailSentMessage', { email: verificationEmail })}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              onClick={handleResendVerification} 
+              color="primary" 
+              disabled={checkingVerification}
+            >
+              {checkingVerification ? (
+                <CircularProgress size={24} />
+              ) : (
+                t('auth.resendVerificationEmail')
+              )}
+            </Button>
+            <Button onClick={handleCloseVerificationDialog} color="primary" autoFocus>
+              {t('common.close')}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         {showResetPassword ? (
           <form onSubmit={handleResetPassword}>

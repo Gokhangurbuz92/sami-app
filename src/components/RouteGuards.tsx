@@ -104,3 +104,22 @@ export function PermissionRoute({
     </RoleRoute>
   );
 }
+
+// Garde de route pour vérifier si l'email est vérifié
+export const EmailVerifiedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!currentUser.emailVerified) {
+    return <Navigate to="/email-verification" replace />;
+  }
+
+  return <>{children}</>;
+};

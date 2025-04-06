@@ -7,7 +7,9 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
   signInWithPopup,
-  GoogleAuthProvider
+  GoogleAuthProvider,
+  sendEmailVerification,
+  reload
 } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { auth } from '../config/firebase';
@@ -51,6 +53,8 @@ interface AuthContextType {
   isReferent: boolean;
   isJeune: boolean;
   checkPermission: (permission: keyof RolePermissions) => boolean;
+  checkEmailVerification: () => Promise<boolean>;
+  sendVerificationEmail: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -94,7 +98,11 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isReferent: false,
   isJeune: false,
-  checkPermission: () => false
+  checkPermission: () => false,
+  checkEmailVerification: async () => false,
+  sendVerificationEmail: async () => {
+    throw new Error('Not implemented');
+  }
 });
 
 const googleProvider = new GoogleAuthProvider();
@@ -214,6 +222,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user as User;
+      
+      // Envoyer l'email de vérification
+      await sendEmailVerification(user);
 
       await userService.createUser({
         uid: user.uid,
@@ -239,6 +250,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user as User;
+
+      // Vérifier si l'email est vérifié
+      if (!user.emailVerified) {
+        const errorMessage = t('auth.emailNotVerified');
+        setError(errorMessage);
+        await signOut(auth);
+        throw new Error(errorMessage);
+      }
 
       // Récupérer les informations du profil utilisateur depuis Firestore
       const userData = await userService.getUserById(user.uid);
@@ -316,6 +335,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Fonction pour vérifier si l'email est vérifié
+  const checkEmailVerification = async (): Promise<boolean> => {
+    if (!currentUser) return false;
+    
+    try {
+      // Recharger l'utilisateur pour obtenir le statut le plus récent
+      await reload(currentUser);
+      return currentUser.emailVerified;
+    } catch (error) {
+      console.error("Erreur lors de la vérification de l'email:", error);
+      return false;
+    }
+  };
+
+  // Fonction pour renvoyer l'email de vérification
+  const sendVerificationEmail = async (): Promise<void> => {
+    if (!currentUser) {
+      throw new Error(t('auth.userNotLoggedIn'));
+    }
+    
+    try {
+      await sendEmailVerification(currentUser);
+    } catch (error) {
+      const err = error as Error;
+      const errorMessage = t('auth.sendVerificationEmailFailed', { message: err.message });
+      setError(errorMessage);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     currentUser,
     signUp,
@@ -330,7 +379,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAdmin,
     isReferent,
     isJeune,
-    checkPermission
+    checkPermission,
+    checkEmailVerification,
+    sendVerificationEmail
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

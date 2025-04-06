@@ -18,6 +18,7 @@ import MessagingPage from './pages/MessagingPage';
 import UserManagement from './components/UserManagement';
 import AdminAssignation from './pages/AdminAssignation';
 import { AdminRoute, PermissionRoute } from './components/RouteGuards';
+import EmailVerification from './components/EmailVerification';
 
 // Création du thème avec support RTL
 const createAppTheme = (direction: 'ltr' | 'rtl') =>
@@ -38,7 +39,7 @@ const createAppTheme = (direction: 'ltr' | 'rtl') =>
   });
 
 function AppContent() {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
   const theme = createAppTheme(direction);
 
@@ -57,80 +58,109 @@ function AppContent() {
     };
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <OfflineStatus />
-        {currentUser ? (
-          <>
-            <MainNavigation />
-            <Routes>
-              {/* Route commune à tous les utilisateurs */}
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/email-verification" element={<EmailVerification />} />
+          
+          {/* Routes protégées nécessitant l'authentification */}
+          {currentUser ? (
+            <>
+              {/* Si l'email n'est pas vérifié, rediriger vers la page de vérification */}
+              {!currentUser.emailVerified ? (
+                <Route path="*" element={<Navigate to="/email-verification" replace />} />
+              ) : (
+                <>
+                  <Route path="/" element={
+                    <>
+                      <MainNavigation />
+                      <Dashboard />
+                    </>
+                  } />
+                  <Route path="/profile" element={
+                    <>
+                      <MainNavigation />
+                      <Profile />
+                    </>
+                  } />
 
-              {/* Routes communes aux jeunes et aux référents */}
-              <Route
-                path="/planning"
-                element={
-                  <PermissionRoute requiredPermission="canAccessAppointments">
-                    <Planning />
-                  </PermissionRoute>
-                }
-              />
-              <Route
-                path="/notes"
-                element={
-                  <PermissionRoute requiredPermission="canAccessNotes">
-                    <Notes />
-                  </PermissionRoute>
-                }
-              />
-              <Route
-                path="/notifications"
-                element={
-                  <PermissionRoute requiredPermission="canAccessNotifications">
-                    <Notifications />
-                  </PermissionRoute>
-                }
-              />
+                  {/* Routes communes aux jeunes et aux référents */}
+                  <Route
+                    path="/planning"
+                    element={
+                      <PermissionRoute requiredPermission="canAccessAppointments">
+                        <MainNavigation />
+                        <Planning />
+                      </PermissionRoute>
+                    }
+                  />
+                  <Route
+                    path="/notes"
+                    element={
+                      <PermissionRoute requiredPermission="canAccessNotes">
+                        <MainNavigation />
+                        <Notes />
+                      </PermissionRoute>
+                    }
+                  />
+                  <Route
+                    path="/notifications"
+                    element={
+                      <PermissionRoute requiredPermission="canAccessNotifications">
+                        <MainNavigation />
+                        <Notifications />
+                      </PermissionRoute>
+                    }
+                  />
 
-              {/* Routes spécifiques aux jeunes et référents qui peuvent accéder à la messagerie */}
-              <Route
-                path="/messaging"
-                element={
-                  <PermissionRoute requiredPermission="canAccessMessaging">
-                    <MessagingPage />
-                  </PermissionRoute>
-                }
-              />
+                  {/* Routes spécifiques aux jeunes et référents qui peuvent accéder à la messagerie */}
+                  <Route
+                    path="/messaging"
+                    element={
+                      <PermissionRoute requiredPermission="canAccessMessaging">
+                        <MainNavigation />
+                        <MessagingPage />
+                      </PermissionRoute>
+                    }
+                  />
 
-              {/* Routes spécifiques aux administrateurs */}
-              <Route
-                path="/admin/users"
-                element={
-                  <AdminRoute>
-                    <UserManagement />
-                  </AdminRoute>
-                }
-              />
+                  {/* Routes spécifiques aux administrateurs */}
+                  <Route
+                    path="/admin/users"
+                    element={
+                      <AdminRoute>
+                        <MainNavigation />
+                        <UserManagement />
+                      </AdminRoute>
+                    }
+                  />
 
-              <Route
-                path="/admin-assignation"
-                element={
-                  <AdminRoute>
-                    <AdminAssignation />
-                  </AdminRoute>
-                }
-              />
+                  <Route
+                    path="/admin-assignation"
+                    element={
+                      <AdminRoute>
+                        <MainNavigation />
+                        <AdminAssignation />
+                      </AdminRoute>
+                    }
+                  />
 
-              {/* Redirection par défaut en fonction du rôle */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </>
-        ) : (
-          <Login />
-        )}
+                  {/* Redirection par défaut en fonction du rôle */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </>
+              )}
+            </>
+          ) : (
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          )}
+        </Routes>
         <InstallPWA />
       </Router>
     </ThemeProvider>
