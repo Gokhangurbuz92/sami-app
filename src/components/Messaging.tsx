@@ -758,7 +758,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
               <Tooltip title={t('messaging.translation.show')}>
                 <IconButton
                   size="small"
-                  onClick={() => translateMessage(message)}
+                  onClick={() => translateMessage(message.id)}
                   disabled={translatingMessages.has(message.id)}
                 >
                   <TranslateIcon fontSize="small" />
@@ -839,7 +839,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                   <Button 
                     size="small" 
                     startIcon={<TranslateIcon fontSize="small" />}
-                    onClick={() => translateMessage(message)}
+                    onClick={() => translateMessage(message.id)}
                     disabled={translatingMessages.has(message.id)}
                     sx={{ mr: 1, fontSize: '0.75rem' }}
                   >
@@ -859,54 +859,66 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   );
 
   // Fonction pour traduire un message
-  const translateMessage = async (message: Message) => {
-    if (!message.content || translatingMessages.has(message.id)) return;
+  const translateMessage = async (messageId: string, targetLanguage: string = i18n.language || 'fr') => {
+    if (!messageId || translatingMessages.has(messageId)) return;
 
-    const targetLang = i18n.language;
-    if (message.translations?.[targetLang]) {
-      toggleTranslation(message.id);
+    const messageToTranslate = messages.find((m) => m.id === messageId);
+    if (!messageToTranslate) {
+      showNotification(t('messaging.translation.error'), 'error');
+      return;
+    }
+
+    const languageToDetect = messageToTranslate.content;
+
+    // Détection automatique de la langue
+    const apiKey = import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY;
+    
+    if (!apiKey) {
+      console.error('No translation API key found');
+      showNotification(t('messaging.translation.error'), 'error');
       return;
     }
 
     try {
-      setTranslatingMessages((prev) => new Set([...prev, message.id]));
+      setTranslatingMessages((prev) => new Set([...prev, messageId]));
       showNotification(t('messaging.translation.inProgress'), 'success');
 
-      // Utiliser une clé API sécurisée depuis les variables d'environnement
-      const apiKey = process.env.REACT_APP_GOOGLE_TRANSLATE_API_KEY;
-      if (!apiKey) {
-        throw new Error('Translation API key not configured');
-      }
-
-      const res = await axios.post(
+      const response = await fetch(
         `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
         {
-          q: message.content,
-          target: targetLang
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            q: languageToDetect,
+            target: targetLanguage
+          })
         }
       );
 
-      if (!res.data.data.translations.length) {
+      if (!response.ok) {
         throw new Error('Translation request failed');
       }
 
-      const translatedText = res.data.data.translations[0].translatedText;
+      const data = await response.json();
+      const translatedText = data.data.translations[0].translatedText;
 
       // Mettre à jour le message dans Firestore avec la traduction
-      const messageRef = doc(db, 'messages', message.id);
+      const messageRef = doc(db, 'messages', messageId);
       await updateDoc(messageRef, {
-        [`translations.${targetLang}`]: translatedText
+        [`translations.${targetLanguage}`]: translatedText
       });
 
       // Afficher la traduction
-      toggleTranslation(message.id);
+      toggleTranslation(messageId);
     } catch (error) {
       console.error('Erreur lors de la traduction:', error);
       alert(t('messaging.translationError'));
     } finally {
       setTranslatingMessages((prev) => {
         const next = new Set(prev);
-        next.delete(message.id);
+        next.delete(messageId);
         return next;
       });
     }
@@ -941,7 +953,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     if (autoTranslate && messages.length > 0) {
       messages.forEach(message => {
         if (shouldShowTranslateButton(message)) {
-          translateMessage(message);
+          translateMessage(message.id);
         }
       });
     }
