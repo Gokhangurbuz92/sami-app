@@ -35,6 +35,7 @@ export interface RolePermissions {
 
 interface AuthContextType {
   currentUser: User | null;
+  user: User | null;
   signUp: (
     email: string,
     password: string,
@@ -76,6 +77,7 @@ const DEFAULT_PERMISSIONS: RolePermissions = {
 
 const AuthContext = createContext<AuthContextType>({
   currentUser: null,
+  user: null,
   signUp: async () => {
     throw new Error('Not implemented');
   },
@@ -367,6 +369,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     currentUser,
+    user: currentUser,
     signUp,
     signIn,
     logout,

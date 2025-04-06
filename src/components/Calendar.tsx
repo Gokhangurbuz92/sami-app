@@ -160,11 +160,11 @@ const Calendar: React.FC = () => {
     setOpenDialog(true);
   };
 
-  const handleEventClick = async (clickInfo: { event: { id: string } }) => {
+  const handleEventClick = async (event: CalendarEvent, e: React.SyntheticEvent<HTMLElement>) => {
     if (window.confirm(t('calendar.confirmDelete'))) {
       try {
-        await appointmentService.deleteAppointment(clickInfo.event.id);
-        setEvents(events.filter((event) => event.resource.id !== clickInfo.event.id));
+        await appointmentService.deleteAppointment(event.resource.id);
+        setEvents(events.filter((evt) => evt.resource.id !== event.resource.id));
         showNotification(t('calendar.success.delete'), 'success');
       } catch (error) {
         console.error('Error deleting appointment:', error);

@@ -8,7 +8,8 @@ import {
   where,
   getDocs,
   orderBy,
-  onSnapshot
+  onSnapshot,
+  getDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { notificationService } from './notificationService';
@@ -78,7 +79,7 @@ export const youthService = {
   // Récupérer un jeune par son ID
   async getYouthById(id: string): Promise<Youth | null> {
     const youthRef = doc(db, 'youth', id);
-    const youthDoc = await getDocs(youthRef);
+    const youthDoc = await getDoc(youthRef);
 
     if (youthDoc.exists()) {
       return {

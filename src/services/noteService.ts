@@ -113,7 +113,7 @@ export const noteService = {
     });
   },
 
-  subscribeToNotes(userId: string, youthId?: string, callback: (notes: Note[]) => void) {
+  subscribeToNotes(userId: string, callback: (notes: Note[]) => void, youthId?: string) {
     const notesRef = collection(db, 'notes');
     const q = query(
       notesRef,

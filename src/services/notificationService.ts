@@ -9,7 +9,7 @@ import {
   getDocs,
   orderBy,
   onSnapshot,
-  Timestamp
+  writeBatch
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
@@ -58,7 +58,7 @@ export const notificationService = {
     const q = query(notificationsRef, where('userId', '==', userId), where('read', '==', false));
 
     const querySnapshot = await getDocs(q);
-    const batch = db.batch();
+    const batch = writeBatch(db);
 
     querySnapshot.docs.forEach((doc) => {
       batch.update(doc.ref, { read: true });

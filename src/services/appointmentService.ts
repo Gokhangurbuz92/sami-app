@@ -66,6 +66,7 @@ export const appointmentService = {
     // Créer une notification pour la mise à jour du rendez-vous
     if (appointment.status) {
       const statusMessages = {
+        scheduled: 'a été programmé',
         completed: 'a été marqué comme terminé',
         cancelled: 'a été annulé'
       };

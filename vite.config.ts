@@ -74,6 +74,23 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Séparer les bibliothèques volumineuses
+          'react-vendor': ['react', 'react-dom'],
+          'material-ui': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          'firebase-core': ['firebase/app', 'firebase/auth'],
+          'firebase-services': ['firebase/firestore', 'firebase/storage', 'firebase/messaging'],
+          'calendar': ['moment', 'react-big-calendar'],
+          'utils': ['i18next', 'react-i18next', 'react-router-dom'],
+          'sentry': ['@sentry/react', '@sentry/capacitor']
+        }
+      }
+    }
+  },
   server: {
     port: 5173,
     host: true
