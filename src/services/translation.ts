@@ -6,7 +6,7 @@ export const translateText = async (text: string, targetLang: string): Promise<s
     // Utiliser l'API de traduction de votre choix (Google, DeepL, etc.)
     // Exemple avec l'API de Google Cloud Translation
     const response = await axios.post(
-      `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_GOOGLE_TRANSLATE_API_KEY}`,
+      `https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`,
       {
         q: text,
         target: targetLang,
