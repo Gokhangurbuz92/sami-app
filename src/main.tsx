@@ -5,6 +5,10 @@ import './i18n/config';
 import './index.css';
 import './styles/calendar.css';
 import { registerSW } from 'virtual:pwa-register';
+import { initSentry } from './config/sentry';
+
+// Initialiser Sentry pour le suivi des erreurs
+initSentry();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');

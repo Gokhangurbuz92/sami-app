@@ -17,8 +17,10 @@ import OfflineStatus from './components/OfflineStatus';
 import MessagingPage from './pages/MessagingPage';
 import UserManagement from './components/UserManagement';
 import AdminAssignation from './pages/AdminAssignation';
-import { AdminRoute, PermissionRoute } from './components/RouteGuards';
+import { AdminRoute as RoleAdminRoute, PermissionRoute } from './components/RouteGuards';
 import EmailVerification from './components/EmailVerification';
+import AdminPanel from './components/Admin/AdminPanel';
+import AdminRoute from './components/Admin/AdminRoute';
 
 // Création du thème avec support RTL
 const createAppTheme = (direction: 'ltr' | 'rtl') =>
@@ -135,22 +137,32 @@ function AppContent() {
                   <Route
                     path="/admin/users"
                     element={
-                      <AdminRoute>
+                      <RoleAdminRoute>
                         <MainNavigation />
                         <UserManagement />
-                      </AdminRoute>
+                      </RoleAdminRoute>
                     }
                   />
 
                   <Route
                     path="/admin-assignation"
                     element={
-                      <AdminRoute>
+                      <RoleAdminRoute>
                         <MainNavigation />
                         <AdminAssignation />
-                      </AdminRoute>
+                      </RoleAdminRoute>
                     }
                   />
+                  
+                  {/* Nouveau panneau d'administration */}
+                  <Route path="/admin" element={<AdminRoute />}>
+                    <Route index element={
+                      <>
+                        <MainNavigation />
+                        <AdminPanel />
+                      </>
+                    } />
+                  </Route>
 
                   {/* Redirection par défaut en fonction du rôle */}
                   <Route path="*" element={<Navigate to="/" replace />} />

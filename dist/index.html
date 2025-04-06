@@ -2,9 +2,26 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/logo192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
+    <!-- Solution Firefox compatible -->
+    <meta name="color-scheme" content="light dark">
+    
+    <!-- prettier-ignore -->
+    <!-- eslint-disable -->
+    <!-- htmlhint-ignore -->
+    <!-- Les balises theme-color ne sont pas supportées par Firefox/Opera mais sont utiles pour Chrome/Edge -->
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <!-- eslint-enable -->
+    <!-- htmlhint-enable -->
+    
+    <!-- Pour navigateurs Microsoft -->
+    <meta name="msapplication-navbutton-color" content="#000000" />
+    <meta name="msapplication-TileColor" content="#000000">
+    <!-- Pour iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="description" content="Application de Gestion SAMI" />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -13,8 +30,8 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     />
-    <script type="module" crossorigin src="/assets/index-BLohgFci.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CSRE77Fh.css">
+    <script type="module" crossorigin src="/assets/index-DP3ZCxnD.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Ck_YYD4k.css">
   <link rel="manifest" href="/manifest.webmanifest"></head>
   <body>
     <div id="root"></div>
