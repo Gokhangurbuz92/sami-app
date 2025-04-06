@@ -34,7 +34,6 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
-  Divider,
   Badge,
   Tooltip,
   Menu,
@@ -684,16 +683,6 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     setAttachments(validFiles);
   };
 
-  const handlePreviewFile = (file: File) => {
-    // Nettoyer l'URL précédente si elle existe
-    if (previewFile?.url) {
-      URL.revokeObjectURL(previewFile.url);
-    }
-
-    const url = URL.createObjectURL(file);
-    setPreviewFile({ url, type: file.type, name: file.name });
-  };
-
   // Nettoyer les URLs lors du démontage
   useEffect(() => {
     return () => {
@@ -891,12 +880,12 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             )}
           </Box>
           {message.attachments?.map((attachment, index) => (
-            <Box key={index} sx={{ mt: 1 }}>
+            <Box key={index} className="attachment-container">
               {attachment.type === 'image' ? (
                 <img
                   src={attachment.url}
                   alt={attachment.name}
-                  style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+                  className="attachment-image"
                 />
               ) : (
                 <Button
@@ -911,7 +900,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             </Box>
           ))}
           {message.reactions && Object.entries(message.reactions).length > 0 && (
-            <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+            <Stack direction="row" spacing={0.5} className="reactions-container">
               {Object.entries(message.reactions).map(([userId, emojis]) => (
                 <Chip
                   key={userId}
@@ -926,60 +915,6 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
       );
     },
     [showTranslations, i18n.language, handleReaction, t, translatingMessages, currentUser, handleTranslateMessage]
-  );
-
-  // Mémoriser le composant de message pour éviter les re-rendus inutiles
-  const MessageItem = useCallback(
-    ({ message }: { message: Message }) => {
-      const isOwnMessage = message.senderId === currentUser?.uid;
-      const isTranslatable = !isOwnMessage && message.content && message.content.trim().length > 0;
-
-      return (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
-            mb: 2
-          }}
-        >
-          <Paper
-            sx={{
-              p: 2,
-              maxWidth: '70%',
-              backgroundColor: isOwnMessage ? 'primary.light' : 'grey.100',
-              color: isOwnMessage ? 'white' : 'text.primary'
-            }}
-          >
-            {renderMessageContent(message)}
-            <Box
-              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}
-            >
-              <Typography variant="caption" sx={{ opacity: 0.7 }}>
-                {message.senderName}
-                {isTranslatable && <span title={t('messaging.translatable')}> 🌐</span>}
-              </Typography>
-              <Box>
-                {isTranslatable && (
-                  <Button 
-                    size="small" 
-                    startIcon={<TranslateIcon fontSize="small" />}
-                    onClick={() => handleTranslateMessage(message.id)}
-                    disabled={translatingMessages.has(message.id)}
-                    sx={{ mr: 1, fontSize: '0.75rem' }}
-                  >
-                    {t('messaging.translate.button')}
-                  </Button>
-                )}
-                <IconButton size="small" onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
-                  <EmojiIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            </Box>
-          </Paper>
-        </Box>
-      );
-    },
-    [currentUser, renderMessageContent, t, translatingMessages, handleTranslateMessage]
   );
 
   // Fonction pour activer/désactiver la traduction automatique
@@ -1290,6 +1225,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                 )}
                 {messages.map((message) => {
                   const isOwnMessage = message.senderId === currentUser?.uid;
+                  const isTranslatable = shouldShowTranslateButton(message, currentUser, translatingMessages, i18n, showTranslations);
                   return (
                     <Box
                       key={message.id}
@@ -1304,12 +1240,13 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                             {message.senderName}
                           </Typography>
                           <Box>
-                            {shouldShowTranslateButton(message, currentUser, translatingMessages, i18n, showTranslations) && (
+                            {isTranslatable && (
                               <Button 
                                 size="small" 
                                 startIcon={<TranslateIcon fontSize="small" />}
                                 onClick={() => handleTranslateMessage(message.id)}
                                 disabled={translatingMessages.has(message.id)}
+                                className="translate-button"
                               >
                                 {t('messaging.translate.button')}
                               </Button>
@@ -1367,7 +1304,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                 <input
                   type="file"
                   ref={fileInputRef}
-                  style={{ display: 'none' }}
+                  className="hidden-input"
                   onChange={handleFileSelect}
                   multiple
                   accept={ALLOWED_FILE_TYPES.join(',')}
@@ -1448,12 +1385,12 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             <img
               src={previewFile.url}
               alt={previewFile.name}
-              style={{ maxWidth: '100%', maxHeight: '70vh' }}
+              className="dialog-preview-image"
             />
           ) : (
             <iframe
               src={previewFile?.url}
-              style={{ width: '100%', height: '70vh' }}
+              className="dialog-preview-iframe"
               title={previewFile?.name}
             />
           )}
