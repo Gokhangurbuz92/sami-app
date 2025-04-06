@@ -58,4 +58,4 @@ Toutes les données sont :
 
 ## 📄 Licence
 
-Ce projet est un outil interne destiné aux professionnels du secteur social. 
+Ce projet est un outil interne destiné aux professionnels du secteur social.
