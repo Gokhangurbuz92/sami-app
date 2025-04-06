@@ -24,7 +24,11 @@
       "vite/client",
       "vite-plugin-pwa/client",
       "workbox-window"
-    ]
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": false
   },
   "include": ["src", "src/types"],
   "references": [{ "path": "./tsconfig.node.json" }]

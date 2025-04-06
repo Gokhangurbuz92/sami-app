@@ -23,7 +23,6 @@ import {
   Add as AddIcon,
   Translate as TranslateIcon,
   EmojiEmotions as EmojiIcon,
-  Image as ImageIcon,
   InsertDriveFile as FileIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
@@ -63,6 +62,8 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { userService } from '../services/userService';
+// Importer les styles
+import '../styles/Messaging.css';
 
 // Constantes pour la configuration
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -385,7 +386,6 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
     type: string;
     name: string;
   } | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [isTyping, setIsTyping] = useState<{ [key: string]: boolean }>({});
   // Variable utilisée dans le code pour la gestion des statuts de lecture des messages
   // ESLint l'identifie comme non utilisée, mais elle est nécessaire pour le bon fonctionnement
@@ -775,9 +775,8 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
             const task = uploadTask as unknown as UploadTask;
             task.on(
               'state_changed',
-              (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadProgress((prev) => ({ ...prev, [file.name]: progress }));
+              () => {
+                // Surveillance du progrès sans stocker la valeur
               },
               (error: Error) => {
                 console.error('Erreur de téléchargement:', error);
@@ -821,7 +820,6 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
       setNewMessage('');
       setAttachments([]);
-      setUploadProgress({});
       showNotification(t('messaging.messageSent'), 'success');
     } catch (error) {
       console.error("Erreur lors de l'envoi du message:", error);
@@ -1146,7 +1144,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         color="primary"
         size="small"
         onClick={() => setShowContactsDialog(true)}
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        className="new-conversation-button"
       >
         <AddIcon />
       </Fab>
@@ -1192,7 +1190,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', height: '100%', position: 'relative' }}>
+      <Box className="messaging-container">
         {/* Messages d'erreur/succès */}
         {error && (
           <Snackbar
@@ -1220,18 +1218,18 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         )}
 
         {/* Liste des conversations */}
-        <Paper sx={{ width: 320, borderRadius: 0, overflowY: 'auto' }}>
-          <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}>
+        <Paper className="conversations-sidebar">
+          <Box className="conversations-header">
             <Typography variant="h6">{t('messaging.conversations')}</Typography>
           </Box>
-          <List sx={{ p: 0 }}>
+          <List className="conversation-list">
             {conversations.map((conv) => (
               <ListItem
                 button
                 key={conv.id}
                 selected={selectedConversation === conv.id}
                 onClick={() => setSelectedConversation(conv.id)}
-                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}
+                className="conversation-item"
               >
                 <ListItemAvatar>
                   <Avatar>
@@ -1245,13 +1243,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                       component="span"
                       variant="body2"
                       color="text.secondary"
-                      sx={{
-                        display: 'inline',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        maxWidth: 200
-                      }}
+                      className="conversation-text"
                     >
                       {conv.lastMessage}
                     </Typography>
@@ -1265,15 +1257,10 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
         </Paper>
 
         {/* Zone de messages */}
-        <Paper sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Paper className="messages-container">
           {selectedConversation ? (
             <>
-              <Box sx={{ 
-                p: 1, 
-                display: 'flex', 
-                justifyContent: 'flex-end', 
-                borderBottom: '1px solid rgba(0, 0, 0, 0.12)' 
-              }}>
+              <Box className="messages-header">
                 <FormControlLabel
                   control={
                     <Switch
@@ -1288,104 +1275,142 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
                       {t('messaging.translation.auto')}
                     </Typography>
                   }
-                  sx={{ mr: 1 }}
+                  className="auto-translate-switch"
                 />
               </Box>
               <Box
-                sx={{
-                  flex: 1,
-                  overflow: 'auto',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column-reverse'
-                }}
+                className="messages-list"
                 onScroll={handleScroll}
+                ref={messagesEndRef}
               >
                 {isLoadingMore && (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                  <Box className="loading-container">
                     <CircularProgress size={24} />
                   </Box>
                 )}
-                {messages.map((message) => (
-                  <MessageItem key={message.id} message={message} />
-                ))}
-                <div ref={messagesEndRef} />
-              </Box>
-              <Divider />
-              <Box sx={{ p: 2 }}>
-                {attachments.length > 0 && (
-                  <Box sx={{ mb: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {attachments.map((file, index) => (
-                      <Chip
-                        key={index}
-                        label={file.name}
-                        onDelete={() =>
-                          setAttachments((prev) => prev.filter((_, i) => i !== index))
-                        }
-                        onClick={() => handlePreviewFile(file)}
-                        icon={file.type.startsWith('image/') ? <ImageIcon /> : <FileIcon />}
-                      />
-                    ))}
-                    {Object.entries(uploadProgress).map(([fileName, progress]) => (
-                      <Box key={fileName} sx={{ width: '100%', mt: 1 }}>
-                        <Typography variant="caption">{fileName}</Typography>
-                        <CircularProgress variant="determinate" value={progress} size={20} />
-                      </Box>
-                    ))}
-                  </Box>
+                {messages.map((message) => {
+                  const isOwnMessage = message.senderId === currentUser?.uid;
+                  return (
+                    <Box
+                      key={message.id}
+                      className={`message-item ${isOwnMessage ? 'message-item-sent' : 'message-item-received'}`}
+                    >
+                      <Paper
+                        className={`message-bubble ${isOwnMessage ? 'message-bubble-sent' : 'message-bubble-received'}`}
+                      >
+                        {renderMessageContent(message)}
+                        <Box className="message-header">
+                          <Typography variant="caption" className="message-sender">
+                            {message.senderName}
+                          </Typography>
+                          <Box>
+                            {shouldShowTranslateButton(message, currentUser, translatingMessages, i18n, showTranslations) && (
+                              <Button 
+                                size="small" 
+                                startIcon={<TranslateIcon fontSize="small" />}
+                                onClick={() => handleTranslateMessage(message.id)}
+                                disabled={translatingMessages.has(message.id)}
+                              >
+                                {t('messaging.translate.button')}
+                              </Button>
+                            )}
+                            <IconButton size="small" onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
+                              <EmojiIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    </Box>
+                  );
+                })}
+                {isTyping[selectedConversation] && (
+                  <Typography variant="body2" className="typing-indicator">
+                    {t('messaging.someoneIsTyping')}
+                  </Typography>
                 )}
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleFileSelect}
-                    multiple
-                    aria-label={t('messaging.attachments.add')}
-                    title={t('messaging.attachments.add')}
-                  />
-                  <IconButton color="primary" onClick={() => fileInputRef.current?.click()}>
-                    <AttachFileIcon />
-                  </IconButton>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder={t('messaging.typeMessage')}
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              </Box>
+              <Box className="message-input-container">
+                <TextField
+                  className="message-input"
+                  placeholder={t('messaging.typeMessage')}
+                  variant="outlined"
+                  size="small"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  fullWidth
+                  disabled={loading}
+                  aria-label={t('messaging.typeMessage')}
+                />
+                <Box className="input-actions">
+                  <IconButton
+                    color="primary"
+                    onClick={() => fileInputRef.current?.click()}
                     disabled={loading}
-                  />
-                  <IconButton color="primary" onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
-                    <EmojiIcon />
+                    aria-label={t('messaging.attachments.add')}
+                  >
+                    <AttachFileIcon />
                   </IconButton>
                   <IconButton
                     color="primary"
                     onClick={handleSendMessage}
                     disabled={loading || (!newMessage.trim() && attachments.length === 0)}
+                    aria-label={t('messaging.send')}
                   >
-                    {loading ? <CircularProgress size={24} /> : <SendIcon />}
+                    {loading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      <SendIcon />
+                    )}
                   </IconButton>
                 </Box>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleFileSelect}
+                  multiple
+                  accept={ALLOWED_FILE_TYPES.join(',')}
+                  aria-label={t('messaging.attachments.add')}
+                />
               </Box>
+              {previewFile && (
+                <Box className="file-preview-container">
+                  {previewFile.type.startsWith('image/') ? (
+                    <img
+                      src={previewFile.url}
+                      alt={previewFile.name}
+                      className="file-preview-image"
+                    />
+                  ) : (
+                    <Box className="file-preview-info">
+                      <FileIcon />
+                      <Typography className="file-preview-name">
+                        {previewFile.name}
+                      </Typography>
+                    </Box>
+                  )}
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      if (previewFile && previewFile.url) {
+                        URL.revokeObjectURL(previewFile.url);
+                      }
+                      setPreviewFile(null);
+                    }}
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                </Box>
+              )}
             </>
           ) : (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                color: 'text.secondary'
-              }}
-            >
-              <Typography>{t('messaging.selectConversation')}</Typography>
+            <Box className="empty-state">
+              <Typography variant="body1">
+                {t('messaging.selectConversation')}
+              </Typography>
             </Box>
-          )}
-          {selectedConversation && isTyping[selectedConversation] && (
-            <Typography variant="caption" sx={{ fontStyle: 'italic', ml: 2 }}>
-              {t('messaging.typing')}
-            </Typography>
           )}
         </Paper>
 
@@ -1394,7 +1419,7 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
           open={Boolean(emojiAnchorEl)}
           onClose={() => setEmojiAnchorEl(null)}
         >
-          <Picker data={data} onEmojiSelect={handleEmojiSelect} theme="light" />
+          <Picker data={data} onEmojiSelect={handleEmojiSelect} />
         </Menu>
 
         <Menu

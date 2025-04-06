@@ -1,0 +1,43 @@
+/* Variables CSS globales */
+:root {
+  /* Couleurs principales */
+  --primary-main: #1976d2;
+  --primary-light: #4791db;
+  --primary-dark: #115293;
+  
+  /* Couleurs de texte */
+  --text-primary: rgba(0, 0, 0, 0.87);
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-disabled: rgba(0, 0, 0, 0.38);
+  
+  /* Couleurs de fond */
+  --background-default: #fff;
+  --background-paper: #fff;
+  
+  /* Nuances de gris */
+  --grey-50: #fafafa;
+  --grey-100: #f5f5f5;
+  --grey-200: #eeeeee;
+  --grey-300: #e0e0e0;
+  --grey-400: #bdbdbd;
+  
+  /* Utilitaires */
+  --border-light: rgba(0, 0, 0, 0.12);
+  --border-medium: rgba(0, 0, 0, 0.23);
+  
+  /* Espacement */
+  --spacing-unit: 8px;
+}
+
+/* Base styles */
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-default);
+  color: var(--text-primary);
+}
+
+/* Style d'importation pour les composants CSS spécifiques */
+@import './Messaging.css'; 

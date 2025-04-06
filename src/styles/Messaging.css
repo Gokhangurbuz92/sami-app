@@ -1,0 +1,191 @@
+/* Styles pour le composant Messaging */
+
+/* Layout principal */
+.messaging-container {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+/* Liste des conversations */
+.conversations-sidebar {
+  width: 320px;
+  border-radius: 0;
+  overflow-y: auto;
+}
+
+.conversations-header {
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.conversation-list {
+  padding: 0;
+}
+
+.conversation-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.conversation-text {
+  display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.new-conversation-button {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}
+
+/* Zone de messages */
+.messages-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages-header {
+  padding: 8px; 
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.auto-translate-switch {
+  margin-right: 8px;
+}
+
+.messages-list {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-item {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.message-item-sent {
+  justify-content: flex-end;
+}
+
+.message-item-received {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  padding: 16px;
+  max-width: 70%;
+}
+
+.message-bubble-sent {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+.message-bubble-received {
+  background-color: var(--grey-100);
+  color: var(--text-primary);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.message-sender {
+  opacity: 0.7;
+}
+
+.message-input-container {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.message-input {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.input-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.file-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+  padding: 16px;
+}
+
+.file-preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.file-preview-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.file-preview-name {
+  margin-left: 8px;
+}
+
+.typing-indicator {
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 16px;
+  text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .conversations-sidebar {
+    width: 280px;
+  }
+  
+  .message-bubble {
+    max-width: 80%;
+  }
+}
+
+@media (max-width: 576px) {
+  .conversations-sidebar {
+    width: 240px;
+  }
+  
+  .message-bubble {
+    max-width: 90%;
+  }
+} 
