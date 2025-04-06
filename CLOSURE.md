@@ -1,6 +1,6 @@
 # ✅ Clôture du projet – Application SAMI
 
-**📆 Date de finalisation : 6 avril 2025**
+**📆 Date de finalisation : 6 avril 2024**
 
 🎯 Objectif : Créer une application Android (et Web) pour faciliter la communication entre les jeunes MNA et les professionnels du Foyer SAMI (Diaconat de Strasbourg).
 
