@@ -64,4 +64,4 @@
 
 L'application SAMI est désormais entièrement optimisée, sécurisée et prête à être déployée sur le Google Play Store et l'App Store. Toutes les exigences techniques ont été satisfaites et l'application répond aux standards de qualité élevés requis pour une utilisation professionnelle dans un contexte sensible comme le Foyer SAMI de Strasbourg.
 
-Date de validation finale: 7 Avril 2024 
+Date de validation finale: 8 Juin 2024 
