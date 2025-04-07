@@ -50,8 +50,17 @@ describe('youthService', () => {
 
   describe('createYouth', () => {
     it('should create a new youth and return it', async () => {
-      const mockDocRef = { id: '1' };
-      vi.mocked(addDoc).mockResolvedValue(mockDocRef);
+      const mockDocRef = {
+        id: '1',
+        converter: null,
+        type: 'document',
+        firestore: {} as any,
+        path: 'youth/1',
+        parent: {} as any,
+        withConverter: () => ({} as any)
+      };
+      
+      vi.mocked(addDoc).mockResolvedValue(mockDocRef as any);
 
       const result = await youthService.createYouth({
         firstName: 'John',

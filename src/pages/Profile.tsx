@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -32,7 +32,7 @@ export default function Profile() {
               <Typography variant="h6" gutterBottom>
                 {user?.email}
               </Typography>
-              <Button variant="outlined" color="error" onClick={signOut} sx={{ mt: 2 }}>
+              <Button variant="outlined" color="error" onClick={logout} sx={{ mt: 2 }}>
                 {t('common.logout')}
               </Button>
             </Box>

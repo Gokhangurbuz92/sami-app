@@ -3,10 +3,22 @@ import { Box, Typography, Paper } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import NotesList from '../components/NotesList';
 import NoteForm from '../components/NoteForm';
+import { Note } from '../services/noteService';
 
 const Notes: React.FC = () => {
   const { t } = useTranslation();
   const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const [selectedNote, setSelectedNote] = React.useState<Note | undefined>(undefined);
+
+  const handleEditNote = (note: Note) => {
+    setSelectedNote(note);
+    setIsFormOpen(true);
+  };
+
+  const handleSaveNote = () => {
+    setIsFormOpen(false);
+    setSelectedNote(undefined);
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -14,9 +26,14 @@ const Notes: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           {t('notes.title')}
         </Typography>
-        <NotesList />
+        <NotesList onEditNote={handleEditNote} />
       </Paper>
-      <NoteForm open={isFormOpen} onClose={() => setIsFormOpen(false)} />
+      <NoteForm 
+        open={isFormOpen} 
+        onClose={() => setIsFormOpen(false)} 
+        onSave={handleSaveNote}
+        note={selectedNote}
+      />
     </Box>
   );
 };

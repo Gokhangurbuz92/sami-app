@@ -259,8 +259,7 @@ const Calendar: React.FC = () => {
         selectable={true}
         onSelectSlot={handleDateSelect}
         onSelectEvent={handleEventClick}
-        height="auto"
-        loading={loading}
+        style={{ height: 500 }}
         eventPropGetter={eventStyleGetter}
       />
 
