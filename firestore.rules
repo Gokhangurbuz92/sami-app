@@ -36,12 +36,45 @@ service cloud.firestore {
     
     // Règles pour les rendez-vous
     match /appointments/{appointmentId} {
-      allow read, write: if request.auth != null;
+      // Lecture seulement si l'utilisateur est le créateur, admin, ou concerné par le rendez-vous
+      allow read: if request.auth != null && 
+        (resource.data.createdBy == request.auth.uid || 
+         isAdmin() || 
+         resource.data.participants.hasAny([request.auth.uid]));
+      
+      // Création seulement si l'utilisateur est connecté et est le créateur
+      allow create: if request.auth != null && 
+                    request.resource.data.createdBy == request.auth.uid;
+      
+      // Mise à jour seulement si l'utilisateur est le créateur ou admin
+      allow update: if request.auth != null && 
+                    (resource.data.createdBy == request.auth.uid || isAdmin());
+      
+      // Suppression seulement si l'utilisateur est le créateur ou admin
+      allow delete: if request.auth != null && 
+                    (resource.data.createdBy == request.auth.uid || isAdmin());
     }
     
     // Règles pour les notes
     match /notes/{noteId} {
-      allow read, write: if request.auth != null;
+      // Lecture seulement si l'utilisateur est le créateur, admin, référent du jeune concerné
+      allow read: if request.auth != null && 
+        (resource.data.createdBy == request.auth.uid || 
+         isAdmin() || 
+         (isReferent() && resource.data.youthId != null && 
+          getAssignedYouths().hasAny([resource.data.youthId])));
+      
+      // Création seulement si l'utilisateur est connecté et est le créateur
+      allow create: if request.auth != null && 
+                   request.resource.data.createdBy == request.auth.uid;
+      
+      // Mise à jour seulement si l'utilisateur est le créateur ou admin
+      allow update: if request.auth != null && 
+                   (resource.data.createdBy == request.auth.uid || isAdmin());
+      
+      // Suppression seulement si l'utilisateur est le créateur ou admin
+      allow delete: if request.auth != null && 
+                   (resource.data.createdBy == request.auth.uid || isAdmin());
     }
     
     // Règles pour les conversations
@@ -108,6 +141,26 @@ service cloud.firestore {
       // Suppression de son propre message uniquement
       allow delete: if request.auth != null && 
         resource.data.senderId == request.auth.uid;
+    }
+    
+    // Règles pour les notifications
+    match /notifications/{notificationId} {
+      // Lecture seulement si l'utilisateur est le destinataire ou admin
+      allow read: if request.auth != null && 
+                 (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Création seulement pour les admins ou les utilisateurs autorisés
+      allow create: if request.auth != null && 
+                    (isAdmin() || request.resource.data.userId == request.auth.uid);
+      
+      // Mise à jour seulement pour le destinataire (pour marquer comme lu)
+      allow update: if request.auth != null && 
+                    resource.data.userId == request.auth.uid && 
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      
+      // Suppression seulement pour le destinataire ou admin
+      allow delete: if request.auth != null && 
+                    (resource.data.userId == request.auth.uid || isAdmin());
     }
   }
 } 
