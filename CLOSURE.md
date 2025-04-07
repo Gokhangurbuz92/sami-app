@@ -83,6 +83,27 @@ Un contrôle qualité complet a été effectué sur l'application :
 - Optimisation du bundle avec code-splitting (réduction de 70% de la taille des chunks)
 - Vérification des règles de sécurité Firestore
 
+## Vulnérabilités connues et plan de mise à jour
+
+Un audit de sécurité a identifié quelques vulnérabilités modérées dans les dépendances suivantes :
+
+1. **esbuild** (<=0.24.2)
+   - Vulnérabilité : Possibilité pour un site web d'envoyer des requêtes au serveur de développement
+   - Impact : Modéré, affecte uniquement l'environnement de développement
+   - Correction : Mise à jour vers Vite 6.2.5+ planifiée pour la prochaine version majeure
+
+2. **undici** (6.0.0 - 6.21.0)
+   - Vulnérabilité : Utilisation de valeurs insuffisamment aléatoires
+   - Impact : Modéré, pourrait affecter la sécurité des connexions réseau
+   - Correction : Mise à jour vers Firebase 11.6.0+ prévue pour la prochaine version majeure
+
+Ces vulnérabilités ne sont pas critiques pour la version de production actuelle et seront adressées lors de la prochaine mise à jour majeure. La mise à jour immédiate nécessiterait des changements importants qui pourraient affecter la stabilité de l'application.
+
+**Plan d'action recommandé :**
+- Planifier une mise à jour complète des dépendances dans les 3 mois
+- Tester rigoureusement les nouvelles versions avant déploiement
+- Prioriser les mises à jour de sécurité lors des développements futurs
+
 ## Verdict final
 
 🟢 **PRÊT POUR PUBLICATION**
