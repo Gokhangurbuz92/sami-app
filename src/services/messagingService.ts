@@ -7,10 +7,7 @@ import {
   where,
   getDocs,
   orderBy,
-  onSnapshot,
   getDoc,
-  arrayUnion,
-  Timestamp,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
@@ -257,4 +254,19 @@ export const getTotalUnreadCount = async (userId: string): Promise<number> => {
   });
   
   return totalUnread;
+};
+
+export const getMessages = async (conversationId: string) => {
+  try {
+    const messagesRef = collection(db, 'conversations', conversationId, 'messages');
+    const q = query(messagesRef, orderBy('timestamp', 'asc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error getting messages:', error);
+    throw error;
+  }
 };

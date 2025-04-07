@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import Dashboard from '../pages/Dashboard';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n/config';
-import { useAuth } from '../contexts/AuthContext';
 
 // Mock du hook useAuth
 vi.mock('../contexts/AuthContext', () => ({

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar as BigCalendar, momentLocalizer, SlotInfo, Event } from 'react-big-calendar';
+import { Calendar as BigCalendar, momentLocalizer, SlotInfo } from 'react-big-calendar';
 import moment from 'moment';
 import { useAuth } from '../contexts/AuthContext';
 import { appointmentService, Appointment } from '../services/appointmentService';
@@ -39,7 +39,6 @@ const Calendar: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -123,7 +122,6 @@ const Calendar: React.FC = () => {
   const loadAppointments = useCallback(async () => {
     if (!user) return;
     try {
-      setLoading(true);
       const appointments = await appointmentService.getAppointments(user.uid);
       const calendarEvents = appointments.map((appointment) => ({
         title: appointment.title,
@@ -139,8 +137,6 @@ const Calendar: React.FC = () => {
     } catch (error) {
       console.error('Error loading appointments:', error);
       showNotification(t('calendar.errors.loadError'), 'error');
-    } finally {
-      setLoading(false);
     }
   }, [user, t]);
 

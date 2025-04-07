@@ -28,3 +28,17 @@ declare module 'workbox-window' {
     removeEventListener(type: string, listener: EventListener): void;
   }
 }
+
+export interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
+// Autres types PWA si nécessaire
+export interface PWAUpdateEvent extends Event {
+  registerSW: () => Promise<ServiceWorkerRegistration>;
+}

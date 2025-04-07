@@ -45,7 +45,7 @@ export function MainNavigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { currentUser, logout, checkPermission, isAdmin, isReferent, isJeune } = useAuth();
+  const { user, logout, checkPermission, isAdmin, isReferent, isJeune } = useAuth();
 
   // Définition des éléments de menu avec leurs permissions
   const allMenuItems: MenuItem[] = [

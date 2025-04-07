@@ -5,9 +5,7 @@ import {
   deleteDoc,
   doc,
   query,
-  where,
   getDocs,
-  orderBy,
   onSnapshot
 } from 'firebase/firestore';
 import { db } from '../../config/firebase';

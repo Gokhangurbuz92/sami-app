@@ -37,6 +37,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const [emailError, setEmailError] = useState('');
 
   // Vérifier si nous arrivons de la page d'inscription avec un paramètre de vérification
   useEffect(() => {
@@ -52,6 +53,7 @@ const Login = () => {
 
   const validateForm = () => {
     if (!email.includes('@') || !email.includes('.')) {
+      setEmailError(t('auth.invalidEmail'));
       return t('auth.invalidEmail');
     }
     if (password.length < 6) {
@@ -223,16 +225,17 @@ const Login = () => {
 
             <form onSubmit={handleSubmit}>
               <TextField
+                margin="normal"
+                required
                 fullWidth
-                label={t('common.email')}
+                id="email"
+                label={t('login.email')}
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                margin="normal"
-                required
-                autoComplete="email"
-                disabled={loading}
-                helperText={t('auth.emailHelper')}
+                error={!!emailError}
+                helperText={emailError}
               />
               <TextField
                 fullWidth

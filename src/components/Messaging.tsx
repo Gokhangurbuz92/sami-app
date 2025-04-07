@@ -16,19 +16,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent
-} from '@mui/material';
-import {
-  AttachFile as AttachFileIcon,
-  Send as SendIcon,
-  Add as AddIcon,
-  Translate as TranslateIcon,
-  EmojiEmotions as EmojiIcon,
-  InsertDriveFile as FileIcon
-} from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
-import { storage } from '../config/firebase';
-import { ref, uploadBytesResumable, getDownloadURL, UploadTask } from 'firebase/storage';
-import {
+,
   List,
   ListItem,
   ListItemText,
@@ -41,6 +29,17 @@ import {
   Chip,
   Stack
 } from '@mui/material';
+import {
+  AttachFile as AttachFileIcon,
+  Send as SendIcon,
+  Add as AddIcon,
+  Translate as TranslateIcon,
+  EmojiEmotions as EmojiIcon,
+  InsertDriveFile as FileIcon
+} from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext';
+import { storage , db } from '../config/firebase';
+import { ref, uploadBytesResumable, getDownloadURL, UploadTask } from 'firebase/storage';
 import {
   collection,
   query,
@@ -56,13 +55,13 @@ import {
   startAfter,
   getDocs,
 } from 'firebase/firestore';
-import { db } from '../config/firebase';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { userService } from '../services/userService';
 // Importer les styles
 import '../styles/Messaging.css';
+import { Message, Conversation } from '../types/messaging';
 
 // Constantes pour la configuration
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -83,39 +82,6 @@ const MAX_ATTACHMENTS = 5;
 // Constantes pour les réactions
 const MAX_REACTIONS_PER_USER = 5;
 const REACTION_DEBOUNCE_TIME = 500; // ms
-
-interface Message {
-  id: string;
-  content: string;
-  senderId: string;
-  senderName: string;
-  senderRole: string;
-  conversationId: string;
-  createdAt: Timestamp;
-  attachments?: {
-    url: string;
-    type: string;
-    name: string;
-    size: number;
-  }[];
-  translations?: {
-    [key: string]: string;
-  };
-  reactions?: {
-    [key: string]: string[];
-  };
-  translatedContent?: {
-    [key: string]: string;
-  };
-}
-
-interface Conversation {
-  id: string;
-  participants: string[];
-  lastMessage: string;
-  lastMessageTime: any;
-  unreadCount: number;
-}
 
 interface ConversationData {
   typing?: {
@@ -819,28 +785,17 @@ const Messaging: React.FC<MessagingProps> = ({ initialConversationId }) => {
   }, [newMessage, attachments, selectedConversation, currentUser, t, validateFile]);
 
   // Fonction pour basculer l'affichage de la traduction
-  const toggleTranslation = (messageId: string) => {
-    setShowTranslations((prev) => {
-      const next = new Set(prev);
-      if (next.has(messageId)) {
-        next.delete(messageId);
-      } else {
-        next.add(messageId);
-      }
-      return next;
-    });
-  };
+  const toggleTranslation = useCallback((messageId: string) => {
+    setShowTranslations(prev => ({
+      ...prev,
+      [messageId]: !prev[messageId]
+    }));
+  }, []);
 
   // Fonction pour afficher les messages d'erreur/succès
-  const showNotification = (message: string, type: 'error' | 'success') => {
-    if (type === 'error') {
-      setError(message);
-      setTimeout(() => setError(null), 5000);
-    } else {
-      setSuccess(message);
-      setTimeout(() => setSuccess(null), 3000);
-    }
-  };
+  const showNotification = useCallback((message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
+    setSnackbar({ open: true, message, severity });
+  }, []);
 
   // Ajouter i18n comme dépendance du hook useCallback pour handleTranslateMessage
   const handleTranslateMessage = useCallback((messageId: string) => {

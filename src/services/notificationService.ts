@@ -12,6 +12,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { NotificationData } from '../types/notification';
 
 export interface Notification {
   id?: string;
@@ -150,5 +151,21 @@ export const notificationService = {
       link: `/youth/${youthId}`,
       data: { youthId }
     });
+  }
+};
+
+export const sendNotification = async (data: NotificationData) => {
+  try {
+    // Logique d'envoi de notification
+    return await fetch('/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    throw error;
   }
 };

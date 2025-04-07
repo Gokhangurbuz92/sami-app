@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import i18n from './i18n/config';
-import { isRTL } from './i18n/config';
+import i18n, { isRTL } from './i18n/config';
 
 const theme = createTheme({
   direction: isRTL(i18n.language) ? 'rtl' : 'ltr',

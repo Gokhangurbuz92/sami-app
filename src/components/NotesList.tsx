@@ -29,6 +29,7 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
   const { user } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [newNote, setNewNote] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -98,6 +99,10 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
       note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
       note.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handleNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewNote(event.target.value);
+  };
 
   return (
     <Paper sx={{ p: 2 }}>

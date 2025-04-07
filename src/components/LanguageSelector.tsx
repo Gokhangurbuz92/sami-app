@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import i18n, { getTextDirection } from '../i18n/config';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 const languages = [
   { code: 'fr', label: 'Français' },
@@ -20,10 +21,10 @@ const LanguageSelector: React.FC = () => {
     document.documentElement.dir = direction;
   }, [currentLang]);
 
-  const handleChange = (event: any) => {
-    const lang = event.target.value;
-    i18n.changeLanguage(lang);
-    document.documentElement.dir = getTextDirection(lang);
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    const newLang = event.target.value;
+    i18n.changeLanguage(newLang);
+    document.documentElement.dir = getTextDirection(newLang);
   };
 
   return (

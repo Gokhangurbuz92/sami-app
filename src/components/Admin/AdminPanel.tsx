@@ -8,13 +8,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import BugReportIcon from '@mui/icons-material/BugReport';
-import { getAuth, signOut } from 'firebase/auth';
-import { getFirestore, collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, getDocs, query, limit } from 'firebase/firestore';
 import { getStorage, ref, listAll } from 'firebase/storage';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { Capacitor } from '@capacitor/core';
 import { Toast } from '@capacitor/toast';
 import { captureMessage } from '../../config/sentry';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Définition des types
 interface FirebaseStatus {
@@ -42,7 +43,7 @@ const AdminPanel: React.FC = () => {
     messaging: false
   });
   const [appVersion, setAppVersion] = useState<string>('1.0.0');
-  const [fcmToken, setFcmToken] = useState<string | null>(null);
+  const { user } = useAuth();
 
   // Chargement initial
   useEffect(() => {
@@ -135,7 +136,6 @@ const AdminPanel: React.FC = () => {
       if (Capacitor.isNativePlatform()) {
         const messaging = getMessaging();
         const token = await getToken(messaging);
-        setFcmToken(token);
         
         // Dans un cas réel, nous enverrions ce token à notre serveur pour envoyer une notification
         // Pour l'instant, nous affichons simplement un toast
