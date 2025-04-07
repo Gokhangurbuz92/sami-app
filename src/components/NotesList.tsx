@@ -16,6 +16,8 @@ import { Delete as DeleteIcon, Edit as EditIcon, Search as SearchIcon } from '@m
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { noteService, Note } from '../services/noteService';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface NotesListProps {
   onEditNote: (note: Note) => void;
@@ -83,6 +85,13 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
     }
   };
 
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return '';
+    
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return format(date, 'dd MMMM yyyy à HH:mm', { locale: fr });
+  };
+
   const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,6 +150,9 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
                   <Typography variant="body2" color="text.secondary">
                     {note.content}
                   </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                    {formatDate(note.createdAt)}
+                  </Typography>
                   <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     {note.tags.map((tag, index) => (
                       <Chip key={index} label={tag} size="small" variant="outlined" />
@@ -158,7 +170,7 @@ export default function NotesList({ onEditNote, youthId }: NotesListProps) {
               >
                 <EditIcon />
               </IconButton>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(note.id)}>
+              <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(note.id || '')}>
                 <DeleteIcon />
               </IconButton>
             </ListItemSecondaryAction>
