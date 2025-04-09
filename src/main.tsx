@@ -5,10 +5,14 @@ import './i18n/config';
 import './index.css';
 import './styles/calendar.css';
 import { registerSW } from 'virtual:pwa-register';
-import { initSentry } from './config/sentry';
+import ErrorBoundaryWrapper from './config/sentry';
+import { Capacitor } from '@capacitor/core';
+import { initSentryCapacitor } from './config/sentryCapacitor';
 
-// Initialiser Sentry pour le suivi des erreurs
-initSentry();
+// Initialisation de Sentry pour les plateformes natives (Android/iOS)
+if (Capacitor.isNativePlatform()) {
+  initSentryCapacitor();
+}
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');
@@ -27,6 +31,8 @@ const updateSW = registerSW({
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundaryWrapper>
+      <App />
+    </ErrorBoundaryWrapper>
   </React.StrictMode>
 );
