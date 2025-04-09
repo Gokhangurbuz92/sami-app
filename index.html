@@ -3,36 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo192.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Solution Firefox compatible -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark">
-    
-    <!-- prettier-ignore -->
-    <!-- eslint-disable -->
-    <!-- htmlhint-ignore -->
-    <!-- Les balises theme-color ne sont pas supportées par Firefox/Opera mais sont utiles pour Chrome/Edge -->
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-    <!-- eslint-enable -->
-    <!-- htmlhint-enable -->
-    
-    <!-- Pour navigateurs Microsoft -->
+    <meta name="theme-color" content="#000000" />
     <meta name="msapplication-navbutton-color" content="#000000" />
     <meta name="msapplication-TileColor" content="#000000">
-    <!-- Pour iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="Application de Gestion SAMI" />
+    <meta name="description" content="Application SAMI - Suivi et Accompagnement des Mineurs Isolés" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SAMI - Suivi et Accompagnement des Mineurs Isolés">
+    <meta property="og:description" content="Application SAMI - Suivi et Accompagnement des Mineurs Isolés">
+    <meta property="og:image" content="/logo512.png">
+    
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <title>APP SAMI</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-    />
+    
+    <title>SAMI - Suivi et Accompagnement des Mineurs Isolés</title>
+    
+    <!-- Préchargement des polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
   </head>
   <body>
     <div id="root"></div>
+    <noscript>Vous devez activer JavaScript pour exécuter cette application.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html> 

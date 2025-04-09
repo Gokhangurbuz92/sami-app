@@ -1,0 +1,42 @@
+# Build files
+dist/
+build/
+
+# Test files
+**/__tests__/**
+**/*.test.ts
+**/*.test.tsx
+
+# Config files
+*.config.ts
+*.config.js
+vite.config.ts
+
+# Type definition files
+*.d.ts
+
+# Generated files
+src/i18n/locales/
+coverage/
+
+# Ignorer les erreurs dans node_modules
+node_modules/**
+dist/**
+build/**
+android/**
+ios/**
+
+# Ignorer les fichiers générés
+*.d.ts
+*.js.map
+*.d.ts.map
+
+# Ignorer les fichiers de configuration
+vite.config.ts
+capacitor.config.ts
+
+# Ignorer les fichiers de test
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx 

@@ -13,6 +13,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { NotificationData } from '../types/notification';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import firebaseApp from '../config/firebase';
 
 export interface Notification {
   id?: string;
@@ -23,7 +25,7 @@ export interface Notification {
   createdAt: Date;
   userId: string;
   link?: string;
-  data?: Record<string, any>;
+  data?: Record<string, string | number | boolean>;
 }
 
 export const notificationService = {
@@ -76,15 +78,22 @@ export const notificationService = {
 
   // Récupérer les notifications d'un utilisateur
   async getNotifications(userId: string): Promise<Notification[]> {
-    const notificationsRef = collection(db, 'notifications');
-    const q = query(notificationsRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt.toDate()
-    })) as Notification[];
+    try {
+      const notificationsRef = collection(db, 'notifications');
+      const q = query(notificationsRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Notification));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error fetching notifications:', error.message);
+        throw error;
+      }
+      throw new Error('An unknown error occurred while fetching notifications');
+    }
   },
 
   // Écouter les notifications en temps réel
@@ -167,5 +176,61 @@ export const sendNotification = async (data: NotificationData) => {
   } catch (error) {
     console.error('Error sending notification:', error);
     throw error;
+  }
+};
+
+const messaging = getMessaging(firebaseApp);
+
+interface NotificationPayload {
+  title: string;
+  body: string;
+  icon?: string;
+  data?: Record<string, string>;
+}
+
+interface FirebaseMessage {
+  notification?: {
+    title?: string;
+    body?: string;
+    icon?: string;
+  };
+  data?: Record<string, string>;
+}
+
+export const requestNotificationPermission = async () => {
+  try {
+    const permission = await Notification.requestPermission();
+    
+    if (permission === 'granted') {
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+      });
+      return token;
+    }
+    
+    return null;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error requesting notification permission:', error.message);
+    }
+    return null;
+  }
+};
+
+export const onMessageListener = (callback: (payload: NotificationPayload) => void) => {
+  try {
+    return onMessage(messaging, (payload: FirebaseMessage) => {
+      callback({
+        title: payload.notification?.title || '',
+        body: payload.notification?.body || '',
+        icon: payload.notification?.icon,
+        data: payload.data
+      });
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error setting up message listener:', error.message);
+    }
+    return () => {};
   }
 };

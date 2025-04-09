@@ -1,0 +1,14 @@
+diff --git a/node_modules/@capacitor/app/android/build.gradle b/node_modules/@capacitor/app/android/build.gradle
+index c5a2cd7..b3a7ed6 100644
+--- a/node_modules/@capacitor/app/android/build.gradle
++++ b/node_modules/@capacitor/app/android/build.gradle
+@@ -56,7 +56,7 @@ dependencies {
+     if (System.getenv("CAP_PLUGIN_PUBLISH") == "true") {
+         implementation "com.capacitorjs:core:$capacitorVersion"
+     } else {
+-        implementation project(':capacitor-android')
++        implementation "com.capacitorjs:android-capacitor:7.2.0"
+     }
+
+     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+ } 

@@ -43,11 +43,12 @@ const AdminPanel: React.FC = () => {
     messaging: false
   });
   const [appVersion, setAppVersion] = useState<string>('1.0.0');
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
 
   // Chargement initial
   useEffect(() => {
     const initAdminPanel = async () => {
+      if (!currentUser) return;
       try {
         setLoading(true);
         await checkFirebaseStatus();
@@ -61,7 +62,7 @@ const AdminPanel: React.FC = () => {
     };
 
     initAdminPanel();
-  }, []);
+  }, [currentUser]);
 
   // Vérifier l'état des services Firebase
   const checkFirebaseStatus = async () => {

@@ -45,7 +45,7 @@ export function MainNavigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, logout, checkPermission, isAdmin, isReferent, isJeune } = useAuth();
+  const { logout, checkPermission, isAdmin, isReferent, isJeune } = useAuth();
 
   // Définition des éléments de menu avec leurs permissions
   const allMenuItems: MenuItem[] = [
@@ -102,7 +102,7 @@ export function MainNavigation() {
     }
 
     // Vérifier les permissions si spécifiées
-    if (item.permissionRequired && !checkPermission(item.permissionRequired as any)) {
+    if (item.permissionRequired && !checkPermission(item.permissionRequired as keyof Permissions)) {
       return false;
     }
 

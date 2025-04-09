@@ -19,11 +19,34 @@ def capacitor_pods
   pod 'SentryCapacitor', :path => '../../node_modules/@sentry/capacitor'
 end
 
+def firebase_pods
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
+  pod 'Firebase/Storage'
+  pod 'Firebase/Messaging'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
+  pod 'FirebaseFirestoreSwift'
+end
+
 target 'App' do
   capacitor_pods
+  firebase_pods
   # Add your Pods here
 end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      
+      # Enable arm64 for simulators
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = ''
+      
+      # For M1 Macs
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+    end
+  end
 end

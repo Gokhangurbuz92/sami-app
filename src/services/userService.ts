@@ -9,228 +9,293 @@ import {
   where,
   getDocs,
   Timestamp,
-  serverTimestamp
+  serverTimestamp,
+  DocumentData
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { ApiResponse, ErrorResponse } from '../types/global';
+import { User, Referent, Youth } from '../types';
 
-export interface User {
-  uid: string;
-  email: string;
-  displayName: string;
-  role: 'jeune' | 'referent' | 'coreferent' | 'admin';
-  assignedReferents?: string[]; // Si le rôle est "jeune"
-  assignedYouths?: string[]; // Si le rôle est "referent" ou "coreferent"
-  createdAt?: Timestamp;
-  updatedAt?: Timestamp;
+type UserRole = 'admin' | 'referent' | 'jeune';
+
+interface FirestoreUser extends Omit<User, 'createdAt' | 'updatedAt'> {
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
+
+const convertFirestoreTimestamps = (data: DocumentData): Partial<User> => {
+  return {
+    ...data,
+    createdAt: data.createdAt?.toDate(),
+    updatedAt: data.updatedAt?.toDate()
+  };
+};
 
 export const userService = {
   /**
    * Crée un nouvel utilisateur dans Firestore
    */
-  async createUser(userData: Omit<User, 'createdAt' | 'updatedAt'>): Promise<User> {
-    const { uid } = userData;
+  async createUser(userData: Omit<User, 'createdAt' | 'updatedAt'>): Promise<ApiResponse<User>> {
+    try {
+      const { id } = userData;
 
-    // Validation de base
-    if (!userData.role) {
-      throw new Error('Le champ role est obligatoire');
+      if (!userData.role) {
+        return {
+          data: null,
+          error: 'Le champ role est obligatoire',
+          status: 400
+        };
+      }
+
+      const userDataToSave: Partial<FirestoreUser> = {
+        ...userData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
+      switch (userData.role) {
+        case 'jeune':
+          userDataToSave.assignedReferents = userData.assignedReferents || [];
+          delete userDataToSave.assignedYouths;
+          break;
+        case 'referent':
+          userDataToSave.assignedYouths = userData.assignedYouths || [];
+          delete userDataToSave.assignedReferents;
+          break;
+        case 'admin':
+          delete userDataToSave.assignedReferents;
+          delete userDataToSave.assignedYouths;
+          break;
+      }
+
+      await setDoc(doc(db, 'users', id), userDataToSave);
+
+      return {
+        data: {
+          ...userDataToSave,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        } as User,
+        error: null,
+        status: 201
+      };
+    } catch (error) {
+      return handleError(error);
     }
-
-    // Préparation des données en fonction du rôle
-    const userDataToSave: any = {
-      ...userData,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    };
-
-    // Pour s'assurer que les champs appropriés existent selon le rôle
-    if (userData.role === 'jeune') {
-      userDataToSave.assignedReferents = userData.assignedReferents || [];
-      // Supprimer le champ assignedYouths si présent
-      delete userDataToSave.assignedYouths;
-    } else if (userData.role === 'referent' || userData.role === 'coreferent') {
-      userDataToSave.assignedYouths = userData.assignedYouths || [];
-      // Supprimer le champ assignedReferents si présent
-      delete userDataToSave.assignedReferents;
-    } else {
-      // Pour le rôle admin, supprimer les deux champs s'ils sont présents
-      delete userDataToSave.assignedReferents;
-      delete userDataToSave.assignedYouths;
-    }
-
-    await setDoc(doc(db, 'users', uid), userDataToSave);
-
-    return {
-      ...userDataToSave,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now()
-    };
   },
 
   /**
    * Récupère un utilisateur par son ID
    */
-  async getUserById(uid: string): Promise<User | null> {
-    const userRef = doc(db, 'users', uid);
-    const userDoc = await getDoc(userRef);
+  async getUserById(id: string): Promise<ApiResponse<User>> {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', id));
+      
+      if (!userDoc.exists()) {
+        return {
+          data: null,
+          error: `L'utilisateur avec l'ID ${id} n'existe pas`,
+          status: 404
+        };
+      }
 
-    if (userDoc.exists()) {
-      return userDoc.data() as User;
+      const userData = userDoc.data() as FirestoreUser;
+      
+      return {
+        data: {
+          ...userData,
+          id: userDoc.id,
+          createdAt: userData.createdAt.toDate(),
+          updatedAt: userData.updatedAt.toDate()
+        } as User,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
     }
-
-    return null;
   },
 
   /**
    * Met à jour un utilisateur
    */
   async updateUser(
-    uid: string,
-    userData: Partial<Omit<User, 'uid' | 'createdAt' | 'updatedAt'>>
-  ): Promise<void> {
-    const userRef = doc(db, 'users', uid);
+    id: string,
+    userData: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<ApiResponse<boolean>> {
+    try {
+      const userRef = doc(db, 'users', id);
+      const userDoc = await getDoc(userRef);
 
-    // Vérifier si l'utilisateur existe
-    const userDoc = await getDoc(userRef);
-    if (!userDoc.exists()) {
-      throw new Error(`L'utilisateur avec l'ID ${uid} n'existe pas`);
+      if (!userDoc.exists()) {
+        return {
+          data: null,
+          error: `L'utilisateur avec l'ID ${id} n'existe pas`,
+          status: 404
+        };
+      }
+
+      const updateData = {
+        ...userData,
+        updatedAt: serverTimestamp()
+      };
+
+      await updateDoc(userRef, updateData);
+
+      return {
+        data: true,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
     }
-
-    // Préparer les données à mettre à jour
-    const userDataToUpdate: any = {
-      ...userData,
-      updatedAt: serverTimestamp()
-    };
-
-    await updateDoc(userRef, userDataToUpdate);
   },
 
   /**
    * Supprime un utilisateur
    */
-  async deleteUser(uid: string): Promise<void> {
-    const userRef = doc(db, 'users', uid);
-    await deleteDoc(userRef);
+  async deleteUser(id: string): Promise<ApiResponse<boolean>> {
+    try {
+      const userRef = doc(db, 'users', id);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        return {
+          data: null,
+          error: `L'utilisateur avec l'ID ${id} n'existe pas`,
+          status: 404
+        };
+      }
+
+      await deleteDoc(userRef);
+
+      return {
+        data: true,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
+    }
   },
 
   /**
    * Récupère tous les utilisateurs par rôle
    */
-  async getUsersByRole(role: User['role']): Promise<User[]> {
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('role', '==', role));
+  async getUsersByRole(role: UserRole): Promise<ApiResponse<User[]>> {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('role', '==', role));
+      const querySnapshot = await getDocs(q);
 
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data() as User);
+      const users = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...convertFirestoreTimestamps(doc.data())
+      })) as User[];
+
+      return {
+        data: users,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
+    }
   },
 
   /**
    * Récupère tous les jeunes associés à un référent
    */
-  async getYouthsByReferentId(referentId: string): Promise<User[]> {
-    const usersRef = collection(db, 'users');
-    const q = query(
-      usersRef,
-      where('role', '==', 'jeune'),
-      where('assignedReferents', 'array-contains', referentId)
-    );
+  async getYouthsByReferentId(referentId: string): Promise<ApiResponse<Youth[]>> {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(
+        usersRef,
+        where('role', '==', 'jeune'),
+        where('assignedReferents', 'array-contains', referentId)
+      );
 
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data() as User);
+      const querySnapshot = await getDocs(q);
+      const youths = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...convertFirestoreTimestamps(doc.data())
+      })) as Youth[];
+
+      return {
+        data: youths,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
+    }
   },
 
   /**
    * Récupère tous les référents associés à un jeune
    */
-  async getReferentsByYouthId(youthId: string): Promise<User[]> {
-    const usersRef = collection(db, 'users');
-    const q = query(
-      usersRef,
-      where('role', 'in', ['referent', 'coreferent']),
-      where('assignedYouths', 'array-contains', youthId)
-    );
+  async getReferentsByYouthId(youthId: string): Promise<ApiResponse<Referent[]>> {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(
+        usersRef,
+        where('role', '==', 'referent'),
+        where('assignedYouths', 'array-contains', youthId)
+      );
 
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data() as User);
-  },
+      const querySnapshot = await getDocs(q);
+      const referents = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...convertFirestoreTimestamps(doc.data())
+      })) as Referent[];
 
-  /**
-   * Ajoute un référent à un jeune
-   */
-  async assignReferentToYouth(youthId: string, referentId: string): Promise<void> {
-    // Mettre à jour le jeune
-    const youthRef = doc(db, 'users', youthId);
-    const youthDoc = await getDoc(youthRef);
-
-    if (!youthDoc.exists() || youthDoc.data().role !== 'jeune') {
-      throw new Error(`L'utilisateur ${youthId} n'existe pas ou n'est pas un jeune`);
-    }
-
-    const userData = youthDoc.data() as User;
-    const assignedReferents = [...(userData.assignedReferents || [])];
-
-    if (!assignedReferents.includes(referentId)) {
-      assignedReferents.push(referentId);
-      await updateDoc(youthRef, {
-        assignedReferents,
-        updatedAt: serverTimestamp()
-      });
-    }
-
-    // Mettre à jour le référent
-    const referentRef = doc(db, 'users', referentId);
-    const referentDoc = await getDoc(referentRef);
-
-    if (!referentDoc.exists() || !['referent', 'coreferent'].includes(referentDoc.data().role)) {
-      throw new Error(`L'utilisateur ${referentId} n'existe pas ou n'est pas un référent`);
-    }
-
-    const referentData = referentDoc.data() as User;
-    const assignedYouths = [...(referentData.assignedYouths || [])];
-
-    if (!assignedYouths.includes(youthId)) {
-      assignedYouths.push(youthId);
-      await updateDoc(referentRef, {
-        assignedYouths,
-        updatedAt: serverTimestamp()
-      });
+      return {
+        data: referents,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
     }
   },
 
   /**
-   * Supprime l'association entre un référent et un jeune
+   * Récupère tous les référents
    */
-  async removeReferentFromYouth(youthId: string, referentId: string): Promise<void> {
-    // Mettre à jour le jeune
-    const youthRef = doc(db, 'users', youthId);
-    const youthDoc = await getDoc(youthRef);
+  async fetchReferents(): Promise<ApiResponse<Referent[]>> {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('role', '==', 'referent'));
+      const querySnapshot = await getDocs(q);
+      
+      const referents = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...convertFirestoreTimestamps(doc.data())
+      })) as Referent[];
 
-    if (youthDoc.exists() && youthDoc.data().role === 'jeune') {
-      const userData = youthDoc.data() as User;
-      const assignedReferents = [...(userData.assignedReferents || [])].filter(
-        (id) => id !== referentId
-      );
-
-      await updateDoc(youthRef, {
-        assignedReferents,
-        updatedAt: serverTimestamp()
-      });
-    }
-
-    // Mettre à jour le référent
-    const referentRef = doc(db, 'users', referentId);
-    const referentDoc = await getDoc(referentRef);
-
-    if (referentDoc.exists() && ['referent', 'coreferent'].includes(referentDoc.data().role)) {
-      const referentData = referentDoc.data() as User;
-      const assignedYouths = [...(referentData.assignedYouths || [])].filter(
-        (id) => id !== youthId
-      );
-
-      await updateDoc(referentRef, {
-        assignedYouths,
-        updatedAt: serverTimestamp()
-      });
+      return {
+        data: referents,
+        error: null,
+        status: 200
+      };
+    } catch (error) {
+      return handleError(error);
     }
   }
+};
+
+export const handleError = (error: unknown): ErrorResponse => {
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      code: 'UNKNOWN_ERROR',
+      status: 500
+    };
+  }
+  return {
+    message: 'Une erreur inconnue est survenue',
+    code: 'UNKNOWN_ERROR',
+    status: 500
+  };
 };

@@ -88,3 +88,6 @@ node_modules/
 # dataconnect generated files
 .dataconnect
 gradle-8.11.1-all.zip
+
+# Sentry Config File
+.env.sentry-build-plugin

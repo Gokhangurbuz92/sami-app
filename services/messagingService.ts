@@ -9,12 +9,11 @@ import {
   orderBy,
   limit,
   serverTimestamp,
-  Timestamp,
+  Timestamp as _Timestamp,
   updateDoc,
-  arrayUnion,
-  setDoc
+  writeBatch
 } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { db } from '../src/config/firebase';
 import { isJeuneAssignedToReferent } from './assignation';
 
 // Types pour la messagerie
@@ -24,7 +23,7 @@ export interface Message {
   senderName?: string;
   conversationId: string;
   content: string;
-  timestamp: Timestamp;
+  timestamp: _Timestamp;
   isRead: boolean;
   attachments?: string[];
 }
@@ -35,11 +34,11 @@ export interface Conversation {
   participantNames?: Record<string, string>;
   lastMessageId?: string;
   lastMessageContent?: string;
-  lastMessageTimestamp?: Timestamp;
+  lastMessageTimestamp?: _Timestamp;
   lastMessageSenderId?: string;
   unreadCount?: Record<string, number>;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: _Timestamp;
+  updatedAt: _Timestamp;
 }
 
 /**
@@ -97,8 +96,8 @@ export async function getOrCreateConversation(user1Id: string, user2Id: string):
       participants: [user1Id, user2Id],
       participantNames,
       unreadCount: { [user1Id]: 0, [user2Id]: 0 },
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp
+      createdAt: serverTimestamp() as _Timestamp,
+      updatedAt: serverTimestamp() as _Timestamp
     };
     
     const conversationRef = await addDoc(collection(db, "conversations"), newConversation);
@@ -139,7 +138,7 @@ export async function sendMessage(conversationId: string, senderId: string, cont
       senderName,
       conversationId,
       content,
-      timestamp: serverTimestamp() as Timestamp,
+      timestamp: serverTimestamp() as _Timestamp,
       isRead: false,
       attachments
     };
@@ -218,44 +217,22 @@ export async function getMessagesForConversation(conversationId: string, userId:
 /**
  * Marque les messages d'une conversation comme lus pour un utilisateur
  */
-export async function markMessagesAsRead(conversationId: string, userId: string): Promise<void> {
+export async function markMessagesAsRead(conversationId: string, _userId: string): Promise<void> {
   try {
-    const conversationRef = doc(db, "conversations", conversationId);
-    const conversationDoc = await getDoc(conversationRef);
-    
-    if (!conversationDoc.exists()) {
-      throw new Error("Cette conversation n'existe pas");
-    }
-    
-    const conversationData = conversationDoc.data() as Conversation;
-    
-    if (!conversationData.participants.includes(userId)) {
-      throw new Error("L'utilisateur ne participe pas à cette conversation");
-    }
-    
-    // Mettre à jour le nombre de messages non lus
-    const unreadCount = conversationData.unreadCount || {};
-    unreadCount[userId] = 0;
-    
-    await updateDoc(conversationRef, { unreadCount });
-    
-    // Marquer tous les messages non lus comme lus
+    const batch = writeBatch(db);
+    const messagesRef = collection(db, "messages");
     const q = query(
-      collection(db, "messages"),
+      messagesRef,
       where("conversationId", "==", conversationId),
-      where("senderId", "!=", userId),
       where("isRead", "==", false)
     );
     
     const querySnapshot = await getDocs(q);
-    
-    const batch = [];
-    querySnapshot.forEach(doc => {
-      const messageRef = doc.ref;
-      batch.push(updateDoc(messageRef, { isRead: true }));
+    querySnapshot.docs.forEach(doc => {
+      batch.update(doc.ref, { isRead: true });
     });
     
-    await Promise.all(batch);
+    await batch.commit();
   } catch (error) {
     console.error("Erreur lors du marquage des messages comme lus :", error);
     throw error;

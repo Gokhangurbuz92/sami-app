@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">SAMI Strasbourg</string>
-    <string name="title_activity_main">SAMI Strasbourg</string>
-    <string name="package_name">com.sami.app</string>
-    <string name="custom_url_scheme">com.sami.app</string>
+    <string name="app_name">SAMI App</string>
+    <string name="title_activity_main">SAMI App</string>
+    <string name="package_name">com.gokhangurbuz.samiapp</string>
+    <string name="custom_url_scheme">com.gokhangurbuz.samiapp</string>
 </resources>
