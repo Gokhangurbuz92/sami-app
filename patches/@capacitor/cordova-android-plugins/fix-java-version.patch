@@ -1,7 +1,7 @@
-diff --git a/node_modules/@capacitor/android/build.gradle b/node_modules/@capacitor/android/build.gradle
+diff --git a/node_modules/@capacitor/cordova-android-plugins/build.gradle b/node_modules/@capacitor/cordova-android-plugins/build.gradle
 index 123456..789012 100644
---- a/node_modules/@capacitor/android/build.gradle
-+++ b/node_modules/@capacitor/android/build.gradle
+--- a/node_modules/@capacitor/cordova-android-plugins/build.gradle
++++ b/node_modules/@capacitor/cordova-android-plugins/build.gradle
 @@ -25,8 +25,8 @@ android {
      }
  
@@ -11,4 +11,4 @@ index 123456..789012 100644
 +        sourceCompatibility JavaVersion.VERSION_17
 +        targetCompatibility JavaVersion.VERSION_17
      }
- }
+ } 
