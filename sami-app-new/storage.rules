@@ -1,0 +1,57 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Fonction pour vérifier si l'utilisateur est authentifié
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Fonction pour vérifier si l'utilisateur est un professionnel
+    function isProfessional() {
+      return isAuthenticated() && 
+        firestore.get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'professional';
+    }
+
+    // Fonction pour vérifier si l'utilisateur est un jeune
+    function isYouth() {
+      return isAuthenticated() && 
+        firestore.get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'youth';
+    }
+
+    // Fonction pour vérifier si l'utilisateur est admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        firestore.get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Dossier des avatars
+    match /avatars/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Dossier des pièces jointes des messages
+    match /attachments/{messageId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (
+        firestore.get(/databases/$(database)/documents/messages/$(messageId)).data.senderId == request.auth.uid
+      );
+    }
+
+    // Dossier des contenus éducatifs
+    match /educational/{contentId} {
+      allow read: if isAuthenticated();
+      allow write: if isProfessional() || isAdmin();
+    }
+
+    // Dossier des documents administratifs
+    match /documents/{documentId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == firestore.get(/databases/$(database)/documents/documents/$(documentId)).data.userId ||
+        isProfessional() ||
+        isAdmin()
+      );
+      allow write: if isProfessional() || isAdmin();
+    }
+  }
+} 

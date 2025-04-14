@@ -91,3 +91,26 @@ gradle-8.11.1-all.zip
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Fichiers de signature Android
+keystore/
+signing.properties
+
+# Fichiers sensibles
+.env.*
+!.env.example
+sentry.properties
+*.key
+*.jks
+*.keystore
+
+# Fichiers volumineux
+*.zip
+*.apks
+bundletool.jar
+gradle-*.zip
+
+# Build files
+dist/
+build/
+sami-app-clean/

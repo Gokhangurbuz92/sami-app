@@ -16,6 +16,7 @@ import { Capacitor } from '@capacitor/core';
 import { Toast } from '@capacitor/toast';
 import { captureMessage } from '../../config/sentry';
 import { useAuth } from '../../contexts/AuthContext';
+import { notificationService } from '../../services/NotificationService';
 
 // Définition des types
 interface FirebaseStatus {
@@ -134,31 +135,22 @@ const AdminPanel: React.FC = () => {
   // Tester une notification push
   const testPushNotification = async () => {
     try {
-      if (Capacitor.isNativePlatform()) {
-        const messaging = getMessaging();
-        const token = await getToken(messaging);
-        
-        // Dans un cas réel, nous enverrions ce token à notre serveur pour envoyer une notification
-        // Pour l'instant, nous affichons simplement un toast
-        await Toast.show({
-          text: 'Token FCM obtenu: ' + token.substring(0, 10) + '...',
-          duration: 'long'
-        });
-        
-        // Enregistrer dans Sentry pour démonstration
-        captureMessage('Test push notification token retrieved', 'info');
-      } else {
-        await Toast.show({
-          text: 'Les notifications push nécessitent un appareil mobile',
-          duration: 'long'
-        });
-      }
+      setLoading(true);
+      const result = await notificationService.testPushNotification();
+      
+      await Toast.show({
+        text: result,
+        duration: 'long'
+      });
+      
+      setLoading(false);
     } catch (error) {
       console.error('Erreur lors du test de notification push:', error);
       await Toast.show({
         text: 'Erreur de notification push: ' + String(error),
         duration: 'long'
       });
+      setLoading(false);
     }
   };
 

@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Fonction pour vérifier si l'utilisateur est authentifié
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Fonction pour vérifier si l'utilisateur est un professionnel
+    function isProfessional() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'professional';
+    }
+
+    // Fonction pour vérifier si l'utilisateur est un jeune
+    function isYouth() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'youth';
+    }
+
+    // Fonction pour vérifier si l'utilisateur est admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Collection des utilisateurs
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if isAdmin();
+    }
+
+    // Collection des messages
+    match /messages/{messageId} {
+      allow read: if isAuthenticated() && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.receiverId == request.auth.uid ||
+        resource.data.groupId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groups
+      );
+      allow create: if isAuthenticated() && (
+        request.resource.data.senderId == request.auth.uid
+      );
+      allow update: if isAuthenticated() && (
+        resource.data.senderId == request.auth.uid
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Collection des groupes
+    match /groups/{groupId} {
+      allow read: if isAuthenticated() && (
+        isProfessional() ||
+        resource.data.members[request.auth.uid] == true
+      );
+      allow create: if isProfessional();
+      allow update: if isProfessional();
+      allow delete: if isAdmin();
+    }
+
+    // Collection des contenus éducatifs
+    match /educationalContent/{contentId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isProfessional() || isAdmin();
+    }
+
+    // Collection des rendez-vous
+    match /appointments/{appointmentId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        isProfessional() ||
+        isAdmin()
+      );
+      allow create, update: if isProfessional() || isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+} 

@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "loading": "Connexion en cours..."
+  },
+  "navigation": {
+    "home": "Accueil",
+    "chat": "Messages",
+    "appointments": "Rendez-vous",
+    "education": "Éducation",
+    "profile": "Profil",
+    "admin": "Administration"
+  },
+  "roles": {
+    "young": "Jeune",
+    "professional": "Professionnel",
+    "admin": "Administrateur"
+  },
+  "errors": {
+    "auth": {
+      "invalid-email": "Email invalide",
+      "user-not-found": "Utilisateur non trouvé",
+      "wrong-password": "Mot de passe incorrect",
+      "network-error": "Erreur réseau"
+    }
+  }
+} 

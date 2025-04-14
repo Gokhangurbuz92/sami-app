@@ -100,7 +100,8 @@
     "profile": "Profil",
     "messaging": "Messagerie",
     "userManagement": "Gestion des utilisateurs",
-    "assignation": "Assignation jeunes/référents"
+    "assignation": "Assignation jeunes/référents",
+    "dailyLife": "Vie quotidienne"
   },
   "dashboard": {
     "searchYouth": "Rechercher un jeune...",
@@ -286,5 +287,20 @@
   },
   "app": {
     "title": "SAMI"
+  },
+  "dailyLife": {
+    "title": "Vie quotidienne",
+    "hygieneGeneral": {
+      "title": "Hygiène générale",
+      "description": "Comment prendre soin de son hygiène au quotidien : se laver, utiliser du savon, et maintenir une bonne propreté."
+    },
+    "brushingTeeth": {
+      "title": "Se brosser les dents",
+      "description": "L'importance du brossage des dents et comment bien se brosser les dents matin et soir."
+    },
+    "intimateHygiene": {
+      "title": "Hygiène intime",
+      "description": "Comment maintenir une bonne hygiène intime pour prévenir les infections et rester en bonne santé."
+    }
   }
 }

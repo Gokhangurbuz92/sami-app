@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "loading": "Iniciando sesión..."
+  },
+  "navigation": {
+    "home": "Inicio",
+    "chat": "Mensajes",
+    "appointments": "Citas",
+    "education": "Educación",
+    "profile": "Perfil",
+    "admin": "Administración"
+  },
+  "roles": {
+    "young": "Joven",
+    "professional": "Profesional",
+    "admin": "Administrador"
+  },
+  "errors": {
+    "auth": {
+      "invalid-email": "Correo electrónico inválido",
+      "user-not-found": "Usuario no encontrado",
+      "wrong-password": "Contraseña incorrecta",
+      "network-error": "Error de red"
+    }
+  }
+} 

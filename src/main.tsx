@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
 import './i18n/config';
 import './index.css';
 import './styles/calendar.css';
@@ -8,6 +7,9 @@ import { registerSW } from 'virtual:pwa-register';
 import ErrorBoundaryWrapper from './config/sentry';
 import { Capacitor } from '@capacitor/core';
 import { initSentryCapacitor } from './config/sentryCapacitor';
+
+// Importation dynamique de App
+const App = lazy(() => import('./App'));
 
 // Initialisation de Sentry pour les plateformes natives (Android/iOS)
 if (Capacitor.isNativePlatform()) {
@@ -32,7 +34,9 @@ const updateSW = registerSW({
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ErrorBoundaryWrapper>
-      <App />
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <App />
+      </React.Suspense>
     </ErrorBoundaryWrapper>
   </React.StrictMode>
 );

@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "Anmeldung",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "loading": "Anmeldung läuft..."
+  },
+  "navigation": {
+    "home": "Startseite",
+    "chat": "Nachrichten",
+    "appointments": "Termine",
+    "education": "Bildung",
+    "profile": "Profil",
+    "admin": "Verwaltung"
+  },
+  "roles": {
+    "young": "Jugendlicher",
+    "professional": "Fachkraft",
+    "admin": "Administrator"
+  },
+  "errors": {
+    "auth": {
+      "invalid-email": "Ungültige E-Mail",
+      "user-not-found": "Benutzer nicht gefunden",
+      "wrong-password": "Falsches Passwort",
+      "network-error": "Netzwerkfehler"
+    }
+  }
+} 

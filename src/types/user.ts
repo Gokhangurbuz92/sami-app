@@ -6,4 +6,5 @@ export interface User {
   profilePicture?: string;
   createdAt: Date;
   lastActive: Date;
+  roomNumber?: string; // Numéro de chambre pour les jeunes
 } 

@@ -20,9 +20,18 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("/Users/gokhan/Dropbox/Mac/Desktop/APP SAMI/sami-app-new/android/keystore/release.keystore")
+            storePassword "android"
+            keyAlias "sami"
+            keyPassword "android"
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.release
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

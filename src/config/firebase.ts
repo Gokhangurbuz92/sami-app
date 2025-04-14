@@ -28,4 +28,7 @@ export const storage = getStorage(app);
 // Initialize Firebase Messaging and get a reference to the service
 export const messaging = isSupported().then((yes) => (yes ? getMessaging(app) : null));
 
+// Exporter l'app Firebase pour être utilisée dans d'autres modules
+export { app as firebaseApp };
+
 export default app;
