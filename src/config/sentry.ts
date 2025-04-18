@@ -1,4 +1,6 @@
 import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/browser';
+import { Hub } from '@sentry/core';
 import React from 'react';
 
 interface ErrorBoundaryProps {
@@ -7,38 +9,73 @@ interface ErrorBoundaryProps {
 
 const ErrorBoundaryWrapper = ({ children }: ErrorBoundaryProps): React.ReactElement => {
   if (process.env.NODE_ENV === 'production') {
-    return React.createElement(Sentry.ErrorBoundary, {
-      fallback: React.createElement('div', null, 'Une erreur est survenue'),
-      children
-    });
+    return React.createElement(
+      Sentry.ErrorBoundary,
+      null,
+      React.createElement('div', null,
+        React.createElement('div', null, 'Une erreur est survenue'),
+        children
+      )
+    );
   }
   return React.createElement(React.Fragment, null, children);
 };
 
-if (process.env.NODE_ENV === 'production' && process.env.VITE_SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.VITE_SENTRY_DSN as string,
-    tracesSampleRate: 1.0,
-    environment: process.env.NODE_ENV,
-  });
-}
-
-export const captureMessage = (message: string, level: 'info' | 'warning' | 'error' = 'info'): string => {
+export const initSentry = () => {
   if (process.env.NODE_ENV === 'production') {
-    try {
-      return Sentry.captureMessage(message, level) || 'unknown-event-id';
-    } catch {
-      return 'error-event-id';
-    }
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      integrations: [new BrowserTracing()],
+      tracesSampleRate: 1.0,
+      environment: process.env.NODE_ENV,
+      beforeSend(event) {
+        if (event.level === 'error') {
+          Sentry.showReportDialog({ eventId: event.event_id });
+        }
+        return event;
+      }
+    });
+  } else {
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      integrations: [new BrowserTracing()],
+      tracesSampleRate: 1.0,
+      environment: process.env.NODE_ENV,
+      beforeSend(event) {
+        if (event.level === 'error') {
+          Sentry.showReportDialog({ eventId: event.event_id });
+        }
+        return event;
+      }
+    });
   }
-  console.log(`[Sentry Mock] ${level}: ${message}`);
-  return 'mock-event-id';
+};
+
+export const captureError = (error: Error) => {
+  Sentry.withScope((scope) => {
+    scope.setLevel('error');
+    Sentry.captureException(error);
+  });
+};
+
+export const captureMessage = (message: string, level: Sentry.SeverityLevel = 'info') => {
+  Sentry.captureMessage(message, level);
+};
+
+export const setUser = (user: Sentry.User | null) => {
+  Sentry.setUser(user);
+};
+
+export const clearUser = () => {
+  Sentry.setUser(null);
 };
 
 export const captureException = (error: Error): string => {
   if (process.env.NODE_ENV === 'production') {
     try {
-      return Sentry.captureException(error) || 'unknown-event-id';
+      const hub = new Hub();
+      const eventId = hub.captureException(error);
+      return eventId || 'unknown-event-id';
     } catch {
       return 'error-event-id';
     }
@@ -50,7 +87,9 @@ export const captureException = (error: Error): string => {
 export const captureEvent = (event: Record<string, unknown>): string => {
   if (process.env.NODE_ENV === 'production') {
     try {
-      return Sentry.captureEvent(event) || 'unknown-event-id';
+      const hub = new Hub();
+      const eventId = hub.captureEvent(event);
+      return eventId || 'unknown-event-id';
     } catch {
       return 'error-event-id';
     }

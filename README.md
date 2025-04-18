@@ -4,8 +4,9 @@ Cette application est destinée aux jeunes du foyer SAMI à Strasbourg, géré p
 Elle permet une communication simple et multilingue entre jeunes et référents (messagerie, notifications, traductions automatiques, etc.)
 
 **Technos :** React + TypeScript, Firebase (Auth, Firestore, Storage, Messaging), Capacitor, i18n, Vite  
-**Déploiement :** Android (.aab) + Firebase Hosting (version Web)  
-**Statut :** ✅ Prête pour le Play Store (avril 2024)
+**Déploiement :** Android (.aab) + iOS (.ipa) + Firebase Hosting (version Web)  
+**Statut :** ✅ Prête pour le Play Store et l'App Store (avril 2024)
+**Performance :** ⚡️ Optimisée pour une utilisation fluide sur tous les appareils
 
 ---
 
@@ -21,14 +22,16 @@ Cette application permet de faciliter la **communication**, le **suivi administr
 
 - 🔒 Connexion sécurisée (Firebase Auth)
 - 👤 Rôles : `jeune`, `référent`, `co-référent`, `admin`
-- 📆 Planning de stage
+- 📆 Planning de stage avec notifications
 - 📋 Suivi des parcours (Parcours 2, contacts, promotion)
-- 🩺 Gestion des rendez-vous médicaux
+- 🩺 Gestion des rendez-vous médicaux avec rappels
 - 📬 Messagerie interne (temps réel, multi-rôles)
 - 🌍 Traduction automatique des messages
-- 🔔 Notifications push (FCM)
+- 🔔 Notifications push (FCM) avec gestion des réveils
 - 🧭 Multilingue : arabe, pashto, turc, somali, français, anglais, etc.
 - ♿ Interface simple, lisible et accessible (FALC)
+- ✨ Animations fluides avec Framer Motion
+- 📊 Monitoring complet avec Sentry
 
 ---
 
@@ -41,27 +44,81 @@ npm install
 npm run dev
 ```
 
-## 🔧 Configuration
+## 🔧 Configuration requise
+
+- Node.js v18+
+- JDK 17 pour Android
+- Xcode 14+ pour iOS
+- Firebase CLI
+- Capacitor CLI
+
+## 📦 Variables d'environnement
 
 Créer un fichier .env à la racine du projet :
 
 ```env
+# Firebase Configuration
 VITE_FIREBASE_API_KEY=...
 VITE_FIREBASE_AUTH_DOMAIN=...
 VITE_FIREBASE_PROJECT_ID=...
 VITE_FIREBASE_STORAGE_BUCKET=...
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
+VITE_FIREBASE_IOS_APP_ID=...
 VITE_GOOGLE_TRANSLATE_API_KEY=...
+
+# Sentry Configuration
+SENTRY_AUTH_TOKEN=...
+SENTRY_ORG=...
+SENTRY_PROJECT=...
+```
+
+## 📱 Compilation mobile
+
+### Android
+```bash
+npm run build:android     # Génère un .aab signé
+./upload-sourcemaps.sh android production  # Upload des sourcemaps
+```
+
+### iOS
+```bash
+npx cap sync ios
+cd ios/App && pod install
+npx cap open ios         # Ouvre Xcode
+./upload-sourcemaps.sh ios production  # Upload des sourcemaps
+```
+
+## 🌐 Déploiement Web
+
+```bash
+npm run build
+firebase deploy          # Déploie sur Firebase Hosting
+./upload-sourcemaps.sh web production  # Upload des sourcemaps
+```
+
+## 🧪 Tests et Simulation
+
+```bash
+npm run test            # Lance les tests unitaires
+npm run simulate:wakeup # Simule les notifications de réveil
 ```
 
 ## 🛡 Sécurité & RGPD
 
-Toutes les données sont :
+- 🔐 Données stockées de manière sécurisée sur Firebase
+- 📍 Hébergement en Europe
+- ✅ Règles Firestore strictes selon les rôles
+- 🔍 Monitoring en temps réel avec Sentry
+- 📊 Sourcemaps pour un débogage précis
 
-- 🔐 Stockées de manière sécurisée sur Firebase
-- 📍 Hébergées en Europe
-- ✅ Protégées par des règles Firestore strictes selon les rôles
+## 🎯 Performance
+
+- ⚡️ Temps de chargement < 2s
+- 📱 PWA optimisée pour mobile
+- 🔄 Synchronisation en temps réel
+- 🎨 Animations fluides
+- 📶 Mode hors ligne
 
 ✨ Développé avec ❤️ par Gökhan GÜRBÜZ
 

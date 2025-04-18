@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/dom';
 import { describe, it, expect, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import Dashboard from '../pages/Dashboard';
@@ -13,7 +14,12 @@ vi.mock('../contexts/AuthContext', () => ({
       email: 'jeune@example.com'
     },
     isJeune: true,
-    isReferent: false
+    isReferent: false,
+    user: {
+      uid: 'jeune123',
+      role: 'jeune',
+      assignedReferents: ['ref123']
+    }
   }),
 }));
 
@@ -40,7 +46,11 @@ vi.mock('../services/referents', () => ({
       uid: 'ref123',
       displayName: 'Référent Test',
       email: 'referent@example.com',
-      role: 'referent'
+      role: 'referent',
+      user: {
+        uid: 'ref123',
+        role: 'referent'
+      }
     }
   ])
 }));
@@ -64,10 +74,21 @@ vi.mock('react-i18next', async () => {
 });
 
 describe('Dashboard', () => {
+  const mockUser = {
+    id: 'jeune123',
+    uid: 'jeune123',
+    email: 'jeune@example.com',
+    displayName: 'Jeune Test',
+    role: 'jeune' as const,
+    assignedReferents: ['ref123'],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
   it('affiche le titre du dashboard', async () => {
     render(
       <I18nextProvider i18n={i18n}>
-        <Dashboard />
+        <Dashboard user={mockUser} />
       </I18nextProvider>
     );
 
@@ -78,7 +99,7 @@ describe('Dashboard', () => {
   it('affiche le bouton pour contacter le référent pour un jeune', async () => {
     render(
       <I18nextProvider i18n={i18n}>
-        <Dashboard />
+        <Dashboard user={mockUser} />
       </I18nextProvider>
     );
 
@@ -91,7 +112,7 @@ describe('Dashboard', () => {
   it('affiche les widgets principaux du tableau de bord', async () => {
     render(
       <I18nextProvider i18n={i18n}>
-        <Dashboard />
+        <Dashboard user={mockUser} />
       </I18nextProvider>
     );
 

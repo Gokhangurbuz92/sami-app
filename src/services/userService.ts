@@ -13,21 +13,24 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { ApiResponse, ErrorResponse } from '../types/global';
-import { User, Referent, Youth } from '../types';
+import { ApiResponse, ErrorResponse, User, Referent, Youth, UserRole, FirestoreUser } from '../types/firebase';
 
-type UserRole = 'admin' | 'referent' | 'jeune';
-
-interface FirestoreUser extends Omit<User, 'createdAt' | 'updatedAt'> {
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
-
-const convertFirestoreTimestamps = (data: DocumentData): Partial<User> => {
+const convertFirestoreTimestamps = (data: DocumentData): User => {
   return {
     ...data,
-    createdAt: data.createdAt?.toDate(),
-    updatedAt: data.updatedAt?.toDate()
+    id: data.id,
+    createdAt: data.createdAt?.toDate() || new Date(),
+    updatedAt: data.updatedAt?.toDate() || new Date()
+  } as User;
+};
+
+const handleError = (error: unknown): ErrorResponse => {
+  console.error('Erreur:', error);
+  return {
+    data: null,
+    error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue',
+    status: 500,
+    success: false
   };
 };
 
@@ -43,14 +46,16 @@ export const userService = {
         return {
           data: null,
           error: 'Le champ role est obligatoire',
-          status: 400
+          status: 400,
+          success: false
         };
       }
 
-      const userDataToSave: Partial<FirestoreUser> = {
+      const userDataToSave: FirestoreUser = {
         ...userData,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        id,
+        createdAt: serverTimestamp() as Timestamp,
+        updatedAt: serverTimestamp() as Timestamp
       };
 
       switch (userData.role) {
@@ -71,13 +76,10 @@ export const userService = {
       await setDoc(doc(db, 'users', id), userDataToSave);
 
       return {
-        data: {
-          ...userDataToSave,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        } as User,
+        data: convertFirestoreTimestamps(userDataToSave),
         error: null,
-        status: 201
+        status: 201,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -95,21 +97,18 @@ export const userService = {
         return {
           data: null,
           error: `L'utilisateur avec l'ID ${id} n'existe pas`,
-          status: 404
+          status: 404,
+          success: false
         };
       }
 
       const userData = userDoc.data() as FirestoreUser;
       
       return {
-        data: {
-          ...userData,
-          id: userDoc.id,
-          createdAt: userData.createdAt.toDate(),
-          updatedAt: userData.updatedAt.toDate()
-        } as User,
+        data: convertFirestoreTimestamps(userData),
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -131,7 +130,8 @@ export const userService = {
         return {
           data: null,
           error: `L'utilisateur avec l'ID ${id} n'existe pas`,
-          status: 404
+          status: 404,
+          success: false
         };
       }
 
@@ -145,7 +145,8 @@ export const userService = {
       return {
         data: true,
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -164,7 +165,8 @@ export const userService = {
         return {
           data: null,
           error: `L'utilisateur avec l'ID ${id} n'existe pas`,
-          status: 404
+          status: 404,
+          success: false
         };
       }
 
@@ -173,7 +175,8 @@ export const userService = {
       return {
         data: true,
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -189,15 +192,13 @@ export const userService = {
       const q = query(usersRef, where('role', '==', role));
       const querySnapshot = await getDocs(q);
 
-      const users = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...convertFirestoreTimestamps(doc.data())
-      })) as User[];
+      const users = querySnapshot.docs.map((doc) => convertFirestoreTimestamps(doc.data()));
 
       return {
         data: users,
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -217,15 +218,13 @@ export const userService = {
       );
 
       const querySnapshot = await getDocs(q);
-      const youths = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...convertFirestoreTimestamps(doc.data())
-      })) as Youth[];
+      const youths = querySnapshot.docs.map((doc) => convertFirestoreTimestamps(doc.data())) as Youth[];
 
       return {
         data: youths,
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -245,15 +244,13 @@ export const userService = {
       );
 
       const querySnapshot = await getDocs(q);
-      const referents = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...convertFirestoreTimestamps(doc.data())
-      })) as Referent[];
+      const referents = querySnapshot.docs.map((doc) => convertFirestoreTimestamps(doc.data())) as Referent[];
 
       return {
         data: referents,
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
@@ -268,34 +265,16 @@ export const userService = {
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('role', '==', 'referent'));
       const querySnapshot = await getDocs(q);
-      
-      const referents = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...convertFirestoreTimestamps(doc.data())
-      })) as Referent[];
+      const referents = querySnapshot.docs.map((doc) => convertFirestoreTimestamps(doc.data())) as Referent[];
 
       return {
         data: referents,
         error: null,
-        status: 200
+        status: 200,
+        success: true
       };
     } catch (error) {
       return handleError(error);
     }
   }
-};
-
-export const handleError = (error: unknown): ErrorResponse => {
-  if (error instanceof Error) {
-    return {
-      message: error.message,
-      code: 'UNKNOWN_ERROR',
-      status: 500
-    };
-  }
-  return {
-    message: 'Une erreur inconnue est survenue',
-    code: 'UNKNOWN_ERROR',
-    status: 500
-  };
 };

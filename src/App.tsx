@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+/// <reference lib="dom" />
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
@@ -16,6 +18,10 @@ import InstallPWA from './components/InstallPWA';
 import OfflineStatus from './components/OfflineStatus';
 import UserManagement from './components/UserManagement';
 import AdminPanel from './components/Admin/AdminPanel';
+import { captureMessage } from './config/sentry';
+import './styles/SentryTestButton.css';
+import { User } from './types';
+import { User as FirebaseUser } from 'firebase/auth';
 
 // Importation paresseuse des pages
 import {
@@ -65,6 +71,16 @@ const createAppTheme = (direction: 'ltr' | 'rtl') =>
     }
   });
 
+const convertFirebaseUser = (firebaseUser: FirebaseUser): User => ({
+  id: firebaseUser.uid,
+  email: firebaseUser.email || '',
+  displayName: firebaseUser.displayName || '',
+  photoURL: firebaseUser.photoURL || undefined,
+  role: 'jeune', // Par défaut, on met 'jeune' comme rôle
+  createdAt: firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime) : new Date(),
+  updatedAt: firebaseUser.metadata?.lastSignInTime ? new Date(firebaseUser.metadata.lastSignInTime) : new Date()
+});
+
 // Composant d'animation pour les routes
 function AnimatedRoutes() {
   const location = useLocation();
@@ -99,7 +115,7 @@ function AnimatedRoutes() {
                 <Route path="/" element={
                   <AnimatedRoute transitionKey="dashboard">
                     <MainNavigation />
-                    <LazyDashboard />
+                    <LazyDashboard user={convertFirebaseUser(currentUser)} />
                   </AnimatedRoute>
                 } />
                 <Route path="/profile" element={
@@ -253,12 +269,19 @@ function AppContent() {
     setupApp();
   }, []);
 
+  const testSentry = () => {
+    captureMessage('Test de notification Sentry', 'info');
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <OfflineStatus />
         <AnimatedRoutes />
         <InstallPWA />
+        <button onClick={testSentry} className="sentry-test-button">
+          Test Sentry
+        </button>
       </Router>
     </ThemeProvider>
   );

@@ -6,20 +6,18 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/setup-tests.ts'],
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTests.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
-        'src/setup-tests.ts',
-        'src/index.tsx',
-        'src/main.tsx',
-        'src/service-worker.ts',
+        'src/setupTests.ts',
       ],
     },
+    include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
   },
   resolve: {
     alias: {

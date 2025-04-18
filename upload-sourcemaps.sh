@@ -6,94 +6,58 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# Fonction pour afficher l'usage
-show_usage() {
-    echo "Usage: $0 [--platform <web|android|ios>] [--env <development|production>]"
-    echo "Options:"
-    echo "  --platform    Plateforme cible (web, android, ios)"
-    echo "  --env         Environnement (development, production)"
+# Vérification des arguments
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <platform> <environment>"
+    echo "Platform: web|android|ios"
+    echo "Environment: development|production"
     exit 1
+fi
+
+PLATFORM=$1
+ENVIRONMENT=$2
+VERSION=$(node -p "require('./package.json').version")
+RELEASE="${VERSION}-${PLATFORM}-${ENVIRONMENT}"
+
+# Chargement des variables d'environnement
+if [ -f .env ]; then
+    export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+fi
+
+# Fonction pour uploader les sourcemaps
+upload_sourcemaps() {
+    local platform=$1
+    local sourcemap_path=$2
+    
+    echo "Uploading sourcemaps for ${platform}..."
+    
+    npx @sentry/cli sourcemaps upload \
+        --auth-token $SENTRY_AUTH_TOKEN \
+        --org $SENTRY_ORG \
+        --project $SENTRY_PROJECT \
+        --release $RELEASE \
+        --url-prefix '~' \
+        $sourcemap_path
 }
 
-# Traitement des arguments
-PLATFORM=""
-ENV="production"
-
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --platform) PLATFORM="$2"; shift ;;
-        --env) ENV="$2"; shift ;;
-        *) show_usage ;;
-    esac
-    shift
-done
-
-if [ -z "$PLATFORM" ]; then
-    show_usage
-fi
-
-# Charger les variables d'environnement
-if [ -f ".env" ]; then
-    source .env
-else
-    echo -e "${RED}❌ Fichier .env non trouvé${NC}"
-    exit 1
-fi
-
-# Vérifier les variables Sentry
-if [ -z "$SENTRY_AUTH_TOKEN" ] || [ -z "$SENTRY_ORG" ] || [ -z "$SENTRY_PROJECT" ]; then
-    echo -e "${RED}❌ Variables Sentry manquantes dans .env${NC}"
-    echo "SENTRY_AUTH_TOKEN, SENTRY_ORG et SENTRY_PROJECT sont requis"
-    exit 1
-fi
-
-# Vérifier si sentry-cli est installé
-if ! command -v sentry-cli &> /dev/null; then
-    echo -e "${YELLOW}⚠️ Installation de sentry-cli...${NC}"
-    npm install -g @sentry/cli
-fi
-
-# Variables
-VERSION=$(node -p "require('./package.json').version")
-RELEASE="sami-app@$VERSION-$ENV"
-
-# Définir le dossier source selon la plateforme
+# Upload selon la plateforme
 case $PLATFORM in
     "web")
-        SOURCE_DIR="./dist"
+        upload_sourcemaps "web" "dist/assets"
         ;;
     "android")
-        SOURCE_DIR="./android/app/build/intermediates/sourcemaps/release"
+        upload_sourcemaps "android" "android/app/build/intermediates/sourcemaps/release"
         ;;
     "ios")
-        SOURCE_DIR="./ios/App/App/public/build"
+        upload_sourcemaps "ios" "ios/App/App/public/assets"
         ;;
     *)
-        echo -e "${RED}❌ Plateforme non supportée : $PLATFORM${NC}"
+        echo "Platform non supportée: $PLATFORM"
         exit 1
         ;;
 esac
 
-echo -e "${GREEN}📦 Configuration de l'upload :${NC}"
-echo -e "- Plateforme : $PLATFORM"
-echo -e "- Environnement : $ENV"
-echo -e "- Version : $VERSION"
-echo -e "- Release : $RELEASE"
-echo -e "- Dossier source : $SOURCE_DIR"
-
-# Créer la release
-echo -e "\n${GREEN}🚀 Création de la release $RELEASE...${NC}"
-sentry-cli releases new "$RELEASE"
-
-# Upload des sourcemaps
-echo -e "\n${GREEN}📝 Upload des sourcemaps...${NC}"
-sentry-cli releases files "$RELEASE" upload-sourcemaps "$SOURCE_DIR" \
-    --ext map \
-    --ext js \
-    --ext ts \
-    --ext tsx \
-    --url-prefix "~/" \
-    --rewrite
+echo "✅ Sourcemaps uploadés avec succès pour $PLATFORM ($ENVIRONMENT)"
 
 # Ajouter des informations sur le commit (si Git est disponible)
 if command -v git &> /dev/null; then
@@ -108,13 +72,12 @@ sentry-cli releases finalize "$RELEASE"
 
 # Déployer la release
 echo -e "\n${GREEN}🚀 Déploiement de la release...${NC}"
-sentry-cli releases deploys "$RELEASE" new -e "$ENV"
+sentry-cli releases deploys "$RELEASE" new -e "$ENVIRONMENT"
 
 echo -e "\n${GREEN}🎉 Upload des sourcemaps terminé avec succès !${NC}"
 echo -e "${YELLOW}📝 Résumé :${NC}"
 echo -e "- Release : $RELEASE"
-echo -e "- Environnement : $ENV"
-echo -e "- Dossier source : $SOURCE_DIR"
+echo -e "- Environnement : $ENVIRONMENT"
 if [ ! -z "$COMMIT" ]; then
     echo -e "- Commit : $COMMIT"
 fi 

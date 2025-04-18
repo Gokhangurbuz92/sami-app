@@ -1,15 +1,22 @@
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '@/config/firebase';
-import { sendMessage } from './chatService';
+import { sendMessage, Message } from './chatService';
 
 interface Appointment {
   userId: string;
   date: Timestamp;
   type: 'medical' | 'school';
   details: string;
+  time?: string;
 }
 
-export const checkWakeupList = async () => {
+interface WakeupCheckResult {
+  success: boolean;
+  message?: string;
+  error?: Error;
+}
+
+export const checkWakeupList = async (): Promise<WakeupCheckResult> => {
   try {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -44,20 +51,39 @@ export const checkWakeupList = async () => {
     ];
 
     if (appointments.length > 0) {
-      const message = `🔔 Liste de réveil du ${today.toLocaleDateString()}:\n\n` +
+      const messageContent = `🔔 Liste de réveil du ${today.toLocaleDateString()}:\n\n` +
         appointments.map(app => 
           `• ${app.details} (${app.type === 'medical' ? 'Rendez-vous médical' : 'École'})`
         ).join('\n');
 
-      await sendMessage({
-        content: message,
+      const message: Message = {
+        content: messageContent,
         senderId: 'system',
         chatId: 'professionals',
         type: 'system'
-      });
+      };
+
+      const result = await sendMessage(message);
+      
+      if (!result.success) {
+        throw result.error;
+      }
+
+      return {
+        success: true,
+        message: `Notifications envoyées pour ${appointments.length} rendez-vous`
+      };
     }
+
+    return {
+      success: true,
+      message: 'Aucun rendez-vous trouvé pour aujourd\'hui'
+    };
   } catch (error) {
     console.error('Erreur lors de la vérification des réveils:', error);
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error : new Error('Erreur inconnue lors de la vérification des réveils')
+    };
   }
 }; 

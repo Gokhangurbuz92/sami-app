@@ -2,6 +2,22 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Fonction pour vérifier si l'utilisateur est authentifié
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Fonction pour vérifier le rôle de l'utilisateur
+    function hasRole(role) {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    // Fonction pour vérifier si l'utilisateur est le propriétaire du document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
     // Fonction pour vérifier si l'utilisateur est admin
     function isAdmin() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
@@ -28,31 +44,46 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.assignedReferents;
     }
     
-    // Règles pour les utilisateurs
+    // Collection des utilisateurs
     match /users/{userId} {
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
-      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) || hasRole('admin');
     }
     
-    // Règles pour les rendez-vous
+    // Collection des messages
+    match /messages/{messageId} {
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.senderId) || 
+        isOwner(resource.data.recipientId) ||
+        hasRole('admin')
+      );
+      allow create: if isAuthenticated() && (
+        isOwner(request.resource.data.senderId) ||
+        hasRole('admin')
+      );
+      allow update, delete: if isAuthenticated() && (
+        isOwner(resource.data.senderId) ||
+        hasRole('admin')
+      );
+    }
+    
+    // Collection des rendez-vous
     match /appointments/{appointmentId} {
-      // Lecture seulement si l'utilisateur est le créateur, admin, ou concerné par le rendez-vous
-      allow read: if request.auth != null && 
-        (resource.data.createdBy == request.auth.uid || 
-         isAdmin() || 
-         resource.data.participants.hasAny([request.auth.uid]));
-      
-      // Création seulement si l'utilisateur est connecté et est le créateur
-      allow create: if request.auth != null && 
-                    request.resource.data.createdBy == request.auth.uid;
-      
-      // Mise à jour seulement si l'utilisateur est le créateur ou admin
-      allow update: if request.auth != null && 
-                    (resource.data.createdBy == request.auth.uid || isAdmin());
-      
-      // Suppression seulement si l'utilisateur est le créateur ou admin
-      allow delete: if request.auth != null && 
-                    (resource.data.createdBy == request.auth.uid || isAdmin());
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        hasRole('admin') ||
+        hasRole('referent')
+      );
+      allow create: if isAuthenticated() && (
+        isOwner(request.resource.data.userId) ||
+        hasRole('admin') ||
+        hasRole('referent')
+      );
+      allow update, delete: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        hasRole('admin') ||
+        hasRole('referent')
+      );
     }
     
     // Règles pour les notes
@@ -111,36 +142,6 @@ service cloud.firestore {
       // Suppression : admin ou appartient à la conversation
       allow delete: if request.auth != null && 
         (isAdmin() || resource.data.participants.hasAny([request.auth.uid]));
-    }
-    
-    // Règles pour les messages
-    match /messages/{messageId} {
-      allow read: if request.auth != null && 
-        (
-          // Admin peut tout lire
-          isAdmin() ||
-          
-          // L'utilisateur doit être un participant de la conversation
-          get(/databases/$(database)/documents/conversations/$(resource.data.conversationId)).data.participants.hasAny([request.auth.uid])
-        );
-      
-      // Création d'un message
-      allow create: if request.auth != null && 
-        // L'expéditeur doit être l'utilisateur connecté
-        request.resource.data.senderId == request.auth.uid &&
-        
-        // Doit appartenir à la conversation
-        get(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId)).data.participants.hasAny([request.auth.uid]);
-      
-      // Modification de son propre message uniquement
-      allow update: if request.auth != null && 
-        (resource.data.senderId == request.auth.uid || 
-         // Ou ajout d'une réaction/traduction
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions', 'translations', 'translatedContent']));
-      
-      // Suppression de son propre message uniquement
-      allow delete: if request.auth != null && 
-        resource.data.senderId == request.auth.uid;
     }
     
     // Règles pour les notifications

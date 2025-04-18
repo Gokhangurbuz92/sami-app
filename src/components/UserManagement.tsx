@@ -29,7 +29,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useTranslation } from 'react-i18next';
-import { userService, User } from '../services/userService';
+import { userService } from '../services/userService';
+import { User, UserRole } from '../types/firebase';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -75,7 +76,7 @@ export default function UserManagement() {
     email: string;
     displayName: string;
     password: string;
-    role: User['role'];
+    role: UserRole;
   }>({
     email: '',
     displayName: '',
@@ -93,15 +94,21 @@ export default function UserManagement() {
     try {
       // Récupérer les jeunes
       const youthList = await userService.getUsersByRole('jeune');
-      setYouths(youthList);
+      if (youthList.data) {
+        setYouths(youthList.data);
+      }
 
       // Récupérer les référents
       const referentList = await userService.getUsersByRole('referent');
       const coreferentList = await userService.getUsersByRole('coreferent');
-      setReferents([...referentList, ...coreferentList]);
+      if (referentList.data && coreferentList.data) {
+        setReferents([...referentList.data, ...coreferentList.data]);
+      }
 
       // Récupérer tous les utilisateurs
-      setUsers([...youthList, ...referentList, ...coreferentList]);
+      if (youthList.data && referentList.data && coreferentList.data) {
+        setUsers([...youthList.data, ...referentList.data, ...coreferentList.data]);
+      }
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
       setError('Erreur lors de la récupération des utilisateurs');
@@ -150,10 +157,10 @@ export default function UserManagement() {
     }));
   };
 
-  const handleRoleChange = (e: SelectChangeEvent<User['role']>) => {
+  const handleRoleChange = (e: SelectChangeEvent<UserRole>) => {
     setNewUser((prev) => ({
       ...prev,
-      role: e.target.value as User['role']
+      role: e.target.value as UserRole
     }));
   };
 
@@ -177,6 +184,7 @@ export default function UserManagement() {
 
       // Créer l'utilisateur
       await userService.createUser({
+        id: `temp-${Date.now()}`, // Ceci devrait être remplacé par l'UID généré par Firebase Auth
         uid: `temp-${Date.now()}`, // Ceci devrait être remplacé par l'UID généré par Firebase Auth
         email,
         displayName,
@@ -211,12 +219,16 @@ export default function UserManagement() {
 
       // Ajouter de nouveaux référents
       for (const refId of referentsToAdd) {
-        await userService.assignReferentToYouth(selectedYouth.uid, refId);
+        await userService.updateUser(selectedYouth.id, {
+          assignedReferents: [...currentAssignments, refId]
+        });
       }
 
       // Retirer les référents désélectionnés
       for (const refId of referentsToRemove) {
-        await userService.removeReferentFromYouth(selectedYouth.uid, refId);
+        await userService.updateUser(selectedYouth.id, {
+          assignedReferents: currentAssignments.filter(id => id !== refId)
+        });
       }
 
       // Fermer le dialogue et rafraîchir la liste des utilisateurs
@@ -248,7 +260,12 @@ export default function UserManagement() {
   if (loading) {
     return (
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
       >
         <CircularProgress />
       </Box>
@@ -257,23 +274,12 @@ export default function UserManagement() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box
-        sx={{
-          borderBottom: 1,
-          borderColor: 'divider',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <Tabs value={tabValue} onChange={handleTabChange} aria-label="user management tabs">
-          <Tab label={t('userManagement.allUsers')} {...a11yProps(0)} />
-          <Tab label={t('userManagement.youths')} {...a11yProps(1)} />
-          <Tab label={t('userManagement.referents')} {...a11yProps(2)} />
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="user tabs">
+          <Tab label={t('users.all')} {...a11yProps(0)} />
+          <Tab label={t('users.youths')} {...a11yProps(1)} />
+          <Tab label={t('users.referents')} {...a11yProps(2)} />
         </Tabs>
-        <Button variant="contained" color="primary" onClick={handleOpenDialog} sx={{ m: 1 }}>
-          {t('userManagement.addUser')}
-        </Button>
       </Box>
 
       <TabPanel value={tabValue} index={0}>
@@ -281,20 +287,20 @@ export default function UserManagement() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('userManagement.name')}</TableCell>
-                <TableCell>{t('userManagement.email')}</TableCell>
-                <TableCell>{t('userManagement.role')}</TableCell>
-                <TableCell>{t('userManagement.actions')}</TableCell>
+                <TableCell>{t('users.name')}</TableCell>
+                <TableCell>{t('users.email')}</TableCell>
+                <TableCell>{t('users.role')}</TableCell>
+                <TableCell>{t('users.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {users.map((user) => (
-                <TableRow key={user.uid}>
+                <TableRow key={user.id}>
                   <TableCell>{user.displayName}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{t(`roles.${user.role}`)}</TableCell>
+                  <TableCell>{t(`users.roles.${user.role}`)}</TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleDeleteUser(user.uid)}>
+                    <IconButton onClick={() => handleDeleteUser(user.id)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -310,33 +316,31 @@ export default function UserManagement() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('userManagement.name')}</TableCell>
-                <TableCell>{t('userManagement.email')}</TableCell>
-                <TableCell>{t('userManagement.assignedReferents')}</TableCell>
-                <TableCell>{t('userManagement.actions')}</TableCell>
+                <TableCell>{t('users.name')}</TableCell>
+                <TableCell>{t('users.email')}</TableCell>
+                <TableCell>{t('users.referents')}</TableCell>
+                <TableCell>{t('users.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {youths.map((youth) => (
-                <TableRow key={youth.uid}>
+                <TableRow key={youth.id}>
                   <TableCell>{youth.displayName}</TableCell>
                   <TableCell>{youth.email}</TableCell>
                   <TableCell>
-                    {youth.assignedReferents && youth.assignedReferents.length > 0 ? (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {youth.assignedReferents.map((refId) => (
-                          <Chip key={refId} label={getReferentName(refId)} size="small" />
-                        ))}
-                      </Box>
-                    ) : (
-                      t('userManagement.noReferentsAssigned')
-                    )}
+                    {youth.assignedReferents?.map((refId) => (
+                      <Chip
+                        key={refId}
+                        label={getReferentName(refId)}
+                        sx={{ mr: 1 }}
+                      />
+                    ))}
                   </TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpenAssignDialog(youth)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDeleteUser(youth.uid)}>
+                    <IconButton onClick={() => handleDeleteUser(youth.id)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -352,39 +356,28 @@ export default function UserManagement() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('userManagement.name')}</TableCell>
-                <TableCell>{t('userManagement.email')}</TableCell>
-                <TableCell>{t('userManagement.role')}</TableCell>
-                <TableCell>{t('userManagement.assignedYouths')}</TableCell>
-                <TableCell>{t('userManagement.actions')}</TableCell>
+                <TableCell>{t('users.name')}</TableCell>
+                <TableCell>{t('users.email')}</TableCell>
+                <TableCell>{t('users.assignedYouths')}</TableCell>
+                <TableCell>{t('users.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {referents.map((referent) => (
-                <TableRow key={referent.uid}>
+                <TableRow key={referent.id}>
                   <TableCell>{referent.displayName}</TableCell>
                   <TableCell>{referent.email}</TableCell>
-                  <TableCell>{t(`roles.${referent.role}`)}</TableCell>
                   <TableCell>
-                    {referent.assignedYouths && referent.assignedYouths.length > 0 ? (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {referent.assignedYouths.map((youthId) => {
-                          const youth = youths.find((y) => y.uid === youthId);
-                          return (
-                            <Chip
-                              key={youthId}
-                              label={youth ? youth.displayName : youthId}
-                              size="small"
-                            />
-                          );
-                        })}
-                      </Box>
-                    ) : (
-                      t('userManagement.noYouthsAssigned')
-                    )}
+                    {referent.assignedYouths?.map((youthId) => (
+                      <Chip
+                        key={youthId}
+                        label={youths.find((y) => y.id === youthId)?.displayName || youthId}
+                        sx={{ mr: 1 }}
+                      />
+                    ))}
                   </TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleDeleteUser(referent.uid)}>
+                    <IconButton onClick={() => handleDeleteUser(referent.id)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -395,66 +388,57 @@ export default function UserManagement() {
         </TableContainer>
       </TabPanel>
 
-      {/* Dialogue pour ajouter un utilisateur */}
+      <Button variant="contained" onClick={handleOpenDialog} sx={{ mt: 2 }}>
+        {t('users.addUser')}
+      </Button>
+
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t('userManagement.addUser')}</DialogTitle>
+        <DialogTitle>{t('users.addUser')}</DialogTitle>
         <DialogContent>
-          <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '100%' } }}>
-            <TextField
-              margin="dense"
-              id="email"
-              name="email"
-              label={t('auth.email')}
-              type="email"
-              fullWidth
-              variant="outlined"
-              value={newUser.email}
-              onChange={handleInputChange}
-            />
-            <TextField
-              margin="dense"
-              id="displayName"
-              name="displayName"
-              label={t('auth.displayName')}
-              type="text"
-              fullWidth
-              variant="outlined"
-              value={newUser.displayName}
-              onChange={handleInputChange}
-            />
-            <TextField
-              margin="dense"
-              id="password"
-              name="password"
-              label={t('auth.password')}
-              type="password"
-              fullWidth
-              variant="outlined"
-              value={newUser.password}
-              onChange={handleInputChange}
-            />
-            <FormControl fullWidth margin="dense">
-              <InputLabel id="role-label">{t('auth.role')}</InputLabel>
-              <Select
-                labelId="role-label"
-                id="role"
-                name="role"
-                value={newUser.role}
-                label={t('auth.role')}
-                onChange={handleRoleChange}
-              >
-                <MenuItem value="jeune">{t('roles.jeune')}</MenuItem>
-                <MenuItem value="referent">{t('roles.referent')}</MenuItem>
-                <MenuItem value="coreferent">{t('roles.coreferent')}</MenuItem>
-                <MenuItem value="admin">{t('roles.admin')}</MenuItem>
-              </Select>
-            </FormControl>
-            {error && (
-              <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                {error}
-              </Typography>
-            )}
-          </Box>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="email"
+            label={t('users.email')}
+            type="email"
+            fullWidth
+            value={newUser.email}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="displayName"
+            label={t('users.name')}
+            fullWidth
+            value={newUser.displayName}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="password"
+            label={t('users.password')}
+            type="password"
+            fullWidth
+            value={newUser.password}
+            onChange={handleInputChange}
+          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>{t('users.role')}</InputLabel>
+            <Select
+              value={newUser.role}
+              onChange={handleRoleChange}
+              label={t('users.role')}
+            >
+              <MenuItem value="jeune">{t('users.roles.jeune')}</MenuItem>
+              <MenuItem value="referent">{t('users.roles.referent')}</MenuItem>
+              <MenuItem value="admin">{t('users.roles.admin')}</MenuItem>
+            </Select>
+          </FormControl>
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t('common.cancel')}</Button>
@@ -462,38 +446,35 @@ export default function UserManagement() {
         </DialogActions>
       </Dialog>
 
-      {/* Dialogue pour attribuer des référents à un jeune */}
       <Dialog open={openAssignDialog} onClose={handleCloseAssignDialog}>
         <DialogTitle>
-          {t('userManagement.assignReferents')}
-          {selectedYouth && `: ${selectedYouth.displayName}`}
+          {t('users.assignReferentsTo', { name: selectedYouth?.displayName })}
         </DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="dense">
-            <InputLabel id="referents-label">{t('userManagement.referents')}</InputLabel>
+            <InputLabel>{t('users.referents')}</InputLabel>
             <Select
-              labelId="referents-label"
-              id="referents"
               multiple
               value={selectedReferents}
               onChange={handleReferentSelectionChange}
+              label={t('users.referents')}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((refId) => (
-                    <Chip key={refId} label={getReferentName(refId)} />
+                  {selected.map((value) => (
+                    <Chip key={value} label={getReferentName(value)} />
                   ))}
                 </Box>
               )}
             >
               {referents.map((referent) => (
-                <MenuItem key={referent.uid} value={referent.uid}>
+                <MenuItem key={referent.id} value={referent.id}>
                   {referent.displayName}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
           {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+            <Typography color="error" sx={{ mt: 2 }}>
               {error}
             </Typography>
           )}

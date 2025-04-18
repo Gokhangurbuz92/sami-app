@@ -96,7 +96,11 @@ const YouthSearch: React.FC = () => {
     <Box sx={{ width: '100%', maxWidth: 600, margin: '0 auto' }}>
       <TextField
         fullWidth
-        placeholder={t('youth.searchPlaceholder')}
+        label="youth-search"
+        inputProps={{
+          placeholder: t('youth.searchPlaceholder'),
+          id: 'youth_search_input'
+        }}
         variant="outlined"
         value={searchTerm}
         onChange={handleSearchChange}
@@ -127,6 +131,7 @@ const YouthSearch: React.FC = () => {
                 <IconButton 
                   edge="end" 
                   aria-label="delete"
+                  id="delete_button"
                   onClick={() => handleDeleteClick(youth.id || '')}
                 >
                   <DeleteIcon />

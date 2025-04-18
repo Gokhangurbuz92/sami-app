@@ -1,31 +1,59 @@
+/// <reference types="node" />
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../../i18n/config';
 import theme from '../../theme';
 import YouthSearch from '../YouthSearch';
 import { youthService } from '../../services/youthService';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
+interface Youth {
+  id: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Mock du service
-vi.mock('../../services/youthService');
+vi.mock('../../services/youthService', () => ({
+  youthService: {
+    searchYouth: vi.fn(),
+    deleteYouth: vi.fn()
+  }
+}));
 
 // Mock des traductions
-vi.mock('react-i18next', async () => {
-  const actual = await vi.importActual('react-i18next');
-  return {
-    ...actual,
-    // Mock des fonctions nécessaires
-    useTranslation: () => ({
-      t: (key: string) => key
-    }),
-    initReactI18next: {
-      type: '3rdParty',
-      init: () => {}
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      console.log('Translation key requested:', key); // Debug log
+      const translations: { [key: string]: string } = {
+        'youth.searchPlaceholder': 'Rechercher un jeune...',
+        'youth.confirmDelete': 'Êtes-vous sûr de vouloir supprimer ce jeune ?',
+        'youth.delete': 'Supprimer',
+        'common.cancel': 'Annuler',
+        'common.delete': 'Supprimer',
+        'youth.dob': 'Date de naissance',
+        'youth.noResults': 'Aucun résultat'
+      };
+      const translation = translations[key] || key;
+      console.log('Translation returned:', translation); // Debug log
+      return translation;
     }
-  };
-});
+  }),
+  initReactI18next: {
+    type: '3rdParty',
+    init: () => {}
+  },
+  I18nextProvider: ({ children }: { children: React.ReactNode }) => children
+}));
 
-const mockYouth = [
+const mockYouth: Youth[] = [
   {
     id: '1',
     firstName: 'John',
@@ -47,79 +75,80 @@ vi.mock('../../contexts/AuthContext', () => ({
   useAuth: () => ({
     currentUser: mockUser,
     isReferent: true
-  }),
-  AuthContext: {
-    Provider: ({ children }: { children: React.ReactNode }) => children
-  }
+  })
 }));
+
+const renderWithProviders = (component: React.ReactElement) => {
+  return render(
+    <I18nextProvider i18n={i18n}>
+      <ThemeProvider theme={theme}>
+        {component}
+      </ThemeProvider>
+    </I18nextProvider>
+  );
+};
 
 describe('YouthSearch Component', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     vi.mocked(youthService.searchYouth).mockResolvedValue(mockYouth);
+    console.log('Test starting...'); // Debug log
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it('renders search input', () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <YouthSearch />
-      </ThemeProvider>
-    );
-
-    expect(screen.getByPlaceholderText('youth.searchPlaceholder')).toBeInTheDocument();
+    const { container } = renderWithProviders(<YouthSearch />);
+    console.log('Rendered HTML:', container.innerHTML);
+    const searchInput = screen.getByRole('textbox', { name: 'youth-search' });
+    expect(searchInput).toBeInTheDocument();
   });
 
   it('displays loading state while searching', async () => {
-    // Ralentir la résolution de la promesse pour avoir le temps de voir le loader
-    let resolvePromise: (value: any) => void;
-    const promise = new Promise((resolve) => {
+    let resolvePromise: (value: Youth[]) => void;
+    const promise = new Promise<Youth[]>((resolve) => {
       resolvePromise = resolve;
     });
     vi.mocked(youthService.searchYouth).mockImplementation(() => {
-      return promise as Promise<any>;
+      return promise;
     });
 
-    render(
-      <ThemeProvider theme={theme}>
-        <YouthSearch />
-      </ThemeProvider>
-    );
+    renderWithProviders(<YouthSearch />);
 
-    const searchInput = screen.getByPlaceholderText('youth.searchPlaceholder');
+    const searchInput = screen.getByRole('textbox', { name: 'youth-search' });
     
-    // Utiliser act pour la mise à jour d'état
     await act(async () => {
-      fireEvent.change(searchInput, { target: { value: 'John' } });
-      // Attendre que le debounce se déclenche
-      await new Promise(r => setTimeout(r, 600));
+      fireEvent.change(searchInput, { 
+        target: { value: 'John' }
+      });
+      vi.advanceTimersByTime(600);
     });
 
-    // Maintenant le spinner devrait être visible
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     
-    // Résoudre la promesse pour terminer la recherche
     await act(async () => {
       resolvePromise(mockYouth);
     });
 
-    // Vérifier que le spinner a disparu
     await waitFor(() => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
   });
 
   it('displays search results', async () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <YouthSearch />
-      </ThemeProvider>
-    );
+    renderWithProviders(<YouthSearch />);
 
-    const searchInput = screen.getByPlaceholderText('youth.searchPlaceholder');
-    fireEvent.change(searchInput, { target: { value: 'John' } });
+    const searchInput = screen.getByRole('textbox', { name: 'youth-search' });
+    
+    await act(async () => {
+      fireEvent.change(searchInput, { 
+        target: { value: 'John' }
+      });
+      vi.advanceTimersByTime(600);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -127,70 +156,58 @@ describe('YouthSearch Component', () => {
   });
 
   it('handles delete confirmation', async () => {
-    // Préparer les mocks
     vi.mocked(youthService.deleteYouth).mockResolvedValue(undefined);
     vi.mocked(youthService.searchYouth).mockResolvedValue(mockYouth);
 
-    render(
-      <ThemeProvider theme={theme}>
-        <YouthSearch />
-      </ThemeProvider>
-    );
+    renderWithProviders(<YouthSearch />);
 
-    const searchInput = screen.getByPlaceholderText('youth.searchPlaceholder');
+    const searchInput = screen.getByRole('textbox', { name: 'youth-search' });
     
-    // Déclencher la recherche avec act
     await act(async () => {
-      fireEvent.change(searchInput, { target: { value: 'John' } });
-      // Attendre que le debounce se déclenche
-      await new Promise(r => setTimeout(r, 600));
-    });
-
-    // Attendre que les résultats apparaissent
-    let listItem: HTMLElement;
-    await waitFor(() => {
-      listItem = screen.getByText((content) => {
-        return content.includes('John') && content.includes('Doe');
+      fireEvent.change(searchInput, { 
+        target: { value: 'John' }
       });
-      expect(listItem).toBeInTheDocument();
+      vi.advanceTimersByTime(600);
     });
 
-    // Maintenant cliquer sur le bouton de suppression
+    await waitFor(() => {
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+    });
+
     const deleteButton = screen.getByLabelText('delete');
     await act(async () => {
       fireEvent.click(deleteButton);
     });
 
-    // Vérifier que la boîte de dialogue est visible
-    expect(screen.getByText('youth.confirmDelete')).toBeInTheDocument();
+    expect(screen.getByText('Êtes-vous sûr de vouloir supprimer ce jeune ?')).toBeInTheDocument();
 
-    // Confirmer la suppression
     const confirmButton = screen.getByLabelText('confirm delete');
     await act(async () => {
       fireEvent.click(confirmButton);
     });
 
-    // Vérifier que la méthode de suppression a été appelée
     expect(youthService.deleteYouth).toHaveBeenCalledWith('1');
   });
 
   it('handles search errors gracefully', async () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(youthService.searchYouth).mockRejectedValue(new Error('Search failed'));
 
-    render(
-      <ThemeProvider theme={theme}>
-        <YouthSearch />
-      </ThemeProvider>
-    );
+    renderWithProviders(<YouthSearch />);
 
-    const searchInput = screen.getByPlaceholderText('youth.searchPlaceholder');
-    fireEvent.change(searchInput, { target: { value: 'John' } });
-
-    await waitFor(() => {
-      expect(consoleError).toHaveBeenCalled();
+    const searchInput = screen.getByRole('textbox', { name: 'youth-search' });
+    
+    await act(async () => {
+      fireEvent.change(searchInput, { 
+        target: { value: 'John' }
+      });
+      vi.advanceTimersByTime(600);
     });
 
-    consoleError.mockRestore();
+    await waitFor(() => {
+      expect(mockConsoleError).toHaveBeenCalled();
+    });
+
+    mockConsoleError.mockRestore();
   });
 });

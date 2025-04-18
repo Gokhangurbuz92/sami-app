@@ -3,101 +3,114 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-  plugins: [react(), VitePWA({
-    registerType: 'autoUpdate',
-    includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
-    manifest: {
-      name: 'SAMI',
-      short_name: 'SAMI',
-      description: 'Application de suivi des jeunes',
-      theme_color: '#ffffff',
-      background_color: '#ffffff',
-      display: 'standalone',
-      icons: [
-        {
-          src: 'pwa-192x192.png',
-          sizes: '192x192',
-          type: 'image/png'
-        },
-        {
-          src: 'pwa-512x512.png',
-          sizes: '512x512',
-          type: 'image/png'
-        },
-        {
-          src: 'pwa-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
-          purpose: 'any maskable'
-        }
-      ]
-    },
-    workbox: {
-      runtimeCaching: [
-        {
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-cache',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
-            },
-            cacheableResponse: {
-              statuses: [0, 200]
-            }
+  plugins: [
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin']
+      }
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true
+      },
+      manifest: {
+        name: 'SAMI App',
+        short_name: 'SAMI',
+        description: 'Application pour le Foyer SAMI',
+        theme_color: '#ffffff',
+        icons: [
+          {
+            src: '/icons/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
           }
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'gstatic-fonts-cache',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
-            },
-            cacheableResponse: {
-              statuses: [0, 200]
-            }
-          }
-        }
-      ]
-    }
-  }), sentryVitePlugin({
-    org: "gokhan-gurbuz",
-    project: "javascript-react"
-  })],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
-    },
-    extensions: ['.js', '.jsx', '.ts', '.tsx']
+        ]
+      }
+    }),
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
+    visualizer({
+      filename: './dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'firebase/app',
+      'firebase/auth',
+      'firebase/firestore',
+      'firebase/storage',
+      '@mui/material',
+      '@mui/icons-material',
+      '@emotion/react',
+      '@emotion/styled'
+    ],
+    exclude: ['@capacitor/core']
   },
   build: {
-    chunkSizeWarningLimit: 600,
-
+    target: 'esnext',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    reportCompressedSize: true,
+    cssCodeSplit: true,
+    sourcemap: true,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {
-          // Séparer les bibliothèques volumineuses
-          'react-vendor': ['react', 'react-dom'],
-          'material-ui': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
-          'firebase-core': ['firebase/app', 'firebase/auth'],
-          'firebase-services': ['firebase/firestore', 'firebase/storage', 'firebase/messaging'],
-          'calendar': ['moment', 'react-big-calendar'],
-          'utils': ['i18next', 'react-i18next', 'react-router-dom'],
-          'sentry': ['@sentry/react', '@sentry/capacitor']
+          react: ['react', 'react-dom', 'react-router-dom'],
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          i18n: ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+          utils: ['date-fns', 'moment']
         }
       }
-    },
-
-    sourcemap: true
+    }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    }
   },
   server: {
-    port: 5173,
-    host: true
+    port: 3000,
+    open: true,
+    hmr: {
+      overlay: true
+    }
+  },
+  esbuild: {
+    jsxInject: `import React from 'react'`,
+    logOverride: {
+      'this-is-undefined-in-esm': 'silent'
+    }
+  },
+  css: {
+    devSourcemap: true,
+    modules: {
+      localsConvention: 'camelCase'
+    }
   }
 });

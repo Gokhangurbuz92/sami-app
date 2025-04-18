@@ -15,6 +15,11 @@ export interface Referent extends User {
   specialization?: string;
   availability?: string[];
   assignedYouths: string[];
+  phoneNumber?: string;
+  emergencyContact?: string;
+  department?: string;
+  position?: string;
+  hireDate?: Date;
 }
 
 export interface Youth extends User {
@@ -23,6 +28,19 @@ export interface Youth extends User {
   dateOfBirth?: string;
   nationality?: string;
   educationLevel?: string;
+  roomNumber?: string;
+  medicalInfo?: string;
+  allergies?: string[];
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  legalGuardian?: {
+    name: string;
+    phone: string;
+    email?: string;
+  };
 }
 
 export interface Message {
