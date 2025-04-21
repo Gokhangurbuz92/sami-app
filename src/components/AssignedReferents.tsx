@@ -14,16 +14,7 @@ import { userService } from '../services/userService';
 import { fetchReferents } from '../services/referents';
 import { Email as EmailIcon, Phone as PhoneIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-
-// Type pour un référent
-interface Referent {
-  uid: string;
-  displayName: string;
-  email: string;
-  phoneNumber?: string;
-  photoURL?: string;
-  role: 'referent' | 'coreferent';
-}
+import { Referent } from '../types/firebase';
 
 export default function AssignedReferents() {
   const { currentUser, isJeune } = useAuth();

@@ -25,9 +25,7 @@ const config: CapacitorConfig = {
       useDialog: true
     },
     PushNotifications: {
-      presentationOptions: ["badge", "sound", "alert"],
-      smallIcon: "ic_notification",
-      iconColor: "#FFFFFF"
+      presentationOptions: ["badge", "sound", "alert"]
     },
     Toast: {
       duration: 'short',
@@ -62,7 +60,13 @@ const config: CapacitorConfig = {
     webContentsDebuggingEnabled: true,
     backgroundColor: '#FFFFFF',
     initialFocus: true,
-    useLegacyBridge: false
+    useLegacyBridge: false,
+    buildOptions: {
+      keystorePath: 'sami.keystore',
+      keystorePassword: process.env.ANDROID_KEYSTORE_PASSWORD,
+      keystoreAlias: 'sami',
+      keystoreAliasPassword: process.env.ANDROID_KEYSTORE_ALIAS_PASSWORD
+    }
   },
   ios: {
     contentInset: 'always',

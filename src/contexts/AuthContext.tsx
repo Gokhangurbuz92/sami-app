@@ -13,9 +13,10 @@ import {
 } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { auth } from '../config/firebase';
-import { userService, User as FirestoreUser } from '../services/userService';
+import { userService } from '../services/userService';
+import { User, UserRole } from '../types/firebase';
 
-interface User extends FirebaseUser {
+interface AuthUser extends FirebaseUser {
   // Propriétés supplémentaires si nécessaire
 }
 
@@ -34,21 +35,21 @@ export interface RolePermissions {
 }
 
 interface AuthContextType {
-  currentUser: User | null;
-  user: User | null;
+  currentUser: AuthUser | null;
+  user: AuthUser | null;
   signUp: (
     email: string,
     password: string,
     displayName: string,
-    role: FirestoreUser['role']
-  ) => Promise<User>;
-  signIn: (email: string, password: string) => Promise<User>;
+    role: UserRole
+  ) => Promise<AuthUser>;
+  signIn: (email: string, password: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  signInWithGoogle: () => Promise<User>;
+  signInWithGoogle: () => Promise<AuthUser>;
   loading: boolean;
   error: string | null;
-  userRole: FirestoreUser['role'] | null;
+  userRole: UserRole | null;
   userPermissions: RolePermissions | null;
   isAdmin: boolean;
   isReferent: boolean;
@@ -114,15 +115,15 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<FirestoreUser['role'] | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [userPermissions, setUserPermissions] = useState<RolePermissions | null>(null);
   const { t } = useTranslation();
 
   // Calcul des permissions en fonction du rôle
-  const computePermissions = (role: FirestoreUser['role'] | null): RolePermissions => {
+  const computePermissions = (role: UserRole | null): RolePermissions => {
     if (!role) return DEFAULT_PERMISSIONS;
 
     switch (role) {
@@ -185,15 +186,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Observer les changements d'authentification
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user as User | null);
+      setCurrentUser(user as AuthUser | null);
 
       if (user) {
         try {
           // Récupérer les informations du profil utilisateur depuis Firestore
           const userData = await userService.getUserById(user.uid);
-          if (userData) {
-            setUserRole(userData.role);
-            setUserPermissions(computePermissions(userData.role));
+          if (userData.success && userData.data) {
+            setUserRole(userData.data.role);
+            setUserPermissions(computePermissions(userData.data.role));
           } else {
             setUserRole(null);
             setUserPermissions(DEFAULT_PERMISSIONS);
@@ -218,17 +219,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     email: string,
     password: string,
     displayName: string,
-    role: FirestoreUser['role']
-  ): Promise<User> => {
+    role: UserRole
+  ): Promise<AuthUser> => {
     try {
       setError(null);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user as User;
+      const user = userCredential.user as AuthUser;
       
       // Envoyer l'email de vérification
       await sendEmailVerification(user);
 
       await userService.createUser({
+        id: user.uid,
         uid: user.uid,
         email: user.email || email,
         displayName,
@@ -247,25 +249,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signIn = async (email: string, password: string): Promise<User> => {
+  const signIn = async (email: string, password: string): Promise<AuthUser> => {
     try {
       setError(null);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user as User;
+      const user = userCredential.user as AuthUser;
 
       // Vérifier si l'email est vérifié
       if (!user.emailVerified) {
-        const errorMessage = t('auth.emailNotVerified');
-        setError(errorMessage);
-        await signOut(auth);
-        throw new Error(errorMessage);
+        throw new Error(t('auth.emailNotVerified'));
       }
 
       // Récupérer les informations du profil utilisateur depuis Firestore
       const userData = await userService.getUserById(user.uid);
-      if (userData) {
-        setUserRole(userData.role);
-        setUserPermissions(computePermissions(userData.role));
+      if (userData.success && userData.data) {
+        setUserRole(userData.data.role);
+        setUserPermissions(computePermissions(userData.data.role));
+      } else {
+        setUserRole(null);
+        setUserPermissions(DEFAULT_PERMISSIONS);
       }
 
       return user;
@@ -277,29 +279,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signInWithGoogle = async (): Promise<User> => {
+  const signInWithGoogle = async (): Promise<AuthUser> => {
     try {
       setError(null);
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user as User;
+      const user = result.user as AuthUser;
 
       // Vérifier si l'utilisateur existe déjà dans Firestore
       const existingUser = await userService.getUserById(user.uid);
 
       // Si l'utilisateur n'existe pas, créer un document utilisateur
-      if (!existingUser) {
-        const defaultRole: FirestoreUser['role'] = 'jeune';
+      if (!existingUser.success || !existingUser.data) {
+        const defaultRole: UserRole = 'jeune';
         await userService.createUser({
+          id: user.uid,
           uid: user.uid,
           email: user.email || '',
-          displayName: user.displayName || 'Utilisateur Google',
+          displayName: user.displayName || '',
           role: defaultRole
         });
         setUserRole(defaultRole);
         setUserPermissions(computePermissions(defaultRole));
       } else {
-        setUserRole(existingUser.role);
-        setUserPermissions(computePermissions(existingUser.role));
+        setUserRole(existingUser.data.role);
+        setUserPermissions(computePermissions(existingUser.data.role));
       }
 
       return user;

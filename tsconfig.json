@@ -15,7 +15,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["vitest/globals"],
+    "types": [
+      "vitest/globals",
+      "@capacitor/cli",
+      "@capacitor/core",
+      "@capacitor/app",
+      "@capacitor/browser",
+      "@capacitor/splash-screen",
+      "@capacitor/status-bar",
+      "@capacitor/toast"
+    ],
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

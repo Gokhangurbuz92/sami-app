@@ -78,6 +78,9 @@ export interface Note {
 
 export interface Referent extends User {
   assignedYouths: string[];
+  phoneNumber?: string;
+  photoURL?: string;
+  role: 'referent' | 'coreferent';
 }
 
 export interface Youth extends User {

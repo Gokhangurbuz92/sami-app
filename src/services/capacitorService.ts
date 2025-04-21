@@ -1,10 +1,18 @@
-import { App as CapApp } from '@capacitor/app';
-import { StatusBar as CapStatusBar, Style } from '@capacitor/status-bar';
-import { SplashScreen as CapSplashScreen } from '@capacitor/splash-screen';
-import { Toast as CapToast } from '@capacitor/toast';
-import { Browser as CapBrowser } from '@capacitor/browser';
-import * as Sentry from '@sentry/react';
+import { App } from '@capacitor/app';
+import { StatusBar } from '@capacitor/status-bar';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { Toast } from '@capacitor/toast';
+import { Browser } from '@capacitor/browser';
+import { init as sentryInit, captureException, captureMessage } from '@sentry/react-native';
+import { BrowserTracing } from '@sentry/tracing';
 import { initializeNotifications } from './notificationService';
+
+// Initialiser Sentry avec le tracing
+sentryInit({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
 
 /**
  * Service centralisé pour la gestion des plugins Capacitor
@@ -12,93 +20,72 @@ import { initializeNotifications } from './notificationService';
  */
 
 // Initialiser tous les plugins Capacitor au démarrage de l'application
-export const initializeCapacitorPlugins = async (): Promise<void> => {
+export const initializeCapacitor = async () => {
   try {
-    // Vérifier si nous sommes sur une plateforme native
-    if (CapApp.isNativePlatform()) {
-      console.log('Initializing Capacitor plugins for native platform');
+    const isNative = await App.isNativePlatform();
+    
+    if (isNative) {
+      const platform = await App.getPlatform();
       
-      // Initialiser le StatusBar (Android/iOS)
-      const platform = await CapApp.getPlatform();
-      if (platform === 'android') {
-        await CapStatusBar.setBackgroundColor({ color: '#FFFFFF' });
-      } else if (platform === 'ios') {
-        await CapStatusBar.setStyle({ style: Style.Dark });
+      if (platform === 'android' || platform === 'ios') {
+        await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+        await StatusBar.setStyle({ style: 'DARK' });
       }
       
-      // Masquer le SplashScreen après un délai
-      setTimeout(() => {
-        CapSplashScreen.hide();
-      }, 2000);
-      
-      // Initialiser les notifications push
-      await initializeNotifications();
-      
-      // Capture information dans Sentry
-      Sentry.captureMessage('Capacitor plugins initialized successfully', {
-        level: 'info',
-        tags: {
-          platform: platform,
-          version: CapApp.getApp().version
-        }
-      });
-    } else {
-      console.log('Running in web environment, some native features will not be available');
-      
-      // Initialiser les notifications web si possible
-      await initializeNotifications();
+      await SplashScreen.hide();
     }
   } catch (error) {
-    console.error('Error initializing Capacitor plugins:', error);
-    Sentry.captureException(error as Error);
+    console.error('Error initializing Capacitor:', error);
   }
 };
 
 /**
  * Utilitaires pour Toast
  */
-export const showToast = async (message: string, duration: 'short' | 'long' = 'short'): Promise<void> => {
+export const showToast = async (message: string) => {
   try {
-    await CapToast.show({
+    await Toast.show({
       text: message,
-      duration: duration
+      duration: 'long'
     });
   } catch (error) {
     console.error('Error showing toast:', error);
-    Sentry.captureException(error as Error);
   }
 };
 
 /**
  * Utilitaires pour Browser
  */
-export const openBrowser = async (url: string, windowName?: string): Promise<void> => {
+export const openBrowser = async (url: string) => {
   try {
-    await CapBrowser.open({
-      url: url,
-      toolbarColor: '#3880ff'
-    });
+    await Browser.open({ url });
   } catch (error) {
     console.error('Error opening browser:', error);
-    Sentry.captureException(error as Error);
-    
-    // Fallback à l'ouverture d'un nouvel onglet si le plugin échoue
-    window.open(url, '_blank');
   }
 };
 
 /**
  * Vérifier si l'application est en mode natif (Android/iOS)
  */
-export const isNativePlatform = (): boolean => {
-  return CapApp.isNativePlatform();
+export const isNativePlatform = async () => {
+  try {
+    return await App.isNativePlatform();
+  } catch (error) {
+    console.error('Error checking native platform:', error);
+    return false;
+  }
 };
 
 /**
  * Obtenir la plateforme actuelle
  */
-export const getPlatform = (): string => {
-  return CapApp.getPlatform();
+export const getPlatform = async () => {
+  try {
+    return await App.getPlatform();
+  } catch (error) {
+    console.error('Error getting platform:', error);
+    return 'web';
+  }
 };
 
 /**
@@ -106,54 +93,100 @@ export const getPlatform = (): string => {
  */
 export const getAppInfo = async () => {
   try {
-    return await CapApp.getInfo();
+    const appInfo = await App.getInfo();
+    return {
+      id: appInfo.id,
+      name: appInfo.name,
+      version: appInfo.version,
+      build: appInfo.build,
+      platform: appInfo.platform
+    };
   } catch (error) {
     console.error('Error getting app info:', error);
     return null;
   }
 };
 
+export const showErrorToast = async (message: string) => {
+  try {
+    await Toast.show({
+      text: message,
+      duration: 'long'
+    });
+  } catch (error) {
+    console.error('Error showing error toast:', error);
+  }
+};
+
+export const openExternalUrl = async (url: string) => {
+  try {
+    await Browser.open({ url });
+  } catch (error) {
+    console.error('Error opening external URL:', error);
+  }
+};
+
 export class CapacitorService {
-  static async initialize() {
+  static async initialize(): Promise<void> {
     try {
-      const platform = await CapApp.getPlatform();
-      if (platform === 'android' || platform === 'ios') {
-        await CapStatusBar.setBackgroundColor({ color: '#FFFFFF' });
-        await CapStatusBar.setStyle({ style: Style.Dark });
-        await CapSplashScreen.hide();
+      await initializeNotifications();
+
+      // Vérifier si nous sommes sur une plateforme native
+      if (App.isNativePlatform()) {
+        const platform = await App.getPlatform();
+        
+        // Configurer la barre de statut
+        if (platform === 'android') {
+          await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+        }
+        await StatusBar.setStyle({ style: 'DARK' });
+
+        // Masquer l'écran de démarrage
+        await SplashScreen.hide();
+
+        // Capture information dans Sentry
+        const appInfo = await App.getInfo();
+        captureMessage('Capacitor plugins initialized successfully', {
+          level: 'info',
+          tags: {
+            platform: appInfo.platform,
+            version: appInfo.version,
+            build: appInfo.build
+          }
+        });
       }
     } catch (error) {
-      Sentry.captureException(error);
-      console.error('Error initializing Capacitor:', error);
+      console.error('Error initializing Capacitor plugins:', error);
+      captureException(error);
     }
   }
 
   static async showToast(message: string, duration: 'short' | 'long' = 'short') {
     try {
-      await CapToast.show({
+      await Toast.show({
         text: message,
         duration: duration
       });
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error('Error showing toast:', error);
     }
   }
 
   static async openBrowser(url: string) {
     try {
-      await CapBrowser.open({ url });
+      await Browser.open({ url });
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error('Error opening browser:', error);
     }
   }
 
   static async getAppInfo() {
     try {
-      return await CapApp.getInfo();
+      return await App.getInfo();
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error('Error getting app info:', error);
       return null;
     }

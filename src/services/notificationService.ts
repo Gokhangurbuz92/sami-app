@@ -13,42 +13,50 @@ import {
   getDocs,
   orderBy,
   onSnapshot,
-  writeBatch
+  writeBatch,
+  Timestamp
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { getMessaging, getToken, onMessage, isSupported, MessagePayload } from 'firebase/messaging';
 import { firebaseApp } from '../config/firebase';
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { ToastPlugin } from '@capacitor/toast';
+import { Toast } from '@capacitor/toast';
 import { init, captureException } from '@sentry/browser';
 import type { Notification } from '../types/firebase';
 
+// Types
+type NotificationType = 'youth' | 'referent' | 'system';
+
 // Initialize Sentry
 init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [],
   tracesSampleRate: 1.0,
-  environment: process.env.NODE_ENV
+  environment: import.meta.env.MODE
 });
 
-// Initialize Toast plugin
-const Toast: ToastPlugin = {
-  show: async (options) => {
-    if (Capacitor.isNativePlatform()) {
-      await Capacitor.Plugins.Toast.show(options);
-    }
-  }
-};
+interface NotificationData {
+  userId: string;
+  title: string;
+  body: string;
+  message: string;
+  timestamp: Date;
+  type: NotificationType;
+  data?: {
+    youthId?: string;
+    referentId?: string;
+  };
+}
 
 class NotificationService {
   private notificationsCollection = collection(db, 'notifications');
 
-  async createNotification(notification: Omit<Notification, 'id' | 'createdAt' | 'read'>): Promise<Notification> {
+  async createNotification(notification: NotificationData): Promise<Notification> {
     try {
       const docRef = await addDoc(this.notificationsCollection, {
         ...notification,
-        createdAt: new Date(),
+        createdAt: Timestamp.fromDate(new Date()),
         read: false
       });
 
@@ -141,14 +149,22 @@ class NotificationService {
 
   async showNotification(title: string, message: string): Promise<void> {
     try {
-      if (Capacitor.isNativePlatform()) {
+      if (Capacitor.getPlatform() !== 'web') {
         await Toast.show({
           text: `${title}: ${message}`,
-          duration: 'long'
+          duration: 'long',
+          position: 'bottom'
         });
+      } else {
+        // Fallback pour le web
+        if ('Notification' in window) {
+          await Notification.requestPermission();
+          new Notification(title, { body: message });
+        }
       }
     } catch (error) {
-      captureException(error as Error);
+      console.error('Error showing notification:', error);
+      captureException(error);
     }
   }
 }
@@ -179,89 +195,25 @@ const messaging = getMessaging(firebaseApp);
  * et web via Firebase Cloud Messaging
  */
 export const initializeNotifications = async (): Promise<void> => {
-  try {
-    if (Capacitor.isNativePlatform()) {
-      // Initialisation pour Android/iOS via Capacitor
-      console.log('Initializing push notifications for native platform');
+  if (Capacitor.getPlatform() !== 'web') {
+    try {
+      await PushNotifications.register();
       
-      // Demande des permissions
-      const permissionStatus = await PushNotifications.requestPermissions();
+      await PushNotifications.addListener('registration', 
+        (token: { value: string }) => {
+          console.log('Push registration success', token.value);
+        }
+      );
       
-      if (permissionStatus.receive === 'granted') {
-        // Enregistrer les listeners avant l'enregistrement
-        PushNotifications.addListener('registration', (token) => {
-          console.log('Push registration success: ', token.value);
-          captureException(new Error(`FCM Token received: ${token.value.substring(0, 10)}`));
-        });
-        
-        PushNotifications.addListener('registrationError', (error) => {
-          console.error('Push registration failed: ', error);
-          captureException(new Error(`Push registration failed: ${JSON.stringify(error)}`));
-        });
-        
-        PushNotifications.addListener('pushNotificationReceived', (notification) => {
-          console.log('Push notification received: ', notification);
-          // Afficher une notification en foreground
-          Toast.show({
-            text: notification.title || 'Nouvelle notification',
-            duration: 'long'
-          });
-        });
-        
-        PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
-          console.log('Push notification action performed: ', action);
-          // Naviguer vers la page appropriée selon la notification
-          // Exemple: router.navigate(['/notifications']);
-        });
-        
-        // Enregistrement pour recevoir les notifications
-        await PushNotifications.register();
-        console.log('Push notifications registered successfully');
-      } else {
-        console.warn('Push notification permission was denied');
-      }
-    } else {
-      // Initialisation pour le web via Firebase Cloud Messaging
-      await requestNotificationPermission();
+      await PushNotifications.addListener('registrationError',
+        (error: any) => {
+          console.error('Error on registration', error);
+          captureException(error);
+        }
+      );
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+      captureException(error);
     }
-  } catch (error) {
-    console.error('Error initializing notifications:', error);
-    captureException(error as Error);
-  }
-};
-
-export const requestNotificationPermission = async () => {
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      console.log('Notification permission granted.');
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('Error requesting notification permission:', error);
-    return false;
-  }
-};
-
-export const onMessageListener = (callback: (payload: MessagePayload) => void) => {
-  if (!isSupported()) {
-    console.warn('Firebase Messaging is not supported in this environment');
-    return;
-  }
-  
-  return onMessage(messaging, callback);
-};
-
-export const testPushNotification = async (): Promise<string> => {
-  try {
-    const token = await getToken(messaging, {
-      vapidKey: process.env.VITE_FIREBASE_VAPID_KEY
-    });
-    console.log('FCM Token:', token);
-    return token;
-  } catch (error) {
-    console.error('Error getting FCM token:', error);
-    throw error;
   }
 };

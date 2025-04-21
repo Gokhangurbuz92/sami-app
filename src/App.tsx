@@ -10,7 +10,7 @@ import { useAuth, AuthProvider } from './contexts/AuthContext';
 import { MainNavigation } from './components/MainNavigation';
 import { AnimatePresence } from 'framer-motion';
 import AnimatedRoute from './components/AnimatedRoute';
-import { initializeCapacitorPlugins } from './services/capacitorService';
+import { initializeCapacitor } from './services/capacitorService';
 import { AdminRoute as RoleAdminRoute, PermissionRoute } from './components/RouteGuards';
 import AdminRoute from './components/Admin/AdminRoute';
 import EmailVerification from './components/EmailVerification';
@@ -71,15 +71,17 @@ const createAppTheme = (direction: 'ltr' | 'rtl') =>
     }
   });
 
-const convertFirebaseUser = (firebaseUser: FirebaseUser): User => ({
-  id: firebaseUser.uid,
-  email: firebaseUser.email || '',
-  displayName: firebaseUser.displayName || '',
-  photoURL: firebaseUser.photoURL || undefined,
-  role: 'jeune', // Par défaut, on met 'jeune' comme rôle
-  createdAt: firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime) : new Date(),
-  updatedAt: firebaseUser.metadata?.lastSignInTime ? new Date(firebaseUser.metadata.lastSignInTime) : new Date()
-});
+const convertFirebaseUser = (firebaseUser: any): User => {
+  return {
+    id: firebaseUser.uid,
+    name: firebaseUser.displayName || '',
+    email: firebaseUser.email || '',
+    role: 'young', // Par défaut, on met 'young' car c'est le rôle le plus restrictif
+    profilePicture: firebaseUser.photoURL || undefined,
+    createdAt: new Date(),
+    lastActive: new Date()
+  };
+};
 
 // Composant d'animation pour les routes
 function AnimatedRoutes() {
@@ -256,7 +258,7 @@ function AppContent() {
     const setupApp = async () => {
       try {
         // Initialiser les plugins Capacitor
-        await initializeCapacitorPlugins();
+        await initializeCapacitor();
         console.log('Capacitor plugins initialized successfully');
         
         // Précharger les pages critiques

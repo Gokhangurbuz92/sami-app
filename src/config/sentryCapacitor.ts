@@ -11,7 +11,7 @@ type SeverityLevel = 'fatal' | 'error' | 'warning' | 'log' | 'info' | 'debug';
 export const initSentryCapacitor = () => {
   if (process.env.NODE_ENV === 'production') {
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn: process.env.VITE_SENTRY_DSN,
       integrations: [new BrowserTracing()],
       tracesSampleRate: 1.0,
       environment: process.env.NODE_ENV,
@@ -25,7 +25,7 @@ export const initSentryCapacitor = () => {
     });
   } else {
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn: process.env.VITE_SENTRY_DSN,
       integrations: [new BrowserTracing()],
       tracesSampleRate: 1.0,
       environment: process.env.NODE_ENV,
@@ -49,8 +49,7 @@ export const initSentryCapacitor = () => {
 
 // Fonction utilitaire pour capturer les exceptions
 export const captureError = (error: Error) => {
-  Sentry.withScope((scope) => {
-    scope.setLevel('error');
+  Sentry.withScope((scope: any) => {
     Sentry.captureException(error);
   });
 };

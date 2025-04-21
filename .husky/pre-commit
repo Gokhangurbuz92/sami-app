@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Vérification du code avant le commit..."
+
+# Exécuter ESLint
+npm run lint || {
+  echo "❌ ESLint a échoué. Veuillez corriger les erreurs avant de commiter."
+  exit 1
+}
+
+# Exécuter les tests
+npm test || {
+  echo "❌ Les tests ont échoué. Veuillez corriger les erreurs avant de commiter."
+  exit 1
+}
+
+echo "✅ Les vérifications sont passées avec succès !"

@@ -1,6 +1,7 @@
-import * as Sentry from '@sentry/react';
+import * as SentryReact from '@sentry/react';
+import { init, showReportDialog, withScope, captureException, captureMessage, setUser, captureEvent } from '@sentry/browser';
 import { BrowserTracing } from '@sentry/browser';
-import { Hub } from '@sentry/core';
+import { Event, EventHint, Scope, User, SeverityLevel } from '@sentry/types';
 import React from 'react';
 
 interface ErrorBoundaryProps {
@@ -10,7 +11,7 @@ interface ErrorBoundaryProps {
 const ErrorBoundaryWrapper = ({ children }: ErrorBoundaryProps): React.ReactElement => {
   if (process.env.NODE_ENV === 'production') {
     return React.createElement(
-      Sentry.ErrorBoundary,
+      SentryReact.ErrorBoundary,
       null,
       React.createElement('div', null,
         React.createElement('div', null, 'Une erreur est survenue'),
@@ -23,27 +24,27 @@ const ErrorBoundaryWrapper = ({ children }: ErrorBoundaryProps): React.ReactElem
 
 export const initSentry = () => {
   if (process.env.NODE_ENV === 'production') {
-    Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+    init({
+      dsn: process.env.VITE_SENTRY_DSN,
       integrations: [new BrowserTracing()],
       tracesSampleRate: 1.0,
       environment: process.env.NODE_ENV,
-      beforeSend(event) {
+      beforeSend(event: Event, hint?: EventHint) {
         if (event.level === 'error') {
-          Sentry.showReportDialog({ eventId: event.event_id });
+          showReportDialog({ eventId: event.event_id });
         }
         return event;
       }
     });
   } else {
-    Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+    init({
+      dsn: process.env.VITE_SENTRY_DSN,
       integrations: [new BrowserTracing()],
       tracesSampleRate: 1.0,
       environment: process.env.NODE_ENV,
-      beforeSend(event) {
+      beforeSend(event: Event, hint?: EventHint) {
         if (event.level === 'error') {
-          Sentry.showReportDialog({ eventId: event.event_id });
+          showReportDialog({ eventId: event.event_id });
         }
         return event;
       }
@@ -52,50 +53,29 @@ export const initSentry = () => {
 };
 
 export const captureError = (error: Error) => {
-  Sentry.withScope((scope) => {
-    scope.setLevel('error');
-    Sentry.captureException(error);
+  withScope((scope: Scope) => {
+    captureException(error);
   });
 };
 
-export const captureMessage = (message: string, level: Sentry.SeverityLevel = 'info') => {
-  Sentry.captureMessage(message, level);
+export const captureMessageWithLevel = (message: string, level: SeverityLevel = 'info') => {
+  captureMessage(message, level);
 };
 
-export const setUser = (user: Sentry.User | null) => {
-  Sentry.setUser(user);
+export const setUserData = (user: User | null) => {
+  setUser(user);
 };
 
 export const clearUser = () => {
-  Sentry.setUser(null);
+  setUser(null);
 };
 
-export const captureException = (error: Error): string => {
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      const hub = new Hub();
-      const eventId = hub.captureException(error);
-      return eventId || 'unknown-event-id';
-    } catch {
-      return 'error-event-id';
-    }
-  }
-  console.error('[Sentry Mock] Error:', error);
-  return 'mock-event-id';
+export const captureExceptionWithReturn = (error: Error): string => {
+  return captureException(error);
 };
 
-export const captureEvent = (event: Record<string, unknown>): string => {
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      const hub = new Hub();
-      const eventId = hub.captureEvent(event);
-      return eventId || 'unknown-event-id';
-    } catch {
-      return 'error-event-id';
-    }
-  }
-  console.log('[Sentry Mock] Event:', event);
-  return 'mock-event-id';
+export const captureEventWithReturn = (event: Record<string, unknown>): string => {
+  return captureEvent(event);
 };
 
 export default ErrorBoundaryWrapper;
